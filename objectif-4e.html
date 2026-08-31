@@ -584,6 +584,78 @@
   }
   .formula .fx { display: block; font-size: 13.5px; color: var(--ink-soft); line-height: 1.45; }
 
+  /* ---------- chapitres de révision (maths 4ᵉ) ---------- */
+  .theme { display: flex; flex-direction: column; gap: 8px; }
+  .theme h3 {
+    font-family: var(--f-mono);
+    font-size: 10px;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    font-weight: 400;
+    color: var(--ink-soft);
+    margin: 8px 0 2px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .chapter {
+    background: var(--card);
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    box-shadow: var(--shadow);
+  }
+  .chapter[open] { border-color: var(--blue); }
+  .chapter summary {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    padding: 13px 15px;
+    cursor: pointer;
+    list-style: none;
+  }
+  .chapter summary::-webkit-details-marker { display: none; }
+  .chapter summary::after {
+    content: "+";
+    margin-left: auto;
+    font-family: var(--f-mono);
+    font-size: 15px;
+    color: var(--ink-soft);
+  }
+  .chapter[open] summary::after { content: "−"; }
+  .chnum {
+    font-family: var(--f-mono);
+    font-size: 12px;
+    color: var(--blue);
+    font-variant-numeric: tabular-nums;
+  }
+  .chtitle { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .chtitle b {
+    font-family: var(--f-display);
+    font-weight: 700;
+    font-size: 18px;
+    letter-spacing: -.01em;
+  }
+  .chtitle em { font-style: normal; font-size: 13.5px; color: var(--ink-soft); }
+
+  .chbody { padding: 0 15px 15px; max-width: 70ch; }
+  .chbody h4 {
+    font-family: var(--f-mono);
+    font-size: 10px;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    font-weight: 400;
+    color: var(--blue);
+    margin: 14px 0 6px;
+  }
+  .chbody ul { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 5px; }
+  .chbody li { font-size: 15.5px; line-height: 1.5; }
+  .chbody p { margin: 0; font-size: 15.5px; line-height: 1.6; }
+  .chbody .trap {
+    border-left: 3px solid var(--marker);
+    padding-left: 12px;
+  }
+  .chbody .row { margin-top: 16px; align-items: center; }
+  .stock { font-family: var(--f-mono); font-size: 11px; color: var(--ink-soft); }
+
   /* ---------- fiches de révision ---------- */
   .pblock {
     background: var(--card);
@@ -1332,7 +1404,23 @@
       { d: 10, q: "Combien de temps faut-il pour parcourir 15 km à 20 km/h ?", a: ["45 min", "1 h 15", "30 min", "1 h 20"], c: 0,
         e: "Temps = distance ÷ vitesse = 15 ÷ 20 = 0,75 h, soit 45 minutes." },
       { d: 10, q: "Dans une classe, 12 élèves ont eu 10 et 8 élèves ont eu 15. Quelle est la moyenne ?", a: ["12", "12,5", "11", "13"], c: 0,
-        e: "Moyenne pondérée : (12 × 10 + 8 × 15) ÷ 20 = (120 + 120) ÷ 20 = 12." }
+        e: "Moyenne pondérée : (12 × 10 + 8 × 15) ÷ 20 = (120 + 120) ÷ 20 = 12." },
+      { d: 8, q: "Quand peut-on appliquer le théorème de Thalès ?", a: ["quand deux droites parallèles coupent deux sécantes", "quand le triangle est rectangle", "quand le triangle est isocèle", "quand les angles sont égaux"], c: 0,
+        e: "Il faut deux droites parallèles et deux sécantes : on obtient alors deux triangles emboîtés dont les longueurs sont proportionnelles." },
+      { d: 8, q: "Dans une configuration de Thalès, AM = 3 cm, AB = 9 cm et MN = 4 cm. Combien mesure BC ?", a: ["12 cm", "6 cm", "10 cm", "1,33 cm"], c: 0,
+        e: "AM/AB = 3/9 = 1/3, donc MN/BC = 1/3. Si MN = 4, alors BC = 4 × 3 = 12 cm." },
+      { d: 9, q: "Dans une configuration de Thalès, AM/AB = 1/4 et BC = 20 cm. Combien mesure MN ?", a: ["5 cm", "80 cm", "16 cm", "4 cm"], c: 0,
+        e: "Les rapports sont égaux : MN/BC = 1/4, donc MN = 20 ÷ 4 = 5 cm." },
+      { d: 9, q: "Que permet de démontrer la réciproque du théorème de Thalès ?", a: ["que deux droites sont parallèles", "qu'un triangle est rectangle", "que deux triangles sont égaux", "qu'un angle est droit"], c: 0,
+        e: "Si les rapports de longueurs sont égaux et les points bien placés, alors les droites sont parallèles." },
+      { d: 9, q: "Dans un triangle rectangle, le côté adjacent mesure 4 cm et l'hypoténuse 5 cm. Que vaut le cosinus de l'angle ?", a: ["0,8", "1,25", "0,6", "20"], c: 0,
+        e: "cos = adjacent ÷ hypoténuse = 4 ÷ 5 = 0,8. L'angle mesure alors environ 37°." },
+      { d: 10, q: "Le cosinus d'un angle aigu est toujours…", a: ["compris entre 0 et 1", "supérieur à 1", "négatif", "égal à l'angle"], c: 0,
+        e: "L'adjacent est toujours plus court que l'hypoténuse, donc le quotient est inférieur à 1." },
+      { d: 5, q: "Deux angles opposés par le sommet sont…", a: ["égaux", "supplémentaires", "complémentaires", "toujours droits"], c: 0,
+        e: "Deux droites sécantes forment deux paires d'angles opposés par le sommet, égaux deux à deux." },
+      { d: 6, q: "Une translation transforme une figure en…", a: ["une figure identique qui a glissé", "une figure agrandie", "une figure retournée", "un point"], c: 0,
+        e: "La translation glisse la figure selon une direction, un sens et une longueur. Elle conserve tout : longueurs, angles et aires." }
     ],
 
     francais: [
@@ -2143,6 +2231,34 @@
     return "0," + new Array(n).join("0") + "1";
   }
 
+  /* ---------- chapitres du programme de maths ----------
+     Chaque question de maths reçoit son chapitre, pour permettre l'entraînement ciblé
+     depuis une fiche de révision. Les tableaux suivent l'ordre des questions ci-dessus. */
+  var CH_GEN_MATHS = [
+    "relatifs", "relatifs", "relatifs", "priorites", "proportion",
+    "fractions", "aires", "aires", "equations", "litteral",
+    "proportion", "aires", "aires", "volumes", "proportion",
+    "puissances", "statistiques", "litteral", "pythagore", "pythagore",
+    "puissances", "volumes", "litteral", "litteral", "litteral",
+    "probabilites", "puissances", "puissances", "equations", "pythagore",
+    "litteral", "proportion", "statistiques"
+  ];
+  var CH_Q_MATHS = [
+    "relatifs", "relatifs", "relatifs", "priorites", "fractions",
+    "fractions", "proportion", "proportion", "aires", "volumes",
+    "transformations", "transformations", "transformations", "equations", "litteral",
+    "statistiques", "priorites", "fractions", "proportion", "aires",
+    "proportion", "aires", "equations", "volumes", "puissances",
+    "puissances", "statistiques", "proportion", "litteral", "pythagore",
+    "pythagore", "puissances", "puissances", "fractions", "proportion",
+    "litteral", "litteral", "pythagore", "probabilites", "litteral",
+    "puissances", "trigonometrie", "puissances", "equations", "probabilites",
+    "puissances", "pythagore", "litteral", "puissances", "proportion",
+    "statistiques",
+    "thales", "thales", "thales", "thales", "trigonometrie", "trigonometrie",
+    "transformations", "transformations"
+  ];
+
   /* Fusion : on étiquette le socle avec sa difficulté, puis on lui ajoute les questions
      des niveaux supérieurs. Après ça, chaque question du jeu possède un champ d. */
   SUBJECTS.forEach(function (s) {
@@ -2150,9 +2266,14 @@
     s.questions.forEach(function (q, i) { q.d = levels[i] || 3; });
     s.questions = s.questions.concat(EXTRA[s.id] || []);
     s.makers = GENERATORS[s.id] || [];
+    if (s.id === "maths") {
+      s.questions.forEach(function (q, i) { q.ch = CH_Q_MATHS[i]; });
+      s.makers.forEach(function (m, i) { m.ch = CH_GEN_MATHS[i]; });
+    }
   });
 
   var QUIZ_LEN = 20;
+  var MAX_REUSE = 5;             // fois qu'un même générateur peut resservir dans un entraînement
   var MAX_LEVEL = 10;
   var PASS = 15;                 // bonnes réponses nécessaires pour débloquer le niveau suivant
   var STORE = "objectif4e_v1";
@@ -2262,15 +2383,32 @@
   /* Prépare un quiz au niveau demandé : on garde les questions dont la difficulté est la
      plus proche du niveau, puis on mélange questions et réponses. Ainsi un quiz reste
      complet même quand un niveau ne compte pas encore assez de questions à lui seul. */
-  function buildQuiz(subject, lvl) {
+  function buildQuiz(subject, lvl, chapter) {
     var makers = subject.makers || [];
     var fixed = subject.questions || [];
 
+    /* Entraînement ciblé : on ne garde que le chapitre demandé. */
+    if (chapter) {
+      makers = makers.filter(function (m) { return m.ch === chapter; });
+      fixed = fixed.filter(function (q) { return q.ch === chapter; });
+    }
+
     /* Les questions calculées viennent en premier : leurs nombres changent à chaque quiz,
        donc elles ne s'apprennent pas par cœur. On en tire jusqu'à la moitié du quiz. */
-    var generated = shuffle(makers.slice().sort(function (a, b) {
+    /* Sur un seul chapitre, les générateurs disponibles sont peu nombreux : on les
+       réutilise avec de nouvelles valeurs plutôt que de rendre un quiz incomplet. */
+    var wanted = Math.ceil(QUIZ_LEN * 0.7);
+    var proches = makers.slice().sort(function (a, b) {
       return Math.abs(a.d - lvl) - Math.abs(b.d - lvl);
-    }).slice(0, Math.ceil(QUIZ_LEN * 0.7))).map(function (m) { return m.make(); });
+    });
+    var tirage = [];
+    if (proches.length) {
+      var limite = chapter
+        ? Math.min(wanted, proches.length * MAX_REUSE)   // un générateur ne resert pas indéfiniment
+        : Math.min(wanted, proches.length);
+      for (var g = 0; g < limite; g++) tirage.push(proches[g % proches.length]);
+    }
+    var generated = shuffle(tirage).map(function (m) { return m.make(); });
 
     /* Puis les questions rédigées : d'abord celles que Hugo n'a jamais vues,
        et parmi elles les plus proches du niveau visé. */
@@ -2912,11 +3050,187 @@
       '</section>';
   }
 
+  /* ---------------- programme de maths de 4ᵉ ----------------
+     Une fiche par chapitre : ce qu'il faut savoir, la méthode, les pièges — et un
+     entraînement qui ne pioche que dans ce chapitre. */
+  var MATHS_CHAPTERS = [
+    { id: "relatifs", theme: "Nombres et calculs", t: "Nombres relatifs",
+      goal: "Additionner, soustraire, multiplier et diviser des nombres positifs et négatifs.",
+      know: [
+        "Deux nombres opposés ont la même distance à zéro : 5 et −5.",
+        "Somme de deux nombres de même signe : on additionne les distances à zéro et on garde le signe.",
+        "Somme de deux nombres de signes contraires : on soustrait les distances à zéro et on garde le signe du plus éloigné de zéro.",
+        "Soustraire un nombre revient à ajouter son opposé : a − (−b) = a + b.",
+        "Produit et quotient : deux signes identiques donnent un résultat positif, deux signes différents un résultat négatif."
+      ],
+      method: "Pour −7 + 12 : les distances à zéro sont 7 et 12, on soustrait (12 − 7 = 5) et on garde le signe de 12, donc +5. Pour (−3) × (−4) : signes identiques, donc positif, 3 × 4 = 12.",
+      traps: "« Moins par moins fait plus » ne vaut que pour la multiplication et la division, jamais pour l'addition : −3 + (−4) = −7, pas +7." },
+
+    { id: "priorites", theme: "Nombres et calculs", t: "Priorités opératoires",
+      goal: "Calculer une expression sans se tromper d'ordre.",
+      know: [
+        "Ordre à respecter : parenthèses, puis puissances, puis multiplications et divisions, puis additions et soustractions.",
+        "À priorité égale, on calcule de gauche à droite.",
+        "Une barre de fraction joue le rôle d'une parenthèse : on calcule le haut et le bas séparément."
+      ],
+      method: "Pour 20 − 3 × (2 + 4) : la parenthèse d'abord (6), puis la multiplication (3 × 6 = 18), puis la soustraction (20 − 18 = 2).",
+      traps: "L'erreur la plus fréquente est de calculer de gauche à droite en ignorant la multiplication : 2 + 3 × 4 vaut 14, pas 20." },
+
+    { id: "fractions", theme: "Nombres et calculs", t: "Fractions",
+      goal: "Additionner, soustraire, multiplier, diviser et comparer des fractions.",
+      know: [
+        "Addition et soustraction : il faut le même dénominateur. On prend le plus petit multiple commun.",
+        "Multiplication : on multiplie les numérateurs entre eux et les dénominateurs entre eux. Pas besoin de dénominateur commun.",
+        "Division : on multiplie par l'inverse. a/b ÷ c/d = a/b × d/c.",
+        "Une fraction se simplifie en divisant le numérateur et le dénominateur par leur PGCD.",
+        "Le résultat se donne toujours sous forme irréductible."
+      ],
+      method: "Pour 5/6 + 2/10 : le dénominateur commun est 30, donc 25/30 + 6/30 = 31/30. On vérifie ensuite qu'on ne peut plus simplifier.",
+      traps: "On n'additionne jamais les dénominateurs : 1/2 + 1/3 ne fait pas 2/5. Et une réponse non simplifiée (62/60 au lieu de 31/30) est comptée fausse." },
+
+    { id: "puissances", theme: "Nombres et calculs", t: "Puissances et notation scientifique",
+      goal: "Utiliser les exposants, y compris négatifs, et écrire un nombre en notation scientifique.",
+      know: [
+        "aⁿ est le produit de n facteurs égaux à a. a¹ = a et a⁰ = 1.",
+        "Exposant négatif : a⁻ⁿ = 1/aⁿ. Ce n'est pas un nombre négatif.",
+        "10ⁿ s'écrit avec n zéros ; 10⁻ⁿ vaut 0,0…1 avec n décimales.",
+        "Produit : 10ⁿ × 10ᵐ = 10ⁿ⁺ᵐ. Quotient : 10ⁿ ÷ 10ᵐ = 10ⁿ⁻ᵐ. Puissance de puissance : (10ⁿ)ᵐ = 10ⁿˣᵐ.",
+        "Notation scientifique : a × 10ⁿ avec un seul chiffre non nul avant la virgule."
+      ],
+      method: "Pour écrire 45 000 : on place la virgule après le 4, soit 4,5 ; la virgule a reculé de 4 rangs, donc 4,5 × 10⁴. Pour 0,00042 : 4,2 et la virgule avance de 4 rangs, donc 4,2 × 10⁻⁴.",
+      traps: "10⁻³ vaut 0,001 et non −1 000. Et (−2)³ = −8 alors que (−2)⁴ = +16 : un exposant pair rend le résultat positif." },
+
+    { id: "litteral", theme: "Nombres et calculs", t: "Calcul littéral",
+      goal: "Réduire, développer et factoriser une expression avec des lettres.",
+      know: [
+        "Réduire : on regroupe les termes semblables, les x avec les x et les nombres avec les nombres.",
+        "Distributivité simple : k(a + b) = ka + kb.",
+        "Double distributivité : (a + b)(c + d) = ac + ad + bc + bd.",
+        "Carré d'une somme : (a + b)² = a² + 2ab + b². Carré d'une différence : (a − b)² = a² − 2ab + b².",
+        "Factoriser, c'est l'inverse de développer : on met le facteur commun devant."
+      ],
+      method: "Pour (x + 5)(x − 2) : x×x = x², x×(−2) = −2x, 5×x = 5x, 5×(−2) = −10. On réduit : x² + 3x − 10.",
+      traps: "(x + 3)² ne vaut pas x² + 9 : il ne faut pas oublier le double produit 6x. Et attention aux signes quand on développe avec une soustraction." },
+
+    { id: "equations", theme: "Nombres et calculs", t: "Équations du premier degré",
+      goal: "Résoudre une équation et vérifier sa solution.",
+      know: [
+        "On peut ajouter ou soustraire le même nombre aux deux membres.",
+        "On peut multiplier ou diviser les deux membres par un même nombre non nul.",
+        "But : isoler x d'un côté et les nombres de l'autre.",
+        "Un produit en croix résout une égalité de deux quotients : a/b = c/d donne a×d = b×c."
+      ],
+      method: "Pour 5x − 3 = 2x + 9 : on enlève 2x des deux côtés (3x − 3 = 9), on ajoute 3 (3x = 12), on divise par 3 (x = 4). On vérifie : 5×4 − 3 = 17 et 2×4 + 9 = 17.",
+      traps: "Quand on déplace un terme, son signe change. Et il faut appliquer l'opération aux deux membres, pas seulement à un." },
+
+    { id: "proportion", theme: "Organisation et gestion de données", t: "Proportionnalité, pourcentages et vitesses",
+      goal: "Reconnaître une situation de proportionnalité et calculer une quatrième valeur.",
+      know: [
+        "Deux grandeurs sont proportionnelles si on passe de l'une à l'autre en multipliant toujours par le même coefficient.",
+        "Quatrième proportionnelle : produit en croix.",
+        "Prendre p % d'un nombre : × p ÷ 100. Augmenter de p % : × (1 + p/100). Diminuer de p % : × (1 − p/100).",
+        "Vitesse : v = d ÷ t, d = v × t, t = d ÷ v.",
+        "Une échelle est un rapport : 1/25 000 signifie que 1 cm sur la carte vaut 25 000 cm en réalité."
+      ],
+      method: "Un pull à 80 € soldé de 25 % : on multiplie par 0,75, soit 60 €. À 80 km/h pendant 1 h 30 : 1 h 30 = 1,5 h, donc 80 × 1,5 = 120 km.",
+      traps: "1 h 30 vaut 1,5 h et non 1,30 h. Et une baisse de 20 % suivie d'une hausse de 20 % ne ramène pas au prix de départ." },
+
+    { id: "statistiques", theme: "Organisation et gestion de données", t: "Statistiques",
+      goal: "Calculer et interpréter moyenne, médiane et étendue.",
+      know: [
+        "Moyenne : somme des valeurs ÷ nombre de valeurs.",
+        "Moyenne pondérée : somme des (effectif × valeur) ÷ effectif total.",
+        "Médiane : valeur qui partage la série rangée en deux moitiés de même effectif.",
+        "Étendue : plus grande valeur − plus petite valeur."
+      ],
+      method: "Pour 3 ; 7 ; 9 ; 12 ; 15 : la moyenne vaut 46 ÷ 5 = 9,2 et la médiane est la 3ᵉ valeur, soit 9. Avec un nombre pair de valeurs, la médiane est la moyenne des deux valeurs centrales.",
+      traps: "Il faut ranger la série avant de chercher la médiane. Et la moyenne d'une classe ne se calcule pas en faisant la moyenne des moyennes si les effectifs diffèrent." },
+
+    { id: "probabilites", theme: "Organisation et gestion de données", t: "Probabilités",
+      goal: "Calculer la probabilité d'un événement simple.",
+      know: [
+        "Une probabilité est un nombre entre 0 et 1.",
+        "Cas d'équiprobabilité : probabilité = nombre de cas favorables ÷ nombre de cas possibles.",
+        "Événement certain : probabilité 1. Événement impossible : probabilité 0.",
+        "La probabilité de l'événement contraire vaut 1 − p."
+      ],
+      method: "Tirer un roi dans un jeu de 32 cartes : 4 rois sur 32 cartes, soit 4/32 = 1/8. Ne pas tirer de roi : 1 − 1/8 = 7/8.",
+      traps: "On donne la probabilité sous forme simplifiée. Et le résultat ne peut jamais dépasser 1." },
+
+    { id: "pythagore", theme: "Espace et géométrie", t: "Théorème de Pythagore",
+      goal: "Calculer une longueur dans un triangle rectangle et démontrer qu'un triangle est rectangle.",
+      know: [
+        "Dans un triangle rectangle, le carré de l'hypoténuse est égal à la somme des carrés des deux autres côtés.",
+        "L'hypoténuse est le côté opposé à l'angle droit : c'est toujours le plus long.",
+        "Réciproque : si a² + b² = c², alors le triangle est rectangle.",
+        "Triplets utiles à reconnaître : 3-4-5, 6-8-10, 5-12-13, 8-15-17."
+      ],
+      method: "Pour trouver l'hypoténuse avec 3 et 4 : 3² + 4² = 25, donc l'hypoténuse vaut √25 = 5. Pour trouver un autre côté avec hypoténuse 13 et côté 5 : 13² − 5² = 144, donc √144 = 12.",
+      traps: "On additionne pour chercher l'hypoténuse, mais on soustrait pour chercher un autre côté. Et il faut penser à prendre la racine carrée à la fin." },
+
+    { id: "thales", theme: "Espace et géométrie", t: "Théorème de Thalès",
+      goal: "Calculer une longueur dans une configuration de droites parallèles.",
+      know: [
+        "Si deux droites parallèles coupent deux sécantes, les longueurs correspondantes sont proportionnelles.",
+        "On écrit les rapports dans le même ordre : petit triangle sur grand triangle.",
+        "La réciproque permet de démontrer que deux droites sont parallèles."
+      ],
+      method: "On repère les deux triangles emboîtés, on écrit l'égalité des trois rapports, puis on utilise le produit en croix sur les deux rapports qui contiennent la longueur cherchée.",
+      traps: "Il faut respecter l'ordre des sommets : mélanger le petit et le grand triangle donne un résultat faux." },
+
+    { id: "trigonometrie", theme: "Espace et géométrie", t: "Trigonométrie : le cosinus",
+      goal: "Calculer une longueur ou un angle dans un triangle rectangle.",
+      know: [
+        "Cosinus d'un angle aigu = côté adjacent ÷ hypoténuse.",
+        "Le côté adjacent est celui qui touche l'angle, sans être l'hypoténuse.",
+        "Moyen de retenir : CAH — Cosinus, Adjacent, Hypoténuse.",
+        "Pour retrouver l'angle à partir du cosinus, on utilise la touche cos⁻¹ de la calculatrice."
+      ],
+      method: "Si l'adjacent vaut 4 et l'hypoténuse 5, alors cos(angle) = 0,8, et l'angle mesure environ 37°.",
+      traps: "La calculatrice doit être en mode degrés. Et le cosinus d'un angle aigu est toujours compris entre 0 et 1." },
+
+    { id: "transformations", theme: "Espace et géométrie", t: "Transformations et angles",
+      goal: "Reconnaître et utiliser symétries, translation, et calculer des angles.",
+      know: [
+        "La somme des angles d'un triangle vaut toujours 180°.",
+        "Symétrie axiale, symétrie centrale et translation conservent les longueurs, les angles et les aires.",
+        "Une translation fait glisser la figure suivant une direction, un sens et une longueur.",
+        "Deux angles opposés par le sommet sont égaux ; avec deux droites parallèles, les angles alternes-internes sont égaux."
+      ],
+      method: "Dans un triangle isocèle dont l'angle au sommet mesure 40° : il reste 140° à partager entre les deux angles de base, soit 70° chacun.",
+      traps: "Une transformation ne change ni les longueurs ni les aires : chercher un agrandissement là où il n'y en a pas est une erreur classique." },
+
+    { id: "aires", theme: "Grandeurs et mesures", t: "Périmètres et aires",
+      goal: "Calculer le périmètre et l'aire des figures usuelles.",
+      know: [
+        "Périmètre du rectangle : 2 × (L + l). Du cercle : 2 × π × r, soit π × d.",
+        "Aire du rectangle : L × l. Du triangle : (base × hauteur) ÷ 2.",
+        "Aire du parallélogramme : base × hauteur. Du losange : (D × d) ÷ 2. Du trapèze : ((B + b) × h) ÷ 2.",
+        "Aire du disque : π × r².",
+        "Le périmètre se mesure en cm, l'aire en cm²."
+      ],
+      method: "Pour un disque de rayon 5 : l'aire vaut 3,14 × 25 = 78,5 cm², et le périmètre 3,14 × 10 = 31,4 cm.",
+      traps: "Confondre π × r² (aire) et 2 × π × r (périmètre) est l'erreur la plus fréquente. Et pour le triangle, on oublie souvent de diviser par 2." },
+
+    { id: "volumes", theme: "Grandeurs et mesures", t: "Volumes",
+      goal: "Calculer le volume des solides usuels et convertir les unités.",
+      know: [
+        "Pavé droit : L × l × h. Cube : c³.",
+        "Prisme droit et cylindre : aire de la base × hauteur.",
+        "Pyramide et cône : (aire de la base × hauteur) ÷ 3.",
+        "Boule : (4 ÷ 3) × π × r³.",
+        "1 L = 1 dm³ = 1 000 cm³ ; 1 m³ = 1 000 L."
+      ],
+      method: "Pour un cylindre de rayon 2 cm et de hauteur 10 cm : l'aire de la base vaut 3,14 × 4 = 12,56 cm², donc le volume vaut 125,6 cm³.",
+      traps: "Le ÷ 3 de la pyramide et du cône s'oublie souvent. Et toutes les longueurs doivent être dans la même unité avant de calculer." }
+  ];
+
   /* ---------------- onglets ---------------- */
   var TABS = [
-    { id: "quiz",    label: "Réviser",   icon: "✏️" },
-    { id: "formules",label: "Formules",  icon: "📐" },
-    { id: "programme",label: "Programme", icon: "📚" }
+    { id: "quiz",     label: "Quiz",       icon: "✏️" },
+    { id: "revision", label: "Révisions 4ᵉ", icon: "🎓" },
+    { id: "formules", label: "Formules",   icon: "📐" },
+    { id: "programme",label: "Programme",  icon: "📚" }
   ];
   var tab = "quiz";
 
@@ -2933,10 +3247,82 @@
       btn.addEventListener("click", function () {
         tab = btn.getAttribute("data-tab");
         if (tab === "quiz") renderHome();
+        else if (tab === "revision") renderRevision();
         else if (tab === "formules") renderFormulas();
         else renderProgram();
       });
     });
+  }
+
+  /* ---------------- onglet Révisions 4ᵉ ---------------- */
+  function renderRevision() {
+    app.setAttribute("style", tint("maths"));
+
+    /* Combien de questions disponibles pour s'entraîner sur ce chapitre. */
+    function stock(chId) {
+      var m = subjectById("maths");
+      var gens = m.makers.filter(function (x) { return x.ch === chId; }).length;
+      var ecrites = m.questions.filter(function (q) { return q.ch === chId; }).length;
+      /* Longueur réelle de l'entraînement, calculée comme dans buildQuiz : un générateur
+         peut resservir avec d'autres valeurs, une question rédigée ne sort qu'une fois. */
+      var generees = gens ? Math.min(Math.ceil(QUIZ_LEN * 0.7), gens * MAX_REUSE) : 0;
+      var taille = generees + Math.min(QUIZ_LEN - generees, ecrites);
+      return { gens: gens, ecrites: ecrites, taille: taille };
+    }
+
+    var themes = [];
+    MATHS_CHAPTERS.forEach(function (c) {
+      if (!themes.length || themes[themes.length - 1].nom !== c.theme) {
+        themes.push({ nom: c.theme, chapitres: [] });
+      }
+      themes[themes.length - 1].chapitres.push(c);
+    });
+
+    var numero = 0;
+    var blocs = themes.map(function (t) {
+      var fiches = t.chapitres.map(function (c) {
+        numero++;
+        var s = stock(c.id);
+        var dispo = s.gens || s.ecrites;
+        return '<details class="chapter">' +
+          '<summary>' +
+            '<span class="chnum">' + (numero < 10 ? "0" : "") + numero + '</span>' +
+            '<span class="chtitle"><b>' + esc(c.t) + '</b><em>' + esc(c.goal) + '</em></span>' +
+          '</summary>' +
+          '<div class="chbody">' +
+            '<h4>À savoir</h4>' +
+            '<ul>' + c.know.map(function (k) { return '<li>' + esc(k) + '</li>'; }).join("") + '</ul>' +
+            '<h4>La méthode</h4><p>' + esc(c.method) + '</p>' +
+            '<h4>Les pièges</h4><p class="trap">' + esc(c.traps) + '</p>' +
+            (dispo
+              ? '<div class="row"><button class="btn" data-train="' + c.id + '">S\'entraîner : ' + s.taille + ' questions</button>' +
+                '<span class="stock">' +
+                (s.gens ? s.gens + ' générateur' + (s.gens > 1 ? "s" : "") + ' à valeurs tirées au sort' : "") +
+                (s.gens && s.ecrites ? " · " : "") +
+                (s.ecrites ? s.ecrites + " question" + (s.ecrites > 1 ? "s" : "") + " rédigée" + (s.ecrites > 1 ? "s" : "") : "") +
+                '</span></div>'
+              : '<p class="stock">Pas encore de questions sur ce chapitre — la fiche sert de cours.</p>') +
+          '</div>' +
+        '</details>';
+      }).join("");
+      return '<section class="theme"><h3>' + esc(t.nom) + '</h3>' + fiches + '</section>';
+    }).join("");
+
+    app.innerHTML = '' +
+      tabsBar() +
+      '<header class="pagehead">' +
+        '<p class="eyebrow">Programme complet · mathématiques</p>' +
+        '<h1>Ce qu\'il y a à réviser en 4ᵉ</h1>' +
+        '<p class="sub">Les ' + MATHS_CHAPTERS.length + ' chapitres de l\'année, avec pour chacun le cours à savoir, ' +
+          'la méthode, les pièges classiques — et un entraînement qui ne pose que des questions de ce chapitre.</p>' +
+      '</header>' +
+      blocs;
+
+    wireTabs();
+    Array.prototype.forEach.call(app.querySelectorAll("[data-train]"), function (btn) {
+      btn.addEventListener("click", function () { startQuiz("maths", btn.getAttribute("data-train")); });
+    });
+    window.scrollTo(0, 0);
   }
 
   /* ---------------- onglet Formules ---------------- */
@@ -3125,9 +3511,27 @@
     return SUBJECTS.filter(function (s) { return s.id === id; })[0];
   }
 
-  function startQuiz(id) {
+  function startQuiz(id, chapter) {
     var subject = subjectById(id);
     var questions, lvl;
+
+    /* Entraînement lancé depuis une fiche : un seul chapitre, tous niveaux confondus,
+       et cela ne fait pas monter de niveau — c'est de la révision, pas une évaluation. */
+    if (chapter) {
+      var ch = MATHS_CHAPTERS.filter(function (c) { return c.id === chapter; })[0];
+      var entrainement = {
+        id: "maths", medal: "📐",
+        name: ch ? ch.t : subject.name,
+        questions: subject.questions, makers: subject.makers
+      };
+      lvl = levelOf("maths");
+      run = {
+        subject: entrainement, level: lvl, chapter: chapter, training: true,
+        items: buildQuiz(subject, lvl, chapter), i: 0, score: 0, misses: [], answered: false
+      };
+      renderQuestion();
+      return;
+    }
 
     if (id === "daily") {
       /* Le défi du jour se cale sur le niveau moyen atteint dans les cinq matières. */
@@ -3159,7 +3563,8 @@
     }).join("");
 
     app.innerHTML = '' +
-      '<div class="row"><button class="btn quiet" id="back">← Matières</button></div>' +
+      '<div class="row"><button class="btn quiet" id="back">← ' +
+        (run.training ? "Fiches de révision" : "Matières") + '</button></div>' +
       '<section class="sheet">' +
         CLIP +
         '<div class="qhead">' +
@@ -3173,7 +3578,9 @@
         '<div id="after"></div>' +
       '</section>';
 
-    document.getElementById("back").addEventListener("click", renderHome);
+    document.getElementById("back").addEventListener("click", function () {
+      if (run.training) { tab = "revision"; renderRevision(); } else renderHome();
+    });
     Array.prototype.forEach.call(app.querySelectorAll(".answer"), function (btn) {
       btn.addEventListener("click", function () { choose(parseInt(btn.getAttribute("data-idx"), 10)); });
     });
@@ -3216,10 +3623,15 @@
   }
 
   /* Le tampon rouge du prof, version encourageante. */
+  /* Seuil de réussite proportionnel : 15/20, mais aussi 3/4 sur un entraînement court. */
+  function seuil(total) {
+    return total === QUIZ_LEN ? PASS : Math.ceil(total * (PASS / QUIZ_LEN));
+  }
+
   function stamp(score, total) {
-    if (score === total)       return { cls: "ok",  text: "Sans faute" };
-    if (score >= PASS)         return { cls: "ok",  text: "Validé" };
-    if (score >= total * 0.5)  return { cls: "mid", text: "Presque" };
+    if (score === total)         return { cls: "ok",  text: "Sans faute" };
+    if (score >= seuil(total))   return { cls: "ok",  text: "Validé" };
+    if (score >= total * 0.5)    return { cls: "mid", text: "Presque" };
     return { cls: "low", text: "À revoir" };
   }
 
@@ -3323,13 +3735,15 @@
     var id = run.subject.id;
 
     var levelUp = 0;
-    if (id === "daily") {
+    if (run.training) {
+      /* Entraînement sur un chapitre : on gagne des points, mais ni record ni niveau. */
+    } else if (id === "daily") {
       gain += 20;                                   // le défi du jour rapporte davantage
       state.dailyDay = today();
     } else {
       if (s > (state.best[id] || 0)) state.best[id] = s;
       /* 15 bonnes réponses sur 20 font passer au niveau suivant. */
-      if (s >= PASS && levelOf(id) < MAX_LEVEL) {
+      if (s >= seuil(run.items.length) && levelOf(id) < MAX_LEVEL) {
         levelUp = levelOf(id) + 1;
         state.levels[id] = levelUp;
       }
@@ -3348,15 +3762,19 @@
 
     var n = run.items.length;
     var msg =
-      s === n        ? "Sans faute. La 4ᵉ n'a qu'à bien se tenir." :
-      s >= PASS      ? "Niveau validé. Les questions vont se durcir." :
-      s >= n * 0.5   ? "Ça vient. Relis les explications et retente : il faut " + PASS + "/" + n + " pour monter." :
-                       "Ce chapitre mérite une deuxième lecture. Recommence, les questions changent.";
+      s === n              ? "Sans faute. La 4ᵉ n'a qu'à bien se tenir." :
+      s >= seuil(n)        ? (run.training ? "Ce chapitre est acquis." : "Niveau validé. Les questions vont se durcir.") :
+      s >= n * 0.5         ? "Ça vient. Relis les explications et retente : il faut " + seuil(n) + "/" + n + "." :
+                             "Ce chapitre mérite une deuxième lecture. Recommence, les questions changent.";
 
     /* Point sur le niveau, affiché à chaque fin de quiz : on doit toujours comprendre
        pourquoi on est monté, ou pourquoi on ne l'est pas. */
     var levelNews;
-    if (id === "daily") {
+    if (run.training) {
+      levelNews = '<div class="unlocked"><span class="won info"><b>🎓</b> ' +
+        'Entraînement sur un seul chapitre : il rapporte des points mais ne change pas ' +
+        'ton niveau en maths. Pour monter, joue un quiz de maths complet.</span></div>';
+    } else if (id === "daily") {
       levelNews = '<div class="unlocked"><span class="won info"><b>🔥</b> ' +
         'Le défi ne change pas les niveaux des matières : il rapporte 20 points bonus. ' +
         'Pour monter d\'un niveau, joue la matière elle-même.</span></div>';
@@ -3369,8 +3787,8 @@
         esc(run.subject.name) + ' : niveau ' + MAX_LEVEL + ', le maximum. Rien de plus dur à débloquer.</span></div>';
     } else {
       levelNews = '<div class="unlocked"><span class="won info"><b>🎯</b> ' +
-        esc(run.subject.name) + ' : toujours niveau ' + levelOf(id) + '. Il faut <b>' + PASS + '/' + n +
-        '</b> pour débloquer le niveau ' + (levelOf(id) + 1) + ' — il t\'en manquait ' + (PASS - s) + '.</span></div>';
+        esc(run.subject.name) + ' : toujours niveau ' + levelOf(id) + '. Il faut <b>' + seuil(n) + '/' + n +
+        '</b> pour débloquer le niveau ' + (levelOf(id) + 1) + ' — il t\'en manquait ' + (seuil(n) - s) + '.</span></div>';
     }
 
     var unlocked = fresh.length
@@ -3404,14 +3822,19 @@
         review +
         '<div class="row">' +
           '<button class="btn" id="again">' + (id === "daily" ? "Refaire un défi" : "Rejouer cette matière") + '</button>' +
-          '<button class="btn ghost" id="home">Retour aux matières</button>' +
+          '<button class="btn ghost" id="home">' +
+            (run.training ? "Retour aux fiches" : "Retour aux matières") + '</button>' +
           '<button class="btn quiet" id="share">Copier mon score</button>' +
         '</div>' +
         '<div id="sharebox"></div>' +
       '</section>';
 
-    document.getElementById("again").addEventListener("click", function () { startQuiz(id); });
-    document.getElementById("home").addEventListener("click", renderHome);
+    var chapitre = run.chapter;
+    document.getElementById("again").addEventListener("click", function () { startQuiz(id, chapitre); });
+    var etaitEntrainement = run.training;
+    document.getElementById("home").addEventListener("click", function () {
+      if (etaitEntrainement) { tab = "revision"; renderRevision(); } else renderHome();
+    });
 
     var shareBtn = document.getElementById("share");
     shareBtn.addEventListener("click", function () {
