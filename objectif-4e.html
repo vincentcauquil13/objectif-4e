@@ -777,6 +777,8 @@
   .lvl-line { font-size: 13px; color: var(--ink-soft); font-family: var(--f-mono); }
   .lvl-line b { color: var(--blue); font-weight: 500; }
   .won.levelup { border-style: solid; border-color: var(--blue); }
+  .won.info { border-style: solid; border-color: var(--rule); color: var(--ink-soft); }
+  .won.info b { color: var(--ink); }
 
   /* badges à débloquer */
   .badges { display: flex; flex-wrap: wrap; gap: 8px; }
@@ -3034,7 +3036,8 @@
           '<span class="name">🔥 Défi du jour</span>' +
           '<span class="badge">' + (state.dailyDay === today() ? "fait aujourd'hui ✓" : "+20 points bonus") + '</span>' +
         '</span>' +
-        '<span class="topics">Vingt questions tirées au sort dans les cinq matières. Un par jour.</span>' +
+        '<span class="topics">Vingt questions tirées au sort dans les cinq matières. Points bonus, ' +
+          'mais il ne fait pas monter les niveaux : pour ça, joue la matière elle-même.</span>' +
       '</button>' +
       '<section class="grid">' + cards + '</section>' +
       dashboard() +
@@ -3130,7 +3133,7 @@
         CLIP +
         '<div class="qhead">' +
           '<span class="qcount">' + run.subject.medal + ' ' + esc(run.subject.name.toUpperCase()) +
-            ' · NIVEAU ' + run.level + '</span>' +
+            (run.subject.id === "daily" ? " · TOUTES MATIÈRES" : " · NIVEAU " + run.level) + '</span>' +
           '<span class="qcount">' + (run.i + 1) + ' / ' + run.items.length + '</span>' +
         '</div>' +
         '<div class="qtrack"><i style="width:' + pct + '%"></i></div>' +
@@ -3319,10 +3322,25 @@
       s >= n * 0.5   ? "Ça vient. Relis les explications et retente : il faut " + PASS + "/" + n + " pour monter." :
                        "Ce chapitre mérite une deuxième lecture. Recommence, les questions changent.";
 
-    var levelNews = levelUp
-      ? '<div class="unlocked"><span class="won levelup"><b>⬆️</b> Niveau ' + levelUp + ' débloqué en ' +
-        esc(run.subject.name) + (levelUp === MAX_LEVEL ? " — le dernier !" : "") + '</span></div>'
-      : '';
+    /* Point sur le niveau, affiché à chaque fin de quiz : on doit toujours comprendre
+       pourquoi on est monté, ou pourquoi on ne l'est pas. */
+    var levelNews;
+    if (id === "daily") {
+      levelNews = '<div class="unlocked"><span class="won info"><b>🔥</b> ' +
+        'Le défi ne change pas les niveaux des matières : il rapporte 20 points bonus. ' +
+        'Pour monter d\'un niveau, joue la matière elle-même.</span></div>';
+    } else if (levelUp) {
+      levelNews = '<div class="unlocked"><span class="won levelup"><b>⬆️</b> ' +
+        esc(run.subject.name) + ' : niveau ' + (levelUp - 1) + ' → <b>niveau ' + levelUp + '</b>' +
+        (levelUp === MAX_LEVEL ? " — le dernier !" : "") + '</span></div>';
+    } else if (levelOf(id) >= MAX_LEVEL) {
+      levelNews = '<div class="unlocked"><span class="won info"><b>🏔️</b> ' +
+        esc(run.subject.name) + ' : niveau ' + MAX_LEVEL + ', le maximum. Rien de plus dur à débloquer.</span></div>';
+    } else {
+      levelNews = '<div class="unlocked"><span class="won info"><b>🎯</b> ' +
+        esc(run.subject.name) + ' : toujours niveau ' + levelOf(id) + '. Il faut <b>' + PASS + '/' + n +
+        '</b> pour débloquer le niveau ' + (levelOf(id) + 1) + ' — il t\'en manquait ' + (PASS - s) + '.</span></div>';
+    }
 
     var unlocked = fresh.length
       ? '<div class="unlocked">' + fresh.map(function (b) {
@@ -3343,7 +3361,7 @@
         '<div class="verdict">' +
           owl(s === 8 ? "win" : s >= 6 ? "good" : s >= 4 ? "idle" : "sad") +
           '<span class="qcount">' + run.subject.medal + ' ' + esc(run.subject.name.toUpperCase()) +
-            ' · NIVEAU ' + run.level + '</span>' +
+            (run.subject.id === "daily" ? " · TOUTES MATIÈRES" : " · NIVEAU " + run.level) + '</span>' +
           '<span class="score">' + s + '<span style="opacity:.35">/' + run.items.length + '</span></span>' +
           '<p class="msg">' + esc(msg) + '</p>' +
           '<span class="gain">+' + gain + ' points' + (s === 8 ? " (bonus sans faute inclus)" : "") +
