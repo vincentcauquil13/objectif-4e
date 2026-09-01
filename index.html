@@ -920,6 +920,95 @@
     margin-right: 8px;
   }
 
+  /* ---------- historique et erreurs ---------- */
+  .progress-table.history .quoi { color: var(--ink); }
+  .progress-table.history .date { font-family: var(--f-mono); font-size: 12px; }
+  .note { font-family: var(--f-mono); font-size: 15px; font-weight: 500; }
+  .note.parfait, .note.reussi { color: var(--green); }
+  .note.rate { color: var(--red); }
+  .pc { font-family: var(--f-mono); font-size: 11px; color: var(--ink-soft); }
+
+  .errors { display: flex; flex-direction: column; gap: 12px; }
+  .errors h3 {
+    font-family: var(--f-mono);
+    font-size: 10px;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    font-weight: 400;
+    color: var(--ink-soft);
+    margin: 6px 0 0;
+  }
+  .faibles { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
+  .faible {
+    border: 1px solid var(--rule);
+    border-top: 3px solid var(--blue);
+    border-radius: 3px;
+    padding: 10px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+  }
+  .faible .k {
+    font-family: var(--f-mono);
+    font-size: 10px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+  .faible .v {
+    font-family: var(--f-display);
+    font-weight: 700;
+    font-size: 26px;
+    line-height: 1.1;
+    color: var(--blue);
+    font-variant-numeric: tabular-nums;
+  }
+  .chapfaibles {
+    margin: 8px 0 0;
+    padding: 8px 0 0;
+    border-top: 1px solid var(--rule-faint);
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+  .chapfaibles li {
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .chapfaibles b { color: var(--ink); font-family: var(--f-mono); font-size: 12px; }
+
+  .errlist { display: flex; flex-direction: column; gap: 5px; }
+  .err { border: 1px solid var(--rule); border-radius: 3px; }
+  .err[open] { border-color: var(--blue); }
+  .err summary {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    padding: 9px 12px;
+    cursor: pointer;
+    list-style: none;
+    font-size: 15px;
+  }
+  .err summary::-webkit-details-marker { display: none; }
+  .err summary b { font-weight: 400; }
+  .err p { margin: 0; padding: 0 12px 12px; font-size: 15px; line-height: 1.6; }
+  .err .lab {
+    display: inline-block;
+    font-family: var(--f-mono);
+    font-size: 10px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin-right: 8px;
+  }
+  .err .fausse { color: var(--red); text-decoration: line-through; }
+  .err .meta { font-family: var(--f-mono); font-size: 11px; color: var(--ink-soft); }
+
+
   /* niveau affiché sur la carte d'une matière */
   .lvl-line { font-size: 13px; color: var(--ink-soft); font-family: var(--f-mono); }
   .lvl-line b { color: var(--blue); font-weight: 500; }
@@ -2762,7 +2851,45 @@
     if (!s.levels || typeof s.levels !== "object") s.levels = {};
     if (!s.log || typeof s.log !== "object") s.log = {};
     if (!s.seen || typeof s.seen !== "object") s.seen = {};
+    if (!Array.isArray(s.history)) s.history = [];   // un enregistrement par quiz terminé
+    if (!Array.isArray(s.errors)) s.errors = [];     // chaque question ratée, avec sa correction
     return s;
+  }
+
+  /* Journal des quiz : on garde les 60 derniers, du plus récent au plus ancien. */
+  function logRun(entry) {
+    state.history.unshift(entry);
+    if (state.history.length > 60) state.history.length = 60;
+  }
+
+  /* Journal des erreurs : chaque question ratée est conservée avec la bonne réponse,
+     pour que Hugo — ou ses parents — voient exactement où ça coince. */
+  function logErrors(subjectId, chapterId, misses) {
+    var quand = Date.now();
+    misses.forEach(function (m) {
+      state.errors.unshift({
+        s: subjectId, ch: m.ch || chapterId || "", q: m.q, bonne: m.a, donnee: m.donnee || "", t: quand
+      });
+    });
+    if (state.errors.length > 300) state.errors.length = 300;
+  }
+
+  /* Regroupe les erreurs par matière puis par chapitre, pour repérer les points faibles. */
+  function errorsBySubject() {
+    var par = {};
+    state.errors.forEach(function (e) {
+      par[e.s] = par[e.s] || { total: 0, chapitres: {} };
+      par[e.s].total++;
+      var c = e.ch || "autre";
+      par[e.s].chapitres[c] = (par[e.s].chapitres[c] || 0) + 1;
+    });
+    return par;
+  }
+
+  function nomChapitre(subjectId, chapterId) {
+    var liste = CHAPTERS[subjectId] || [];
+    var trouve = liste.filter(function (c) { return c.id === chapterId; })[0];
+    return trouve ? trouve.t : "";
   }
 
   /* Journal des révisions : une ligne par jour, pour le tableau de bord. */
@@ -2878,7 +3005,7 @@
       if (item.type === "saisie") return item;       // rien à mélanger : la réponse s'écrit
       var right = item.a[item.c];
       var opts = shuffle(item.a);
-      return { q: item.q, a: opts, c: opts.indexOf(right), e: item.e, d: item.d, gen: !!item.gen };
+      return { q: item.q, a: opts, c: opts.indexOf(right), e: item.e, d: item.d, ch: item.ch, gen: !!item.gen };
     });
   }
 
@@ -3458,6 +3585,97 @@
     ] }
   ];
 
+  /* Date courte, pour les journaux. */
+  function quand(ts) {
+    var d = new Date(ts);
+    var jours = ["dim", "lun", "mar", "mer", "jeu", "ven", "sam"];
+    return jours[d.getDay()] + " " + d.getDate() + "/" + (d.getMonth() + 1) + " à " +
+      d.getHours() + "h" + (d.getMinutes() < 10 ? "0" : "") + d.getMinutes();
+  }
+
+  /* ---------------- historique des quiz ----------------
+     Un quiz par ligne, du plus récent au plus ancien, avec la note obtenue. */
+  function historiqueQuiz() {
+    if (!state.history.length) return "";
+
+    var lignes = state.history.slice(0, 15).map(function (h, i) {
+      var s = subjectById(h.s) || { name: h.s, medal: "" };
+      var numero = state.history.length - i;
+      var pourcent = Math.round((h.score / h.n) * 100);
+      var etat = h.score === h.n ? "parfait" : h.score >= PASS ? "reussi" : "rate";
+      var quoi = h.mode === "defi" ? "Défi du jour"
+        : h.mode === "chapitre" ? esc(nomChapitre(h.s, h.ch) || "Entraînement")
+        : "Niveau " + h.lvl;
+      return '<tr style="' + tint(h.s) + '">' +
+        '<th scope="row"><span class="dot"></span>Quiz ' + numero + '</th>' +
+        '<td>' + esc(s.name) + '</td>' +
+        '<td class="quoi">' + quoi + '</td>' +
+        '<td><b class="note ' + etat + '">' + h.score + '/' + h.n + '</b> <span class="pc">' + pourcent + ' %</span></td>' +
+        '<td class="date">' + esc(quand(h.t)) + '</td>' +
+        '</tr>';
+    }).join("");
+
+    return '' +
+      '<div class="tablewrap">' +
+        '<table class="progress-table history">' +
+          '<caption>Historique des quiz — ' + state.history.length + ' au total' +
+            (state.history.length > 15 ? ", les 15 derniers ci-dessous" : "") + '</caption>' +
+          '<thead><tr><th scope="col">Quiz</th><th scope="col">Matière</th>' +
+            '<th scope="col">Ce qui était joué</th><th scope="col">Note</th><th scope="col">Quand</th></tr></thead>' +
+          '<tbody>' + lignes + '</tbody>' +
+        '</table>' +
+      '</div>';
+  }
+
+  /* ---------------- bilan des erreurs ----------------
+     Où ça coince, matière par matière et chapitre par chapitre, puis le détail
+     des dernières questions ratées avec la bonne réponse. */
+  function bilanErreurs() {
+    if (!state.errors.length) return "";
+
+    var par = errorsBySubject();
+    var cartes = Object.keys(par).sort(function (a, b) { return par[b].total - par[a].total; })
+      .map(function (id) {
+        var s = subjectById(id) || { name: id, medal: "" };
+        var chapitres = Object.keys(par[id].chapitres)
+          .sort(function (a, b) { return par[id].chapitres[b] - par[id].chapitres[a]; })
+          .slice(0, 4)
+          .map(function (c) {
+            var nom = nomChapitre(id, c);
+            if (!nom) return "";
+            return '<li>' + esc(nom) + ' <b>' + par[id].chapitres[c] + '</b></li>';
+          }).join("");
+        return '<div class="faible" style="' + tint(id) + '">' +
+          '<span class="k">' + s.medal + ' ' + esc(s.name) + '</span>' +
+          '<span class="v">' + par[id].total + '</span>' +
+          '<span class="k">erreur' + (par[id].total > 1 ? "s" : "") + '</span>' +
+          (chapitres ? '<ul class="chapfaibles">' + chapitres + '</ul>' : "") +
+          '</div>';
+      }).join("");
+
+    var detail = state.errors.slice(0, 25).map(function (e) {
+      var s = subjectById(e.s) || { name: e.s, medal: "" };
+      var chap = nomChapitre(e.s, e.ch);
+      return '<details class="err" style="' + tint(e.s) + '">' +
+        '<summary><span class="dot"></span><b>' + esc(e.q) + '</b></summary>' +
+        '<p><span class="lab">Bonne réponse</span>' + esc(e.bonne) +
+          (e.donnee ? '<br><span class="lab">Sa réponse</span><span class="fausse">' + esc(e.donnee) + '</span>' : "") +
+          '<br><span class="meta">' + esc(s.name) + (chap ? " · " + esc(chap) : "") + " · " + esc(quand(e.t)) + '</span></p>' +
+      '</details>';
+    }).join("");
+
+    return '' +
+      '<section class="errors">' +
+        '<h3>Où ça coince — ' + state.errors.length + ' erreur' + (state.errors.length > 1 ? "s" : "") +
+          ' enregistrée' + (state.errors.length > 1 ? "s" : "") + '</h3>' +
+        '<div class="faibles">' + cartes + '</div>' +
+        '<h3>Les dernières questions ratées</h3>' +
+        '<div class="errlist">' + detail + '</div>' +
+        '<div class="row"><button class="btn quiet" id="viderErreurs">Effacer l\'historique des erreurs</button></div>' +
+      '</section>';
+  }
+
+
   /* ---------------- tableau de bord ----------------
      Ce qui a été fait aujourd'hui, la semaine écoulée, et le point matière par matière. */
   function dashboard() {
@@ -3524,6 +3742,8 @@
           '</div>' +
         '</div>' +
 
+        historiqueQuiz() +
+        bilanErreurs() +
         '<div class="tablewrap">' +
           '<table class="progress-table">' +
             '<caption>Progression par matière</caption>' +
@@ -5307,6 +5527,17 @@
     Array.prototype.forEach.call(app.querySelectorAll("[data-subject]"), function (btn) {
       btn.addEventListener("click", function () { startQuiz(btn.getAttribute("data-subject")); });
     });
+    var vider = document.getElementById("viderErreurs");
+    if (vider) {
+      vider.addEventListener("click", function () {
+        if (confirm("Effacer la liste des erreurs ? Les scores et les niveaux sont conservés.")) {
+          state.errors = [];
+          save();
+          renderHome();
+        }
+      });
+    }
+
     var reset = document.getElementById("reset");
     if (reset) {
       reset.addEventListener("click", function () {
@@ -5482,7 +5713,7 @@
 
     run.answered = true;
     if (juste) run.score++;
-    else run.misses.push({ q: item.q, a: item.sol });
+    else run.misses.push({ q: item.q, a: item.sol, donnee: saisie, ch: item.ch });
 
     champ.disabled = true;
     champ.classList.add(juste ? "good" : "bad");
@@ -5528,7 +5759,7 @@
     var item = run.items[run.i];
     var right = idx === item.c;
     if (right) run.score++;
-    else run.misses.push({ q: item.q, a: item.a[item.c] });
+    else run.misses.push({ q: item.q, a: item.a[item.c], donnee: item.a[idx], ch: item.ch });
 
     Array.prototype.forEach.call(app.querySelectorAll(".answer"), function (btn) {
       var i = parseInt(btn.getAttribute("data-idx"), 10);
@@ -5690,6 +5921,9 @@
     state.xp += gain;
     state.played++;
     logQuiz(id, s, run.items.length - s);
+    logErrors(id, run.chapter, run.misses);
+    logRun({ s: id, ch: run.chapter || "", n: run.items.length, score: s, lvl: run.level,
+             mode: run.training ? "chapitre" : (id === "daily" ? "defi" : "quiz"), t: Date.now() });
     touchStreak();
     var fresh = checkBadges();
     save();
