@@ -30,13 +30,14 @@
     --francais-l: #7B3AA8;  --francais-d: #CDA4F7;
     --anglais-l:  #BE2A72;  --anglais-d:  #FF93C8;
     --histoire-l: #8F6410;  --histoire-d: #EAC15E;
-    --sciences-l: #0E7A6B;  --sciences-d: #5FD9C0;
+    --svt-l:      #2E7D32;  --svt-d:      #86D98F;
+    --physique-l: #0E6E7A;  --physique-d: #5FD2E0;
     --daily-l:    #C2410C;  --daily-d:    #FFA366;
   }
   /* jeu clair par défaut (les thèmes sombres le remplacent plus bas) */
   :root {
     --c-maths: var(--maths-l); --c-francais: var(--francais-l); --c-anglais: var(--anglais-l);
-    --c-histoire: var(--histoire-l); --c-sciences: var(--sciences-l); --c-daily: var(--daily-l);
+    --c-histoire: var(--histoire-l); --c-svt: var(--svt-l); --c-physique: var(--physique-l); --c-daily: var(--daily-l);
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
@@ -55,7 +56,7 @@
       --green-wash: #16302A;
       --shadow:     0 1px 0 var(--rule), 0 10px 28px -20px #000;
       --c-maths: var(--maths-d); --c-francais: var(--francais-d); --c-anglais: var(--anglais-d);
-      --c-histoire: var(--histoire-d); --c-sciences: var(--sciences-d); --c-daily: var(--daily-d);
+      --c-histoire: var(--histoire-d); --c-svt: var(--svt-d); --c-physique: var(--physique-d); --c-daily: var(--daily-d);
     }
   }
   :root[data-theme="dark"] {
@@ -74,7 +75,7 @@
     --green-wash: #16302A;
     --shadow:     0 1px 0 var(--rule), 0 10px 28px -20px #000;
     --c-maths: var(--maths-d); --c-francais: var(--francais-d); --c-anglais: var(--anglais-d);
-    --c-histoire: var(--histoire-d); --c-sciences: var(--sciences-d); --c-daily: var(--daily-d);
+    --c-histoire: var(--histoire-d); --c-svt: var(--svt-d); --c-physique: var(--physique-d); --c-daily: var(--daily-d);
   }
 
   /* ---------- thèmes au choix ----------
@@ -86,7 +87,7 @@
     --red: #FF8878; --red-wash: #3A2220; --green: #6BD6B0; --green-wash: #16302A;
     --shadow: 0 1px 0 var(--rule), 0 10px 28px -20px #000;
     --c-maths: var(--maths-d); --c-francais: var(--francais-d); --c-anglais: var(--anglais-d);
-    --c-histoire: var(--histoire-d); --c-sciences: var(--sciences-d); --c-daily: var(--daily-d);
+    --c-histoire: var(--histoire-d); --c-svt: var(--svt-d); --c-physique: var(--physique-d); --c-daily: var(--daily-d);
   }
   :root[data-skin="neon"] {
     --ink: #F2E9FF; --ink-soft: #9E8CC4; --paper: #0B0714; --card: #150E24;
@@ -95,7 +96,7 @@
     --red: #FF5470; --red-wash: #33101C; --green: #6BFFB8; --green-wash: #0B3327;
     --shadow: 0 1px 0 var(--rule), 0 12px 30px -18px #35E0F0;
     --c-maths: var(--maths-d); --c-francais: var(--francais-d); --c-anglais: var(--anglais-d);
-    --c-histoire: var(--histoire-d); --c-sciences: var(--sciences-d); --c-daily: var(--daily-d);
+    --c-histoire: var(--histoire-d); --c-svt: var(--svt-d); --c-physique: var(--physique-d); --c-daily: var(--daily-d);
   }
   :root[data-skin="foret"] {
     --ink: #1B2A1F; --ink-soft: #5C6E5F; --paper: #EFF3EA; --card: #FFFFFF;
@@ -104,7 +105,7 @@
     --red: #B0442F; --red-wash: #F6E3DE; --green: #5FA845; --green-wash: #E6F2DE;
     --shadow: 0 1px 0 var(--rule), 0 8px 24px -18px rgba(27,42,31,.5);
     --c-maths: var(--maths-l); --c-francais: var(--francais-l); --c-anglais: var(--anglais-l);
-    --c-histoire: var(--histoire-l); --c-sciences: var(--sciences-l); --c-daily: var(--daily-l);
+    --c-histoire: var(--histoire-l); --c-svt: var(--svt-l); --c-physique: var(--physique-l); --c-daily: var(--daily-l);
   }
   :root[data-skin="bonbon"] {
     --ink: #3A1B33; --ink-soft: #8A6580; --paper: #FDF0F6; --card: #FFFFFF;
@@ -113,7 +114,7 @@
     --red: #D6455B; --red-wash: #FBE2E6; --green: #2FA37D; --green-wash: #DDF3EC;
     --shadow: 0 1px 0 var(--rule), 0 8px 24px -18px rgba(58,27,51,.45);
     --c-maths: var(--maths-l); --c-francais: var(--francais-l); --c-anglais: var(--anglais-l);
-    --c-histoire: var(--histoire-l); --c-sciences: var(--sciences-l); --c-daily: var(--daily-l);
+    --c-histoire: var(--histoire-l); --c-svt: var(--svt-l); --c-physique: var(--physique-l); --c-daily: var(--daily-l);
   }
   :root[data-skin="volcan"] {
     --ink: #FBEDE4; --ink-soft: #B79A88; --paper: #17100D; --card: #221713;
@@ -122,7 +123,7 @@
     --red: #FF6B6B; --red-wash: #3A1B1B; --green: #8FD694; --green-wash: #1E3320;
     --shadow: 0 1px 0 var(--rule), 0 10px 28px -20px #000;
     --c-maths: var(--maths-d); --c-francais: var(--francais-d); --c-anglais: var(--anglais-d);
-    --c-histoire: var(--histoire-d); --c-sciences: var(--sciences-d); --c-daily: var(--daily-d);
+    --c-histoire: var(--histoire-d); --c-svt: var(--svt-d); --c-physique: var(--physique-d); --c-daily: var(--daily-d);
   }
 
   * { box-sizing: border-box; }
@@ -2502,6 +2503,158 @@
     "transformations", "transformations"
   ];
 
+  /* ---------- séparation SVT / Physique-Chimie ----------
+     « Sciences » recouvrait deux matières qui n'ont ni le même programme ni la même
+     logique. On répartit les questions existantes, on ajoute ce qui manquait de chaque
+     côté, et chacune obtient ses dix niveaux. Les tableaux suivent l'ordre des questions. */
+  var SPLIT_SOCLE = ["svt", "svt", "svt", "svt", "phy", "phy", "phy", "phy", "phy", "phy",
+                     "phy", "svt", "svt", "svt", "svt"];
+  var SPLIT_EXTRA = ["svt", "svt", "phy", "phy", "phy", "phy", "phy", "phy", "phy", "phy",
+                     "phy", "phy", "phy", "phy", "phy", "phy", "phy", "phy", "phy", "phy",
+                     "phy", "phy", "svt", "svt", "svt", "svt", "phy", "phy", "phy", "phy",
+                     "phy", "svt", "svt", "phy"];
+
+  var NOUVEAU = {
+    svt: [
+      { d: 1, q: "À quoi servent les dents ?", a: ["à couper et broyer les aliments", "à produire la salive", "à absorber les nutriments", "à avaler"], c: 0,
+        e: "C'est l'action mécanique de la digestion : réduire les aliments en petits morceaux pour faciliter l'action des sucs digestifs." },
+      { d: 1, q: "Où commence la digestion ?", a: ["dans la bouche", "dans l'estomac", "dans l'intestin grêle", "dans l'œsophage"], c: 0,
+        e: "Les dents broient et la salive commence à transformer les aliments dès la bouche." },
+      { d: 2, q: "Quel organe fabrique l'urine en filtrant le sang ?", a: ["le rein", "le foie", "la vessie", "l'estomac"], c: 0,
+        e: "Les reins éliminent les déchets du sang. La vessie ne fait que stocker l'urine." },
+      { d: 2, q: "À quoi sert le squelette ?", a: ["à soutenir le corps et protéger les organes", "à digérer", "à produire le sang uniquement", "à respirer"], c: 0,
+        e: "Le crâne protège le cerveau, la cage thoracique le cœur et les poumons. Les os fabriquent aussi les cellules du sang." },
+      { d: 3, q: "Que deviennent les nutriments une fois passés dans le sang ?", a: ["ils sont distribués aux organes qui les utilisent", "ils sont rejetés", "ils restent dans le sang", "ils retournent dans l'intestin"], c: 0,
+        e: "Le sang les transporte jusqu'aux organes, qui s'en servent pour produire de l'énergie et se construire." },
+      { d: 3, q: "Qu'est-ce qu'un micro-organisme ?", a: ["un être vivant visible seulement au microscope", "une cellule morte", "une molécule", "un organe minuscule"], c: 0,
+        e: "Bactéries, virus et certains champignons. La plupart sont inoffensifs, voire utiles, comme ceux du yaourt." },
+      { d: 4, q: "Comment le sang circule-t-il dans l'organisme ?", a: ["en circuit fermé, propulsé par le cœur", "librement dans le corps", "seulement dans les poumons", "dans les nerfs"], c: 0,
+        e: "Cœur, artères, capillaires puis veines : le sang tourne en boucle sans jamais quitter les vaisseaux." },
+      { d: 4, q: "Que consomme une cellule lors de la respiration cellulaire ?", a: ["du dioxygène et des nutriments", "du dioxyde de carbone", "de l'eau seulement", "de la lumière"], c: 0,
+        e: "Elle libère ainsi l'énergie contenue dans les nutriments, et rejette du CO₂ et de l'eau." },
+      { d: 5, q: "Qu'est-ce que la puberté ?", a: ["l'ensemble des transformations qui rendent le corps apte à se reproduire", "la naissance", "la croissance des os uniquement", "la fin de la croissance"], c: 0,
+        e: "Elle s'accompagne de changements physiques et psychologiques, à un âge variable selon les personnes." },
+      { d: 5, q: "Combien de jours dure en moyenne un cycle menstruel ?", a: ["28 jours", "7 jours", "14 jours", "40 jours"], c: 0,
+        e: "C'est une moyenne : la durée varie d'une personne à l'autre et d'un cycle à l'autre." },
+      { d: 5, q: "De quoi est constituée une cellule animale ?", a: ["une membrane, un cytoplasme et un noyau", "une paroi et des chloroplastes", "un noyau seulement", "des organes"], c: 0,
+        e: "La cellule végétale possède en plus une paroi rigide et des chloroplastes pour la photosynthèse." },
+      { d: 6, q: "Quel est le rôle du placenta ?", a: ["permettre les échanges entre la mère et le fœtus", "protéger des chocs", "produire les ovules", "déclencher l'accouchement"], c: 0,
+        e: "Dioxygène et nutriments passent de la mère au fœtus, déchets et CO₂ font le trajet inverse. Les sangs ne se mélangent pas." },
+      { d: 6, q: "Qu'est-ce qu'une espèce ?", a: ["des individus qui peuvent se reproduire entre eux et avoir des descendants fertiles", "des animaux qui se ressemblent", "des êtres vivants d'un même milieu", "un groupe d'animaux domestiques"], c: 0,
+        e: "Le critère décisif est la descendance fertile : c'est pourquoi le mulet, stérile, ne forme pas une espèce." },
+      { d: 6, q: "Un organisme unicellulaire est…", a: ["formé d'une seule cellule", "invisible au microscope", "toujours un animal", "formé de peu d'organes"], c: 0,
+        e: "La paramécie ou la bactérie accomplissent toutes les fonctions du vivant avec une seule cellule." },
+      { d: 7, q: "Que faut-il pour une reproduction sexuée ?", a: ["deux cellules reproductrices qui fusionnent", "un seul parent", "une simple division cellulaire", "un bourgeon"], c: 0,
+        e: "La fusion des gamètes mélange les informations génétiques des deux parents : les descendants sont tous différents." },
+      { d: 7, q: "Le bouturage d'une plante est un exemple de…", a: ["reproduction asexuée", "reproduction sexuée", "pollinisation", "germination"], c: 0,
+        e: "Un seul parent, et les descendants lui sont identiques : ce sont des clones." },
+      { d: 7, q: "Où se trouve l'information génétique dans une cellule ?", a: ["dans le noyau, portée par les chromosomes", "dans le cytoplasme", "dans la membrane", "dans le sang"], c: 0,
+        e: "Les chromosomes sont formés d'ADN. Chaque gène est un morceau d'ADN qui porte une information." },
+      { d: 7, q: "Pourquoi les êtres vivants d'un milieu changent-ils selon les saisons ?", a: ["les conditions de vie varient et chaque espèce y répond à sa manière", "ils meurent tous en hiver", "ils changent d'espèce", "le sol se modifie"], c: 0,
+        e: "Migration, hibernation, perte des feuilles, formes de résistance : autant de réponses à la mauvaise saison." },
+      { d: 8, q: "Combien de chromosomes contient une cellule humaine ?", a: ["46, soit 23 paires", "23", "2", "46 paires"], c: 0,
+        e: "Une paire vient du père, l'autre de la mère. Les cellules reproductrices n'en contiennent que 23." },
+      { d: 8, q: "Quel est le rôle des neurones ?", a: ["transmettre les messages nerveux", "produire des hormones", "filtrer le sang", "contracter les muscles"], c: 0,
+        e: "Le message circule le long du neurone puis passe au suivant au niveau des synapses." },
+      { d: 8, q: "Qu'est-ce qu'un réflexe ?", a: ["une réponse rapide et involontaire à un stimulus", "un mouvement décidé par le cerveau", "une habitude", "une contraction lente"], c: 0,
+        e: "Le message ne remonte pas jusqu'au cerveau : il passe par la moelle épinière, d'où la rapidité." },
+      { d: 8, q: "Qu'est-ce qui perturbe le fonctionnement du système nerveux ?", a: ["l'alcool, les drogues et le manque de sommeil", "le sport", "une alimentation variée", "la lecture"], c: 0,
+        e: "Le temps de réaction s'allonge et la vigilance baisse — d'où les accidents de la route." },
+      { d: 9, q: "Que sont les plaques lithosphériques ?", a: ["des morceaux rigides de la surface terrestre qui se déplacent lentement", "des couches de sédiments", "des morceaux de magma", "des îles"], c: 0,
+        e: "Elles se déplacent de quelques centimètres par an, portées par les mouvements du manteau." },
+      { d: 9, q: "Que se passe-t-il dans une zone de subduction ?", a: ["une plaque océanique plonge sous une autre plaque", "deux plaques s'écartent", "deux plaques coulissent", "une plaque disparaît sans raison"], c: 0,
+        e: "C'est là que naissent les volcans explosifs et les séismes les plus profonds." },
+      { d: 9, q: "Comment se forme une chaîne de montagnes comme les Alpes ?", a: ["par la collision de deux plaques continentales", "par l'érosion", "par une éruption volcanique", "par le retrait de la mer"], c: 0,
+        e: "Les roches se plissent et se cassent sous la poussée : on observe des plis et des failles." },
+      { d: 9, q: "Comment se forme une roche sédimentaire ?", a: ["par accumulation puis compaction de sédiments", "par refroidissement du magma", "par un séisme", "par fusion des roches"], c: 0,
+        e: "Le calcaire et le grès se forment ainsi, souvent au fond de l'eau, couche après couche." },
+      { d: 10, q: "Quelle est la différence entre un aléa et un risque ?", a: ["l'aléa est le phénomène possible, le risque tient compte des populations exposées", "ce sont deux mots pour la même chose", "l'aléa concerne les volcans, le risque les séismes", "le risque est toujours plus faible"], c: 0,
+        e: "Un séisme en plein désert est un aléa fort mais un risque faible : il n'y a personne à protéger." },
+      { d: 10, q: "Comment un fossile se forme-t-il ?", a: ["les restes d'un être vivant sont conservés dans une roche sédimentaire", "l'animal se change en pierre vivante", "il se forme dans le magma", "il apparaît par érosion"], c: 0,
+        e: "Il faut un enfouissement rapide. Les fossiles permettent de dater les roches et de retracer l'évolution." },
+      { d: 10, q: "Qu'est-ce que la biodiversité ?", a: ["la diversité des espèces, des gènes et des milieux", "le nombre d'animaux d'un pays", "la variété des plantes cultivées", "le nombre d'espèces protégées"], c: 0,
+        e: "Elle se mesure à trois échelles. Sa baisse fragilise les écosystèmes entiers." },
+      { d: 10, q: "Quelle énergie fait fonctionner le cycle de l'eau ?", a: ["l'énergie solaire", "l'énergie du vent seule", "l'énergie des marées", "la chaleur du magma"], c: 0,
+        e: "Le Soleil provoque l'évaporation ; l'eau retombe ensuite en précipitations et ruisselle." }
+    ],
+
+    physique: [
+      { d: 1, q: "Que faut-il pour qu'une lampe s'allume dans un circuit ?", a: ["que le circuit soit fermé", "que le circuit soit ouvert", "un interrupteur ouvert", "deux piles"], c: 0,
+        e: "Le courant ne circule que dans une boucle fermée. Un interrupteur ouvert coupe le circuit." },
+      { d: 1, q: "Quels sont les trois états de l'eau ?", a: ["solide, liquide et gazeux", "chaud, tiède et froid", "glace, neige et pluie", "pur, salé et sucré"], c: 0,
+        e: "Glace, eau liquide et vapeur d'eau : c'est la même substance sous trois formes." },
+      { d: 2, q: "À quoi sert une pile dans un circuit électrique ?", a: ["elle fournit l'énergie qui met le courant en mouvement", "elle stocke la lumière", "elle empêche les courts-circuits", "elle mesure la tension"], c: 0,
+        e: "C'est le générateur du circuit. Sans lui, aucun courant ne circule." },
+      { d: 2, q: "À quelle température l'eau bout-elle sous pression normale ?", a: ["100 °C", "0 °C", "50 °C", "37 °C"], c: 0,
+        e: "Pendant toute l'ébullition, la température reste bloquée à 100 °C." },
+      { d: 3, q: "Avec quel appareil mesure-t-on l'intensité d'un courant ?", a: ["un ampèremètre, branché en série", "un voltmètre, branché en dérivation", "un thermomètre", "un dynamomètre"], c: 0,
+        e: "L'intensité se mesure en ampères, et l'appareil doit être traversé par le courant, donc branché en série." },
+      { d: 9, q: "Si la vitesse d'un objet double, que devient son énergie cinétique ?", a: ["elle est multipliée par 4", "elle double", "elle reste identique", "elle est divisée par 2"], c: 0,
+        e: "L'énergie cinétique dépend du carré de la vitesse : c'est pourquoi les chocs sont bien plus violents à grande vitesse." },
+      { d: 9, q: "Qu'est-ce que la puissance ?", a: ["l'énergie transférée chaque seconde, en watts", "la quantité totale d'énergie", "la force d'un objet", "la vitesse d'un courant"], c: 0,
+        e: "Un appareil de 1 000 W consomme 1 000 joules par seconde. L'énergie, elle, se mesure en joules ou en kilowattheures." },
+      { d: 9, q: "Un objet flotte dans l'eau si sa masse volumique est…", a: ["inférieure à celle de l'eau", "supérieure à celle de l'eau", "égale à son poids", "nulle"], c: 0,
+        e: "L'eau vaut 1 g/cm³ : le bois flotte, le fer coule. C'est la masse volumique qui compte, pas la masse." },
+      { d: 3, q: "Le son peut-il se propager dans le vide ?", a: ["non, il lui faut un milieu matériel", "oui, comme la lumière", "oui, mais moins vite", "seulement dans l'espace"], c: 0,
+        e: "Le son fait vibrer la matière de proche en proche. Sans matière, pas de son — contrairement à la lumière." },
+      { d: 4, q: "Quelle est la vitesse du son dans l'air ?", a: ["environ 340 m/s", "300 000 km/s", "34 m/s", "1 000 m/s"], c: 0,
+        e: "Bien plus lent que la lumière : on voit l'éclair avant d'entendre le tonnerre." },
+      { d: 5, q: "Qu'est-ce que la fréquence d'un son ?", a: ["le nombre de vibrations par seconde, en hertz", "le volume du son", "la vitesse du son", "la durée du son"], c: 0,
+        e: "L'oreille humaine perçoit environ de 20 Hz à 20 000 Hz." },
+      { d: 5, q: "Un son aigu se caractérise par…", a: ["une fréquence élevée", "une fréquence basse", "une forte intensité", "une longue durée"], c: 0,
+        e: "La fréquence donne la hauteur du son : grave si elle est basse, aigu si elle est haute." },
+      { d: 6, q: "En quoi se mesure le niveau sonore ?", a: ["en décibels (dB)", "en hertz", "en volts", "en watts"], c: 0,
+        e: "Au-delà de 85 dB, une exposition prolongée abîme l'oreille de façon irréversible." },
+      { d: 6, q: "Qu'est-ce qu'un atome ?", a: ["la plus petite partie d'un élément chimique", "un assemblage de molécules", "une particule toujours chargée", "un mélange"], c: 0,
+        e: "Il est formé d'un noyau et d'électrons. Les molécules, elles, sont des assemblages d'atomes." },
+      { d: 7, q: "Que produit la combustion complète du carbone ?", a: ["du dioxyde de carbone", "du dioxygène", "de l'eau seulement", "du carbone pur"], c: 0,
+        e: "Carbone + dioxygène → dioxyde de carbone. Si le dioxygène manque, il se forme du monoxyde de carbone, un gaz mortel." },
+      { d: 7, q: "Comment teste-t-on la présence de dioxyde de carbone ?", a: ["l'eau de chaux se trouble", "une flamme s'avive", "un papier bleuit", "une détonation se produit"], c: 0,
+        e: "L'eau de chaux devient blanchâtre. Une flamme qui s'avive signale au contraire le dioxygène." },
+      { d: 8, q: "Comment reconnaît-on le dihydrogène ?", a: ["il produit une détonation à l'approche d'une flamme", "il trouble l'eau de chaux", "il éteint la flamme", "il colore l'eau en bleu"], c: 0,
+        e: "C'est le fameux « jappement du chien » de l'expérience de laboratoire." },
+      { d: 8, q: "Que doit-on respecter en écrivant une équation de réaction chimique ?", a: ["la conservation des atomes de chaque élément", "le même nombre de molécules", "le même volume", "la même température"], c: 0,
+        e: "On ajuste avec des coefficients : les atomes se réorganisent, mais aucun n'apparaît ni ne disparaît." },
+      { d: 9, q: "Qu'est-ce qu'une force ?", a: ["une action capable de modifier le mouvement d'un objet ou de le déformer", "une vitesse", "une énergie", "une masse"], c: 0,
+        e: "Elle se mesure en newtons avec un dynamomètre, et se représente par une flèche : direction, sens, intensité." },
+      { d: 9, q: "Que dit le principe d'inertie ?", a: ["sans force qui s'exerce sur lui, un objet garde une vitesse constante en ligne droite", "tout objet finit par s'arrêter", "un objet tombe toujours", "la vitesse augmente avec la masse"], c: 0,
+        e: "Sur Terre, les frottements finissent par arrêter les objets — d'où l'impression contraire." },
+      { d: 10, q: "De quoi dépend le poids d'un objet ?", a: ["de sa masse et de l'astre sur lequel il se trouve", "de sa masse seulement", "de son volume", "de sa forme"], c: 0,
+        e: "P = m × g : sur la Lune, g vaut environ 1,6 N/kg au lieu de 10, donc le poids est six fois plus faible." }
+    ]
+  };
+
+  (function separeSciences() {
+    var i = 0;
+    while (i < SUBJECTS.length && SUBJECTS[i].id !== "sciences") i++;
+    if (i === SUBJECTS.length) return;
+
+    var sci = SUBJECTS[i];
+    var svt = { id: "svt", name: "SVT", medal: "🧬",
+      topics: "Corps humain, cellules, reproduction, génétique, Terre et biodiversité", questions: [] };
+    var phy = { id: "physique", name: "Physique-Chimie", medal: "⚗️",
+      topics: "Électricité, lumière, son, matière, chimie, forces et énergie", questions: [] };
+
+    BASE_D.svt = [];
+    BASE_D.physique = [];
+    sci.questions.forEach(function (q, k) {
+      var versSvt = SPLIT_SOCLE[k] === "svt";
+      (versSvt ? svt : phy).questions.push(q);
+      (versSvt ? BASE_D.svt : BASE_D.physique).push(BASE_D.sciences[k]);
+    });
+
+    EXTRA.svt = [];
+    EXTRA.physique = [];
+    (EXTRA.sciences || []).forEach(function (q, k) {
+      (SPLIT_EXTRA[k] === "svt" ? EXTRA.svt : EXTRA.physique).push(q);
+    });
+    EXTRA.svt = EXTRA.svt.concat(NOUVEAU.svt);
+    EXTRA.physique = EXTRA.physique.concat(NOUVEAU.physique);
+
+    GENERATORS.physique = GENERATORS.sciences;   // tous les calculs sont de la physique
+    SUBJECTS.splice(i, 1, svt, phy);
+  })();
+
   /* Fusion : on étiquette le socle avec sa difficulté, puis on lui ajoute les questions
      des niveaux supérieurs. Après ça, chaque question du jeu possède un champ d. */
   SUBJECTS.forEach(function (s) {
@@ -2699,8 +2852,8 @@
       won: function (st) { return st.played >= 1; } },
     { id: "perfect",icon: "🎯", name: "Sans faute",     hint: "Faire 20 sur 20",
       won: function (st) { return Object.keys(st.best).some(function (k) { return st.best[k] >= QUIZ_LEN; }); } },
-    { id: "tour",   icon: "🧭", name: "Tour complet",   hint: "Essayer les cinq matières",
-      won: function (st) { return Object.keys(st.best).length >= 5; } },
+    { id: "tour",   icon: "🧭", name: "Tour complet",   hint: "Essayer toutes les matières",
+      won: function (st) { return Object.keys(st.best).length >= SUBJECTS.length; } },
     { id: "cap4e",  icon: "⭐", name: "Cap sur la 4ᵉ",  hint: "Atteindre le niveau 5 partout",
       won: function (st) { return SUBJECTS.every(function (s) { return (st.levels[s.id] || 1) >= 5; }); } },
     { id: "streak", icon: "🔥", name: "Trois jours",    hint: "Réviser trois jours d'affilée",
@@ -3126,21 +3279,45 @@
         c: "« Elle s'est lavée » s'accorde, car « se » est COD placé avant. « Elle s'est lavé les mains » ne s'accorde pas, car le COD (« les mains ») suit le verbe." }
     ] },
 
-    { id: "sciences", year5: [
+    { id: "svt", year5: [
       { t: "Nutrition et digestion", s: "Des aliments aux nutriments",
         c: "La digestion transforme les aliments en nutriments, sous l'action mécanique des dents et chimique des sucs digestifs. Les nutriments passent dans le sang au niveau de l'intestin grêle, dont la paroi est couverte de villosités très irriguées." },
       { t: "Respiration et circulation", s: "Échanges gazeux, cœur, vaisseaux",
         c: "Dans les alvéoles pulmonaires, le dioxygène passe de l'air vers le sang et le dioxyde de carbone fait le trajet inverse. Le cœur est une pompe : le sang part par les artères et revient par les veines. Les globules rouges transportent le dioxygène grâce à l'hémoglobine." },
       { t: "Reproduction", s: "Puberté, fécondation, grossesse",
         c: "La fécondation est la rencontre d'un spermatozoïde et d'un ovule, dans une trompe. La cellule-œuf obtenue se fixe dans la paroi de l'utérus : c'est la nidation. Les échanges avec la mère passent ensuite par le placenta." },
+      { t: "La Terre", s: "Séismes, volcans, roches",
+        c: "Un séisme naît de la rupture brutale des roches en profondeur, au foyer ; les ondes se propagent jusqu'à l'épicentre. Un refroidissement lent du magma en profondeur donne de gros cristaux (granite), un refroidissement rapide en surface de petits cristaux (basalte)." },
+      { t: "La cellule", s: "L'unité de base du vivant",
+        c: "Tout être vivant est formé de cellules : membrane, cytoplasme et noyau. La cellule végétale possède en plus une paroi rigide et des chloroplastes. Certains organismes, comme les bactéries, tiennent en une seule cellule." },
+      { t: "Nutrition des plantes", s: "Photosynthèse",
+        c: "Une plante verte fabrique sa propre matière organique à partir d'eau, de dioxyde de carbone et de lumière, et rejette du dioxygène. Elle prélève l'eau et les sels minéraux par ses racines." }
+    ], year4: [
+      { t: "Reproduction sexuée", s: "Gamètes, fécondation, descendance",
+        c: "La reproduction sexuée fait fusionner deux cellules reproductrices, une de chaque parent : les descendants sont tous différents. En reproduction asexuée (bouturage, division), un seul parent donne des clones identiques à lui." },
+      { t: "Information génétique", s: "Noyau, chromosomes, ADN",
+        c: "L'information génétique est dans le noyau, portée par 46 chromosomes chez l'humain, soit 23 paires — une de chaque parent. Les chromosomes sont faits d'ADN, et chaque gène en est un segment porteur d'une information." },
+      { t: "Système nerveux", s: "Neurones, messages, réflexes",
+        c: "Les organes des sens envoient des messages au cerveau par les nerfs ; le cerveau ordonne la réponse aux muscles. Un réflexe court-circuite le cerveau en passant par la moelle épinière, ce qui le rend très rapide. Alcool, drogues et fatigue allongent le temps de réaction." },
+      { t: "Tectonique des plaques", s: "Dorsales, subduction, montagnes",
+        c: "La surface terrestre est découpée en plaques rigides qui se déplacent de quelques centimètres par an. Elles s'écartent aux dorsales, plongent l'une sous l'autre en subduction, ou entrent en collision et forment des montagnes." },
+      { t: "Risques géologiques", s: "Aléa, enjeux, risque",
+        c: "Un aléa est un phénomène naturel possible ; le risque combine cet aléa et la présence de populations ou de biens. Prévention, normes de construction et éducation réduisent le risque sans changer l'aléa." },
+      { t: "Évolution et biodiversité", s: "Fossiles, espèces, milieux",
+        c: "La biodiversité se mesure à trois échelles : les milieux, les espèces et les gènes. Les fossiles, conservés dans les roches sédimentaires, permettent de dater les couches et de retracer l'histoire du vivant." }
+    ] },
+
+    { id: "physique", year5: [
       { t: "La lumière", s: "Propagation, ombres, éclipses",
         c: "Dans un milieu transparent et homogène, la lumière se propage en ligne droite, à 300 000 km/s. Cela explique les ombres nettes et les éclipses : lors d'une éclipse de Soleil, la Lune s'interpose entre le Soleil et la Terre." },
       { t: "Circuits électriques", s: "Série, dérivation, court-circuit",
         c: "Dans un circuit en série, une seule boucle : si une lampe grille, tout s'éteint. En dérivation, chaque branche est indépendante — c'est le câblage des maisons. Un court-circuit offre un chemin de très faible résistance : l'intensité s'emballe et les fils chauffent." },
       { t: "États et changements d'état", s: "Fusion, vaporisation, liquéfaction",
         c: "La glace fond à 0 °C et l'eau bout à 100 °C sous pression normale. Pendant tout le changement d'état, la température reste bloquée. La masse se conserve, mais le volume peut varier : l'eau qui gèle prend plus de place." },
-      { t: "La Terre", s: "Séismes, volcans, roches",
-        c: "Un séisme naît de la rupture brutale des roches en profondeur, au foyer ; les ondes se propagent jusqu'à l'épicentre. Un refroidissement lent du magma en profondeur donne de gros cristaux (granite), un refroidissement rapide en surface de petits cristaux (basalte)." }
+      { t: "Mélanges et solutions", s: "Homogène, hétérogène, dissolution",
+        c: "Un mélange homogène ne laisse pas distinguer ses constituants (eau salée) ; un mélange hétérogène, si (eau et huile). Lors d'une dissolution, la masse totale se conserve : le sel est dispersé, pas détruit." },
+      { t: "Le son", s: "Propagation, fréquence, niveau sonore",
+        c: "Le son se propage dans la matière à environ 340 m/s dans l'air, et pas du tout dans le vide. Sa fréquence, en hertz, donne sa hauteur : grave si elle est basse, aiguë si elle est haute. Le niveau sonore se mesure en décibels ; au-delà de 85 dB, l'oreille s'abîme." }
     ], year4: [
       { t: "Loi d'Ohm", s: "U = R × I",
         c: "La tension aux bornes d'une résistance est le produit de sa résistance par l'intensité qui la traverse. U en volts, R en ohms, I en ampères. On mesure la tension avec un voltmètre branché en dérivation, l'intensité avec un ampèremètre branché en série." },
@@ -3155,7 +3332,11 @@
       { t: "Énergie", s: "Formes, conversions, puissance",
         c: "L'énergie se conserve mais change de forme : cinétique (mouvement), thermique, électrique, chimique. P = U × I donne la puissance électrique en watts. Une lampe à filament transforme plus de 90 % de l'énergie reçue en chaleur." },
       { t: "L'Univers", s: "Système solaire, gravitation, années-lumière",
-        c: "La gravitation maintient les planètes en orbite : elle dépend des masses et de la distance. L'année-lumière est une distance, pas une durée. La lumière du Soleil met environ 8 minutes à nous atteindre." }
+        c: "La gravitation maintient les planètes en orbite : elle dépend des masses et de la distance. L'année-lumière est une distance, pas une durée. La lumière du Soleil met environ 8 minutes à nous atteindre." },
+      { t: "Forces et mouvement", s: "Actions, newtons, inertie",
+        c: "Une force est une action capable de modifier le mouvement d'un objet ou de le déformer. Elle se mesure en newtons et se représente par une flèche. Sans force, un objet garde une vitesse constante en ligne droite : c'est le principe d'inertie." },
+      { t: "Transformations chimiques", s: "Combustions, tests, équations",
+        c: "Lors d'une transformation chimique, les atomes se réorganisent sans disparaître : la masse se conserve et l'équation doit être ajustée. Tests à connaître : l'eau de chaux se trouble avec le dioxyde de carbone, une flamme s'avive avec le dioxygène, le dihydrogène détone." }
     ] },
 
     { id: "anglais", year5: [
@@ -4447,7 +4628,7 @@
     ctx.scale(dpr, dpr);
 
     var css = getComputedStyle(document.documentElement);
-    var colors = ["--c-maths", "--c-francais", "--c-anglais", "--c-histoire", "--c-sciences", "--marker"]
+    var colors = ["--c-maths", "--c-francais", "--c-anglais", "--c-histoire", "--c-svt", "--c-physique", "--marker"]
       .map(function (name) { return css.getPropertyValue(name).trim() || "#FFD54A"; });
 
     var bits = [];
