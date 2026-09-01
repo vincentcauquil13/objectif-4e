@@ -1831,7 +1831,7 @@
 
   /* Une saisie ne peut contenir que des caractères de calcul. */
   function saisieValide(expr) {
-    return /^[0-9x+\-*/().^²³×÷−–—,\s]+$/.test(String(expr));
+    return /^[0-9x+\-*/().^²³×÷−–—,=\s]+$/.test(String(expr));
   }
 
   function evalue(s, x) {
@@ -1866,6 +1866,31 @@
       else if ((c === "+" || c === "-") && prof === 0 && i > 0) return false;
     }
     return true;
+  }
+
+  /* Développé = plus aucune parenthèse à multiplier. */
+  function estDeveloppe(expr) {
+    return alg(expr).indexOf("(") < 0;
+  }
+
+  /* Réduit = un seul terme par degré. « x² − 2x + 5x − 10 » est développé mais pas réduit. */
+  function estReduit(expr) {
+    var e = alg(expr);
+    var termes = e.replace(/-/g, "+-").split("+").filter(function (t) { return t.length; });
+    var vus = {};
+    for (var i = 0; i < termes.length; i++) {
+      var deg = /x\*\*3/.test(termes[i]) ? 3 : /x\*\*2/.test(termes[i]) ? 2 : /x/.test(termes[i]) ? 1 : 0;
+      if (vus[deg]) return false;
+      vus[deg] = 1;
+    }
+    return true;
+  }
+
+  /* Solution d'équation : on accepte « x = 4 », « 4 », « 5/2 » ou « 2,5 ». */
+  function valeurSaisie(saisie) {
+    var brut = String(saisie).trim().replace(/^x\s*=\s*/i, "");
+    if (!brut) return NaN;
+    return evalue(alg(brut), 0);
   }
 
   /* Fabrique une question à réponse écrite. */
@@ -1951,15 +1976,17 @@
       { d: 4, make: function () {
         var a = rnd(2, 9), b = rnd(2, 20), x = rnd(2, 12);
         var res = a * x + b;
-        return made(4, "Résous l'équation " + a + "x + " + b + " = " + res + ".", "x = " + x,
-          ["x = " + (res - b), "x = " + num(res / a), "x = " + (x + a)],
-          "On retire " + b + " des deux côtés : " + a + "x = " + a * x + ". Puis on divise par " + a + " : x = " + x + ".");
+        return ecrite(4, "Résous l'équation " + a + "x + " + b + " = " + res + ".", "x = " + x,
+          "donne la valeur de x",
+          "On retire " + b + " des deux côtés : " + a + "x = " + a * x + ". Puis on divise par " + a + " : x = " + x + ".",
+          { mode: "equation", sol: x });
       } },
       { d: 4, make: function () {
         var a = rnd(2, 9), b = rnd(2, 12);
-        return made(4, "Développe " + a + "(x + " + b + ").", a + "x + " + a * b,
-          [a + "x + " + b, "x + " + a * b, (a + b) + "x"],
-          "On distribue le " + a + " sur chaque terme : " + a + " × x + " + a + " × " + b + " = " + a + "x + " + a * b + ".");
+        return ecrite(4, "Développe " + a + "(x + " + b + ").", a + "x + " + a * b,
+          "écris la forme développée, par exemple 4x + 12",
+          "On distribue le " + a + " sur chaque terme : " + a + " × x + " + a + " × " + b + " = " + a + "x + " + a * b + ".",
+          { source: a + "*(x+" + b + ")", mode: "developpe" });
       } },
       { d: 4, make: function () {
         var p = rnd(20, 90), h = pickOne([10, 20, 25, 50]);
@@ -2042,13 +2069,13 @@
       { d: 8, make: function () {
         var a = rnd(2, 9), b = rnd(2, 9);
         while (a === b) b = rnd(2, 9);
-        var k = a - b;                                   // coefficient du terme en x
-        var terme = (k > 0 ? "+ " + k : "− " + Math.abs(k)) + "x";
-        return made(8, "Développe (x + " + a + ")(x − " + b + ").",
+        var terme = termeX(a - b);                       // coefficient du terme en x
+        return ecrite(8, "Développe et réduis (x + " + a + ")(x − " + b + ").",
           "x² " + terme + " − " + a * b,
-          ["x² − " + a * b, "x² + " + (a + b) + "x − " + a * b, "x² " + terme + " + " + a * b],
+          "n'oublie pas de réduire les termes en x",
           "Double distributivité : x² − " + b + "x + " + a + "x − " + a * b +
-          ", puis on réduit les termes en x : " + terme + ".");
+          ", puis on réduit les termes en x : " + terme + ".",
+          { source: "(x+" + a + ")*(x-" + b + ")", mode: "developpe" });
       } },
       { d: 8, make: function () {
         var k = rnd(2, 9), b = rnd(2, 12);
@@ -2091,9 +2118,11 @@
       } },
       { d: 8, make: function () {
         var a = rnd(2, 9);
-        return made(8, "Développe (x + " + a + ")².", "x² + " + 2 * a + "x + " + a * a,
-          ["x² + " + a * a, "x² + " + a + "x + " + a * a, "2x + " + 2 * a],
-          "(x + " + a + ")² = (x + " + a + ")(x + " + a + ") = x² + " + a + "x + " + a + "x + " + a * a + ". Le double produit s'oublie souvent.");
+        return ecrite(8, "Développe et réduis (x + " + a + ")².", "x² + " + 2 * a + "x + " + a * a,
+          "attention au double produit",
+          "(x + " + a + ")² = (x + " + a + ")(x + " + a + ") = x² + " + a + "x + " + a + "x + " + a * a +
+          " = x² + " + 2 * a + "x + " + a * a + ". Le double produit s'oublie souvent.",
+          { source: "(x+" + a + ")**2", mode: "developpe" });
       } },
       { d: 8, make: function () {
         var faces = pickOne([6, 10, 20]), cible = pickOne(["pair", "impair"]);
@@ -2114,9 +2143,10 @@
       } },
       { d: 9, make: function () {
         var d = rnd(2, 9), n = rnd(2, 9), k = rnd(2, 6);
-        return made(9, "Résous l'équation x/" + d + " = " + n + "/" + (d * k) + ".", "x = " + num(n / k),
-          ["x = " + n * d, "x = " + num(n * k), "x = " + num(d / n)],
-          "Produit en croix : " + (d * k) + "x = " + n * d + ", donc x = " + n * d + " ÷ " + (d * k) + " = " + num(n / k) + ".");
+        return ecrite(9, "Résous l'équation x/" + d + " = " + n + "/" + (d * k) + ".", "x = " + frac(n, k),
+          "tu peux répondre en fraction ou en nombre décimal",
+          "Produit en croix : " + (d * k) + "x = " + n * d + ", donc x = " + n * d + " ÷ " + (d * k) + " = " + frac(n, k) + ".",
+          { mode: "equation", sol: n / k });
       } },
       { d: 10, make: function () {
         var trip = pickOne([[6, 8, 10], [9, 12, 15], [5, 12, 13], [12, 16, 20]]);
@@ -2126,11 +2156,14 @@
       } },
       { d: 10, make: function () {
         var a = rnd(2, 5), b = rnd(2, 9), c = rnd(2, 9);
+        while (b === a * c) c = rnd(2, 9);               // sinon le terme en x disparaît
         var mid = a * -c + b;
-        return made(10, "Développe (" + a + "x + " + b + ")(x − " + c + ").",
-          a + "x² " + (mid < 0 ? "− " + Math.abs(mid) : "+ " + mid) + "x − " + b * c,
-          [a + "x² − " + b * c, a + "x² + " + (b + c) + "x − " + b * c, a + "x² " + (mid < 0 ? "− " + Math.abs(mid) : "+ " + mid) + "x + " + b * c],
-          a + "x² − " + a * c + "x + " + b + "x − " + b * c + ", puis on réduit les termes en x : " + (mid < 0 ? "−" : "+") + Math.abs(mid) + "x.");
+        var terme = termeX(mid);
+        return ecrite(10, "Développe et réduis (" + a + "x + " + b + ")(x − " + c + ").",
+          a + "x² " + terme + " − " + b * c,
+          "quatre produits, puis on réduit",
+          a + "x² − " + a * c + "x + " + b + "x − " + b * c + ", puis on réduit les termes en x : " + terme + ".",
+          { source: "(" + a + "x+" + b + ")*(x-" + c + ")", mode: "developpe" });
       } },
       { d: 10, make: function () {
         var v = rnd(2, 12) * 10, t = pickOne([15, 30, 45]);
@@ -2138,6 +2171,16 @@
         return made(10, "À " + v + " km/h, quelle distance parcourt-on en " + t + " minutes ?",
           num(dist) + " km", [num(v * t) + " km", num(v / t) + " km", num(dist * 2) + " km"],
           t + " min = " + num(t / 60) + " h. Distance = " + v + " × " + num(t / 60) + " = " + num(dist) + " km. Il faut convertir les minutes en heures.");
+      } },
+      { d: 6, make: function () {
+        /* a − c ≥ 2 et c ≥ 2 : sinon l'énoncé ou l'explication afficherait « 1x ». */
+        var a = rnd(4, 9), c = rnd(2, a - 2), x = rnd(2, 12), b = rnd(2, 15);
+        var droite = (a - c) * x + b;                    // ax + b = cx + (a−c)x + b
+        return ecrite(6, "Résous l'équation " + a + "x + " + b + " = " + c + "x + " + droite + ".", "x = " + x,
+          "regroupe d'abord les x d'un même côté",
+          "On enlève " + c + "x des deux côtés : " + (a - c) + "x + " + b + " = " + droite + ". On enlève " + b + " : " +
+          (a - c) + "x = " + (a - c) * x + ". On divise par " + (a - c) + " : x = " + x + ".",
+          { mode: "equation", sol: x });
       } },
       { d: 10, make: function () {
         var n1 = rnd(8, 18), n2 = rnd(4, 14), v1 = rnd(5, 12), v2 = rnd(12, 18);
@@ -2363,6 +2406,12 @@
     ]
   };
 
+  /* Écrit un terme en x avec son signe, sans jamais afficher « 1x ». */
+  function termeX(k) {
+    var abs = Math.abs(k);
+    return (k > 0 ? "+ " : "− ") + (abs === 1 ? "" : abs) + "x";
+  }
+
   /* Écriture décimale de 10 puissance moins n. */
   function num2exp(n) {
     return "0," + new Array(n).join("0") + "1";
@@ -2379,7 +2428,7 @@
     "puissances", "volumes", "litteral",
     "litteral", "litteral", "litteral", "litteral",   // les quatre factorisations à écrire
     "litteral", "probabilites", "puissances", "puissances", "equations",
-    "pythagore", "litteral", "proportion", "statistiques"
+    "pythagore", "litteral", "proportion", "equations", "statistiques"
   ];
   var CH_Q_MATHS = [
     "relatifs", "relatifs", "relatifs", "priorites", "fractions",
@@ -3743,6 +3792,46 @@
     window.scrollTo(0, 0);
   }
 
+  /* Juge une réponse écrite selon la forme attendue, et dit précisément ce qui cloche.
+     Les trois modes correspondent aux trois exercices où un QCM donnerait la réponse. */
+  function corrige(verif, saisie) {
+    if (!saisieValide(saisie)) {
+      return { juste: false, motif: "Utilise seulement des chiffres, la lettre x, des parenthèses et les signes + − × ÷." };
+    }
+
+    if (verif.mode === "equation") {
+      var v = valeurSaisie(saisie);
+      if (!isFinite(v)) return { juste: false, motif: "Écris seulement la valeur de x, par exemple « 4 » ou « x = 4 »." };
+      if (Math.abs(v - verif.sol) > 1e-9) {
+        /* Une valeur approchée montre que le raisonnement est bon : on le dit autrement. */
+        return { juste: false, motif: Math.abs(v - verif.sol) < 0.02
+          ? "Tu y es presque, mais c'est une valeur approchée : donne la valeur exacte, en fraction."
+          : "Vérifie en remplaçant x par ta valeur dans l'équation de départ." };
+      }
+      return { juste: true, motif: "" };
+    }
+
+    if (!memeExpression(saisie, verif.source)) {
+      return { juste: false, motif: verif.mode === "developpe"
+        ? "Ton expression ne vaut pas la même chose que l'énoncé. Reprends la distributivité terme par terme."
+        : "Ton expression ne vaut pas la même chose que l'énoncé. Développe ta réponse pour vérifier." };
+    }
+
+    if (verif.mode === "developpe") {
+      if (!estDeveloppe(saisie)) return { juste: false, motif: "Il reste des parenthèses : il faut les développer." };
+      if (!estReduit(saisie)) return { juste: false, motif: "C'est développé, mais pas réduit : il reste des termes semblables à regrouper." };
+      return { juste: true, motif: "" };
+    }
+
+    if (!estFactorise(saisie)) {
+      return { juste: false, motif: "C'est bien égal à l'énoncé, mais ce n'est pas factorisé : il faut un produit, avec des parenthèses." };
+    }
+    if (verif.pgcdMin && !facteurSuffisant(saisie, verif.pgcdMin)) {
+      return { juste: false, motif: "C'est factorisé, mais pas complètement : on peut encore sortir un facteur commun." };
+    }
+    return { juste: true, motif: "" };
+  }
+
   /* Correction d'une réponse écrite. */
   function corrigeSaisie(valeur) {
     if (run.answered) return;
@@ -3752,20 +3841,9 @@
 
     if (!saisie) { champ.focus(); return; }
 
-    var motif = "";
-    var juste = false;
-
-    if (!saisieValide(saisie)) {
-      motif = "Utilise seulement des chiffres, la lettre x, des parenthèses et les signes + − × ÷.";
-    } else if (!memeExpression(saisie, item.verif.source)) {
-      motif = "Ton expression ne vaut pas la même chose que l'énoncé. Développe ta réponse pour vérifier.";
-    } else if (item.verif.factorise && !estFactorise(saisie)) {
-      motif = "C'est bien égal à l'énoncé, mais ce n'est pas factorisé : il faut un produit, avec des parenthèses.";
-    } else if (item.verif.pgcdMin && !facteurSuffisant(saisie, item.verif.pgcdMin)) {
-      motif = "C'est factorisé, mais pas complètement : on peut encore sortir un facteur commun.";
-    } else {
-      juste = true;
-    }
+    var verdict = corrige(item.verif, saisie);
+    var juste = verdict.juste;
+    var motif = verdict.motif;
 
     run.answered = true;
     if (juste) run.score++;
