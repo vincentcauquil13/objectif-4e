@@ -653,6 +653,62 @@
     border-left: 3px solid var(--marker);
     padding-left: 12px;
   }
+  /* schéma de la fiche */
+  .schema {
+    margin: 14px 0 4px;
+    padding: 14px 10px 10px;
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    background: color-mix(in srgb, var(--blue) 4%, var(--card));
+    color: var(--blue);
+  }
+  .schema svg { display: block; width: 100%; height: auto; max-height: 230px; }
+  .schema .lbl {
+    font-family: var(--f-mono);
+    font-size: 12px;
+    fill: var(--ink-soft);
+  }
+  .schema .lbl.mark { fill: var(--ink); }
+  .schema .lbl.ctr, .schema .lbl.tick { text-anchor: middle; }
+  .schema .frm {
+    font-family: var(--f-mono);
+    font-size: 14px;
+    fill: var(--blue);
+  }
+  .schema figcaption {
+    margin-top: 8px;
+    font-size: 13px;
+    line-height: 1.45;
+    color: var(--ink-soft);
+    text-align: center;
+  }
+
+  /* exercice type corrigé */
+  .exo {
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    padding: 13px 15px;
+    background: var(--paper);
+  }
+  .exo .enonce { font-weight: 500; margin-bottom: 10px; }
+  .exo .etapes {
+    margin: 0;
+    padding-left: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+  .exo .etapes li { font-size: 15px; line-height: 1.5; }
+  .exo .etapes li::marker { font-family: var(--f-mono); font-size: 12px; color: var(--blue); }
+  .exo .reponse {
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px solid var(--rule);
+    font-family: var(--f-mono);
+    font-size: 15px;
+    color: var(--green);
+  }
+
   .chbody .row { margin-top: 16px; align-items: center; }
   .stock { font-family: var(--f-mono); font-size: 11px; color: var(--ink-soft); }
 
@@ -3241,6 +3297,221 @@
   /* ---------------- programme de maths de 4ᵉ ----------------
      Une fiche par chapitre : ce qu'il faut savoir, la méthode, les pièges — et un
      entraînement qui ne pioche que dans ce chapitre. */
+  /* Schémas des fiches. Tracés en currentColor (la teinte des maths) avec les
+     annotations en gris : ils restent lisibles dans les six thèmes. */
+  function svg(viewBox, contenu, legende) {
+    return '<figure class="schema"><svg viewBox="' + viewBox + '" role="img" aria-label="' +
+      esc(legende) + '">' + contenu + '</svg><figcaption>' + esc(legende) + '</figcaption></figure>';
+  }
+
+  var SCHEMAS = {
+    trigo: svg("0 0 320 200",
+      '<polygon points="40,170 260,170 260,40" fill="none" stroke="currentColor" stroke-width="2.5"/>' +
+      '<path d="M40 170 L40 156 M40 156 L54 156" fill="none" stroke="none"/>' +
+      '<rect x="244" y="154" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"/>' +
+      '<path d="M78 170 A38 38 0 0 0 62 148" fill="none" stroke="var(--marker)" stroke-width="3"/>' +
+      '<text x="86" y="162" class="lbl mark">angle</text>' +
+      '<text x="150" y="190" class="lbl">côté adjacent</text>' +
+      '<text x="268" y="110" class="lbl">côté opposé</text>' +
+      '<text x="120" y="96" class="lbl" transform="rotate(-31 120 96)">hypoténuse</text>' +
+      '<circle cx="40" cy="170" r="3.5" fill="currentColor"/>',
+      "Le côté adjacent touche l'angle, l'hypoténuse est face à l'angle droit"),
+
+    pythagore: svg("0 0 320 200",
+      '<polygon points="60,160 220,160 220,50" fill="none" stroke="currentColor" stroke-width="2.5"/>' +
+      '<rect x="204" y="144" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"/>' +
+      '<text x="132" y="180" class="lbl">a</text>' +
+      '<text x="232" y="110" class="lbl">b</text>' +
+      '<text x="126" y="96" class="lbl mark">c = hypoténuse</text>' +
+      '<text x="60" y="34" class="frm">a² + b² = c²</text>',
+      "L'hypoténuse est toujours le côté opposé à l'angle droit, donc le plus long"),
+
+    thales: svg("0 0 320 210",
+      '<path d="M160 20 L40 190 M160 20 L280 190" fill="none" stroke="currentColor" stroke-width="2.5"/>' +
+      '<path d="M110 90 L210 90" fill="none" stroke="currentColor" stroke-width="2.5"/>' +
+      '<path d="M40 190 L280 190" fill="none" stroke="currentColor" stroke-width="2.5"/>' +
+      '<text x="152" y="14" class="lbl">A</text>' +
+      '<text x="96" y="88" class="lbl">M</text><text x="216" y="88" class="lbl">N</text>' +
+      '<text x="26" y="204" class="lbl">B</text><text x="286" y="204" class="lbl">C</text>' +
+      '<path d="M120 96 l8 -4 M124 98 l8 -4" stroke="var(--marker)" stroke-width="2.5" fill="none"/>' +
+      '<path d="M60 196 l8 -4 M64 198 l8 -4" stroke="var(--marker)" stroke-width="2.5" fill="none"/>' +
+      '<text x="6" y="30" class="frm">AM/AB = AN/AC = MN/BC</text>',
+      "(MN) parallèle à (BC) : les longueurs des deux triangles sont proportionnelles"),
+
+    aires: svg("0 0 330 180",
+      '<polygon points="20,140 140,140 100,40" fill="none" stroke="currentColor" stroke-width="2.5"/>' +
+      '<path d="M100 40 L100 140" stroke="var(--marker)" stroke-width="2.5" stroke-dasharray="5 4" fill="none"/>' +
+      '<rect x="86" y="126" width="14" height="14" fill="none" stroke="var(--marker)" stroke-width="1.5"/>' +
+      '<text x="60" y="158" class="lbl">base</text>' +
+      '<text x="106" y="96" class="lbl mark">hauteur</text>' +
+      '<text x="14" y="26" class="frm">(b × h) ÷ 2</text>' +
+      '<circle cx="250" cy="92" r="52" fill="none" stroke="currentColor" stroke-width="2.5"/>' +
+      '<path d="M250 92 L302 92" stroke="var(--marker)" stroke-width="2.5" fill="none"/>' +
+      '<circle cx="250" cy="92" r="3.5" fill="currentColor"/>' +
+      '<text x="266" y="86" class="lbl mark">r</text>' +
+      '<text x="206" y="26" class="frm">π × r²</text>',
+      "La hauteur part du sommet et tombe perpendiculairement sur la base"),
+
+    volumes: svg("0 0 330 180",
+      '<path d="M30 60 L110 60 L110 140 L30 140 Z" fill="none" stroke="currentColor" stroke-width="2.5"/>' +
+      '<path d="M30 60 L60 34 L140 34 L110 60 M140 34 L140 114 L110 140" fill="none" stroke="currentColor" stroke-width="2.5"/>' +
+      '<path d="M110 60 L140 34" fill="none" stroke="currentColor" stroke-width="2.5"/>' +
+      '<text x="56" y="158" class="lbl">L × l × h</text>' +
+      '<ellipse cx="250" cy="52" rx="46" ry="16" fill="none" stroke="currentColor" stroke-width="2.5"/>' +
+      '<path d="M204 52 L204 128 M296 52 L296 128" fill="none" stroke="currentColor" stroke-width="2.5"/>' +
+      '<path d="M204 128 A46 16 0 0 0 296 128" fill="none" stroke="currentColor" stroke-width="2.5"/>' +
+      '<path d="M250 52 L296 52" stroke="var(--marker)" stroke-width="2.5" fill="none"/>' +
+      '<text x="266" y="46" class="lbl mark">r</text>' +
+      '<text x="216" y="158" class="lbl">π × r² × h</text>',
+      "Pour un prisme ou un cylindre : aire de la base × hauteur"),
+
+    relatifs: svg("0 0 340 120",
+      '<path d="M20 80 L320 80" stroke="currentColor" stroke-width="2.5" fill="none"/>' +
+      '<path d="M312 74 L320 80 L312 86" fill="none" stroke="currentColor" stroke-width="2.5"/>' +
+      (function () {
+        var out = "";
+        for (var i = 0; i <= 10; i++) {
+          var x = 30 + i * 28;
+          out += '<path d="M' + x + ' 74 L' + x + ' 86" stroke="currentColor" stroke-width="2"/>' +
+                 '<text x="' + x + '" y="104" class="lbl tick">' + (i - 5) + '</text>';
+        }
+        return out;
+      })() +
+      '<path d="M86 62 Q170 20 254 62" fill="none" stroke="var(--marker)" stroke-width="3"/>' +
+      '<path d="M246 54 L256 64 L244 68" fill="none" stroke="var(--marker)" stroke-width="3"/>' +
+      '<text x="140" y="32" class="lbl mark">+ 6</text>',
+      "Ajouter, c'est avancer vers la droite : −3 + 6 = +3"),
+
+    fractions: svg("0 0 330 150",
+      '<rect x="20" y="30" width="120" height="40" fill="none" stroke="currentColor" stroke-width="2.5"/>' +
+      '<path d="M60 30 L60 70 M100 30 L100 70" stroke="currentColor" stroke-width="2"/>' +
+      '<rect x="20" y="30" width="80" height="40" fill="var(--marker)" opacity=".45"/>' +
+      '<text x="56" y="92" class="lbl">2/3</text>' +
+      '<rect x="190" y="30" width="120" height="40" fill="none" stroke="currentColor" stroke-width="2.5"/>' +
+      (function () {
+        var out = "";
+        for (var i = 1; i < 6; i++) out += '<path d="M' + (190 + i * 20) + ' 30 L' + (190 + i * 20) + ' 70" stroke="currentColor" stroke-width="2"/>';
+        return out;
+      })() +
+      '<rect x="190" y="30" width="80" height="40" fill="var(--marker)" opacity=".45"/>' +
+      '<text x="222" y="92" class="lbl">4/6</text>' +
+      '<text x="152" y="56" class="frm">=</text>' +
+      '<text x="20" y="130" class="lbl">Même part du tout : on peut simplifier 4/6 en 2/3</text>',
+      "Deux fractions égales représentent la même part du tout"),
+
+    equations: svg("0 0 330 170",
+      '<path d="M165 30 L165 120" stroke="currentColor" stroke-width="3"/>' +
+      '<path d="M60 40 L270 40" stroke="currentColor" stroke-width="3"/>' +
+      '<path d="M135 130 L195 130 L180 150 L150 150 Z" fill="none" stroke="currentColor" stroke-width="2.5"/>' +
+      '<path d="M60 40 L60 70 M270 40 L270 70" stroke="currentColor" stroke-width="2"/>' +
+      '<rect x="30" y="70" width="60" height="34" rx="3" fill="none" stroke="currentColor" stroke-width="2.5"/>' +
+      '<text x="60" y="92" class="lbl ctr">3x + 5</text>' +
+      '<rect x="240" y="70" width="60" height="34" rx="3" fill="none" stroke="currentColor" stroke-width="2.5"/>' +
+      '<text x="270" y="92" class="lbl ctr">20</text>' +
+      '<text x="14" y="164" class="lbl">Ce qu\'on enlève d\'un côté, on l\'enlève de l\'autre : la balance reste équilibrée</text>',
+      "Une équation est une balance : les deux plateaux restent à l'équilibre"),
+
+    litteral: svg("0 0 320 190",
+      '<rect x="40" y="40" width="160" height="100" fill="none" stroke="currentColor" stroke-width="2.5"/>' +
+      '<path d="M140 40 L140 140 M40 100 L200 100" stroke="currentColor" stroke-width="2"/>' +
+      '<text x="90" y="76" class="lbl ctr">x²</text>' +
+      '<text x="170" y="76" class="lbl ctr">3x</text>' +
+      '<text x="90" y="126" class="lbl ctr">2x</text>' +
+      '<text x="170" y="126" class="lbl ctr">6</text>' +
+      '<text x="90" y="30" class="lbl ctr">x</text><text x="170" y="30" class="lbl ctr">3</text>' +
+      '<text x="26" y="76" class="lbl ctr">x</text><text x="26" y="126" class="lbl ctr">2</text>' +
+      '<text x="40" y="176" class="frm">(x + 2)(x + 3) = x² + 5x + 6</text>',
+      "L'aire du grand rectangle est la somme des quatre morceaux"),
+
+    transformations: svg("0 0 330 170",
+      '<polygon points="50,50 110,50 80,110" fill="none" stroke="currentColor" stroke-width="2.5"/>' +
+      '<polygon points="250,120 190,120 220,60" fill="none" stroke="currentColor" stroke-width="2.5" stroke-dasharray="6 4"/>' +
+      '<circle cx="150" cy="85" r="4.5" fill="var(--marker)"/>' +
+      '<text x="144" y="76" class="lbl mark">O</text>' +
+      '<path d="M80 110 L220 60 M110 50 L190 120 M50 50 L250 120" stroke="var(--ink-soft)" stroke-width="1.2" stroke-dasharray="3 4" fill="none"/>' +
+      '<text x="20" y="160" class="lbl">Symétrie centrale : demi-tour autour du point O</text>',
+      "Chaque point et son image sont à égale distance du centre, de part et d'autre"),
+
+    statistiques: svg("0 0 330 130",
+      (function () {
+        var vals = [3, 7, 9, 12, 15], out = "";
+        for (var i = 0; i < 5; i++) {
+          var x = 40 + i * 60;
+          var actif = i === 2;
+          out += '<rect x="' + (x - 22) + '" y="40" width="44" height="44" rx="3" fill="' +
+            (actif ? "var(--marker)" : "none") + '" opacity="' + (actif ? ".5" : "1") +
+            '" stroke="currentColor" stroke-width="2.5"/>' +
+            '<text x="' + x + '" y="70" class="lbl ctr">' + vals[i] + '</text>';
+        }
+        return out;
+      })() +
+      '<text x="160" y="112" class="lbl ctr mark">médiane</text>' +
+      '<text x="20" y="26" class="lbl">Série rangée dans l\'ordre croissant</text>',
+      "La médiane partage la série rangée en deux moitiés de même effectif"),
+
+    probabilites: svg("0 0 330 140",
+      (function () {
+        var out = "";
+        for (var i = 1; i <= 6; i++) {
+          var x = 20 + (i - 1) * 52;
+          var pair = i % 2 === 0;
+          out += '<rect x="' + x + '" y="40" width="42" height="42" rx="6" fill="' +
+            (pair ? "var(--marker)" : "none") + '" opacity="' + (pair ? ".5" : "1") +
+            '" stroke="currentColor" stroke-width="2.5"/>' +
+            '<text x="' + (x + 21) + '" y="68" class="lbl ctr">' + i + '</text>';
+        }
+        return out;
+      })() +
+      '<text x="20" y="112" class="lbl">3 faces paires sur 6 → 3/6 = 1/2</text>' +
+      '<text x="20" y="28" class="lbl">cas favorables ÷ cas possibles</text>',
+      "La probabilité compare les cas favorables au nombre total de cas"),
+
+    priorites: svg("0 0 330 170",
+      (function () {
+        var etages = ["( ) parenthèses", "aⁿ puissances", "× et ÷", "+ et −"];
+        var out = "";
+        for (var i = 0; i < 4; i++) {
+          var y = 20 + i * 34;
+          out += '<rect x="' + (30 + i * 18) + '" y="' + y + '" width="' + (230 - i * 18) + '" height="26" rx="3" ' +
+            'fill="' + (i === 0 ? "var(--marker)" : "none") + '" opacity="' + (i === 0 ? ".45" : "1") +
+            '" stroke="currentColor" stroke-width="2"/>' +
+            '<text x="' + (42 + i * 18) + '" y="' + (y + 18) + '" class="lbl">' + etages[i] + '</text>' +
+            '<text x="278" y="' + (y + 18) + '" class="lbl">' + (i + 1) + '</text>';
+        }
+        return out;
+      })() +
+      '<text x="30" y="164" class="lbl">On descend les marches dans l\'ordre, de haut en bas</text>',
+      "L'ordre des opérations : parenthèses, puissances, × et ÷, puis + et −"),
+
+    puissances: svg("0 0 340 130",
+      (function () {
+        var exp = [3, 2, 1, 0, -1, -2, -3];
+        var val = ["1 000", "100", "10", "1", "0,1", "0,01", "0,001"];
+        var out = "";
+        for (var i = 0; i < 7; i++) {
+          var x = 22 + i * 45;
+          out += '<text x="' + (x + 18) + '" y="46" class="lbl ctr mark">10' + (exp[i] < 0 ? "⁻" : "") +
+            "⁰¹²³"[Math.abs(exp[i])] + '</text>' +
+            '<path d="M' + x + ' 58 L' + (x + 36) + ' 58" stroke="currentColor" stroke-width="2"/>' +
+            '<text x="' + (x + 18) + '" y="78" class="lbl ctr">' + val[i] + '</text>';
+        }
+        return out;
+      })() +
+      '<text x="22" y="26" class="lbl">L\'exposant compte les rangs de la virgule</text>' +
+      '<text x="22" y="108" class="lbl">Exposant négatif = nombre plus petit que 1, jamais négatif</text>',
+      "Un exposant négatif rend le nombre plus petit, il ne le rend pas négatif"),
+
+    proportion: svg("0 0 330 140",
+      '<rect x="30" y="35" width="240" height="60" fill="none" stroke="currentColor" stroke-width="2.5"/>' +
+      '<path d="M30 65 L270 65 M110 35 L110 95 M190 35 L190 95" stroke="currentColor" stroke-width="2"/>' +
+      '<text x="70" y="56" class="lbl ctr">3</text><text x="150" y="56" class="lbl ctr">5</text><text x="230" y="56" class="lbl ctr">8</text>' +
+      '<text x="70" y="86" class="lbl ctr">4,50</text><text x="150" y="86" class="lbl ctr">7,50</text><text x="230" y="86" class="lbl ctr">12</text>' +
+      '<path d="M286 45 Q306 65 286 85" fill="none" stroke="var(--marker)" stroke-width="2.5"/>' +
+      '<text x="292" y="70" class="lbl mark">× 1,5</text>' +
+      '<text x="30" y="124" class="lbl">On passe d\'une ligne à l\'autre en multipliant toujours par le même nombre</text>',
+      "Dans un tableau de proportionnalité, le coefficient est le même pour toutes les colonnes")
+  };
+
   var MATHS_CHAPTERS = [
     { id: "relatifs", theme: "Nombres et calculs", t: "Nombres relatifs",
       goal: "Additionner, soustraire, multiplier et diviser des nombres positifs et négatifs.",
@@ -3252,6 +3523,17 @@
         "Produit et quotient : deux signes identiques donnent un résultat positif, deux signes différents un résultat négatif."
       ],
       method: "Pour −7 + 12 : les distances à zéro sont 7 et 12, on soustrait (12 − 7 = 5) et on garde le signe de 12, donc +5. Pour (−3) × (−4) : signes identiques, donc positif, 3 × 4 = 12.",
+      schema: SCHEMAS.relatifs,
+      exemple: {
+        enonce: "Calcule A = −8 + 5 − (−6) × 2.",
+        etapes: [
+          "On repère la multiplication, prioritaire : (−6) × 2. Signes différents, donc résultat négatif : −12.",
+          "L'expression devient A = −8 + 5 − (−12).",
+          "Soustraire −12 revient à ajouter 12 : A = −8 + 5 + 12.",
+          "On calcule de gauche à droite : −8 + 5 = −3, puis −3 + 12 = 9."
+        ],
+        reponse: "A = 9"
+      },
       traps: "« Moins par moins fait plus » ne vaut que pour la multiplication et la division, jamais pour l'addition : −3 + (−4) = −7, pas +7." },
 
     { id: "priorites", theme: "Nombres et calculs", t: "Priorités opératoires",
@@ -3262,6 +3544,17 @@
         "Une barre de fraction joue le rôle d'une parenthèse : on calcule le haut et le bas séparément."
       ],
       method: "Pour 20 − 3 × (2 + 4) : la parenthèse d'abord (6), puis la multiplication (3 × 6 = 18), puis la soustraction (20 − 18 = 2).",
+      schema: SCHEMAS.priorites,
+      exemple: {
+        enonce: "Calcule B = 5 + 2 × (9 − 3)² ÷ 4.",
+        etapes: [
+          "La parenthèse en premier : 9 − 3 = 6, donc B = 5 + 2 × 6² ÷ 4.",
+          "Puis la puissance : 6² = 36, donc B = 5 + 2 × 36 ÷ 4.",
+          "Multiplications et divisions de gauche à droite : 2 × 36 = 72, puis 72 ÷ 4 = 18.",
+          "Enfin l'addition : B = 5 + 18."
+        ],
+        reponse: "B = 23"
+      },
       traps: "L'erreur la plus fréquente est de calculer de gauche à droite en ignorant la multiplication : 2 + 3 × 4 vaut 14, pas 20." },
 
     { id: "fractions", theme: "Nombres et calculs", t: "Fractions",
@@ -3274,6 +3567,17 @@
         "Le résultat se donne toujours sous forme irréductible."
       ],
       method: "Pour 5/6 + 2/10 : le dénominateur commun est 30, donc 25/30 + 6/30 = 31/30. On vérifie ensuite qu'on ne peut plus simplifier.",
+      schema: SCHEMAS.fractions,
+      exemple: {
+        enonce: "Calcule C = 5/6 + 2/10, puis donne le résultat simplifié.",
+        etapes: [
+          "On cherche un dénominateur commun à 6 et 10 : le plus petit multiple commun est 30.",
+          "On convertit : 5/6 = 25/30 (on multiplie en haut et en bas par 5) et 2/10 = 6/30 (par 3).",
+          "On additionne les numérateurs, jamais les dénominateurs : 25/30 + 6/30 = 31/30.",
+          "On vérifie si on peut simplifier : 31 est premier et ne divise pas 30, donc la fraction est déjà irréductible."
+        ],
+        reponse: "C = 31/30"
+      },
       traps: "On n'additionne jamais les dénominateurs : 1/2 + 1/3 ne fait pas 2/5. Et une réponse non simplifiée (62/60 au lieu de 31/30) est comptée fausse." },
 
     { id: "puissances", theme: "Nombres et calculs", t: "Puissances et notation scientifique",
@@ -3286,6 +3590,17 @@
         "Notation scientifique : a × 10ⁿ avec un seul chiffre non nul avant la virgule."
       ],
       method: "Pour écrire 45 000 : on place la virgule après le 4, soit 4,5 ; la virgule a reculé de 4 rangs, donc 4,5 × 10⁴. Pour 0,00042 : 4,2 et la virgule avance de 4 rangs, donc 4,2 × 10⁻⁴.",
+      schema: SCHEMAS.puissances,
+      exemple: {
+        enonce: "Écris D = (3 × 10⁵) × (2 × 10⁻²) en notation scientifique.",
+        etapes: [
+          "On regroupe les nombres d'un côté et les puissances de 10 de l'autre : (3 × 2) × (10⁵ × 10⁻²).",
+          "On multiplie les nombres : 3 × 2 = 6.",
+          "On additionne les exposants : 5 + (−2) = 3, donc 10³.",
+          "Le nombre devant est bien compris entre 1 et 10 : l'écriture scientifique est correcte."
+        ],
+        reponse: "D = 6 × 10³, c'est-à-dire 6 000"
+      },
       traps: "10⁻³ vaut 0,001 et non −1 000. Et (−2)³ = −8 alors que (−2)⁴ = +16 : un exposant pair rend le résultat positif." },
 
     { id: "litteral", theme: "Nombres et calculs", t: "Calcul littéral",
@@ -3298,6 +3613,18 @@
         "Factoriser, c'est l'inverse de développer : on met le facteur commun devant."
       ],
       method: "Pour (x + 5)(x − 2) : x×x = x², x×(−2) = −2x, 5×x = 5x, 5×(−2) = −10. On réduit : x² + 3x − 10.",
+      schema: SCHEMAS.litteral,
+      exemple: {
+        enonce: "Développe et réduis E = (x + 4)(x − 3), puis factorise F = 12x + 18.",
+        etapes: [
+          "Développement : chaque terme de la première parenthèse multiplie chaque terme de la seconde.",
+          "x × x = x², x × (−3) = −3x, 4 × x = 4x, 4 × (−3) = −12.",
+          "On réduit les termes semblables : −3x + 4x = x, donc E = x² + x − 12.",
+          "Factorisation : on cherche le PGCD de 12 et 18, qui vaut 6.",
+          "On sort 6 : 12x + 18 = 6 × 2x + 6 × 3 = 6(2x + 3). On vérifie en redéveloppant."
+        ],
+        reponse: "E = x² + x − 12   et   F = 6(2x + 3)"
+      },
       traps: "(x + 3)² ne vaut pas x² + 9 : il ne faut pas oublier le double produit 6x. Et attention aux signes quand on développe avec une soustraction." },
 
     { id: "equations", theme: "Nombres et calculs", t: "Équations du premier degré",
@@ -3309,6 +3636,17 @@
         "Un produit en croix résout une égalité de deux quotients : a/b = c/d donne a×d = b×c."
       ],
       method: "Pour 5x − 3 = 2x + 9 : on enlève 2x des deux côtés (3x − 3 = 9), on ajoute 3 (3x = 12), on divise par 3 (x = 4). On vérifie : 5×4 − 3 = 17 et 2×4 + 9 = 17.",
+      schema: SCHEMAS.equations,
+      exemple: {
+        enonce: "Résous 7x − 5 = 4x + 13.",
+        etapes: [
+          "On regroupe les x à gauche : on enlève 4x aux deux membres, ce qui donne 3x − 5 = 13.",
+          "On regroupe les nombres à droite : on ajoute 5 aux deux membres, ce qui donne 3x = 18.",
+          "On divise les deux membres par 3 : x = 6.",
+          "Vérification : à gauche 7 × 6 − 5 = 37, à droite 4 × 6 + 13 = 37. Les deux membres sont égaux."
+        ],
+        reponse: "x = 6"
+      },
       traps: "Quand on déplace un terme, son signe change. Et il faut appliquer l'opération aux deux membres, pas seulement à un." },
 
     { id: "proportion", theme: "Organisation et gestion de données", t: "Proportionnalité, pourcentages et vitesses",
@@ -3321,6 +3659,17 @@
         "Une échelle est un rapport : 1/25 000 signifie que 1 cm sur la carte vaut 25 000 cm en réalité."
       ],
       method: "Un pull à 80 € soldé de 25 % : on multiplie par 0,75, soit 60 €. À 80 km/h pendant 1 h 30 : 1 h 30 = 1,5 h, donc 80 × 1,5 = 120 km.",
+      schema: SCHEMAS.proportion,
+      exemple: {
+        enonce: "Un vélo coûte 240 €. Il est soldé à −15 %. Quel est son prix ? Combien de temps met-on pour faire 45 km à 30 km/h ?",
+        etapes: [
+          "Remise : 15 % de 240 = 240 × 15 ÷ 100 = 36 €.",
+          "Prix soldé : 240 − 36 = 204 €. On peut aussi faire directement 240 × 0,85.",
+          "Durée : t = d ÷ v = 45 ÷ 30 = 1,5 h.",
+          "On convertit en heures et minutes : 0,5 h = 30 min, donc 1 h 30."
+        ],
+        reponse: "204 €   et   1 h 30"
+      },
       traps: "1 h 30 vaut 1,5 h et non 1,30 h. Et une baisse de 20 % suivie d'une hausse de 20 % ne ramène pas au prix de départ." },
 
     { id: "statistiques", theme: "Organisation et gestion de données", t: "Statistiques",
@@ -3332,6 +3681,18 @@
         "Étendue : plus grande valeur − plus petite valeur."
       ],
       method: "Pour 3 ; 7 ; 9 ; 12 ; 15 : la moyenne vaut 46 ÷ 5 = 9,2 et la médiane est la 3ᵉ valeur, soit 9. Avec un nombre pair de valeurs, la médiane est la moyenne des deux valeurs centrales.",
+      schema: SCHEMAS.statistiques,
+      exemple: {
+        enonce: "Dans une classe, 12 élèves ont eu 10 et 8 élèves ont eu 15. Calcule la moyenne de la classe.",
+        etapes: [
+          "Attention : ce n'est pas la moyenne de 10 et 15, car les effectifs sont différents.",
+          "On calcule le total des points : 12 × 10 = 120, et 8 × 15 = 120, donc 240 points en tout.",
+          "On compte les élèves : 12 + 8 = 20.",
+          "Moyenne = total des points ÷ nombre d'élèves = 240 ÷ 20 = 12.",
+          "Contrôle : la moyenne doit être comprise entre 10 et 15, et plus proche de 10 car il y a plus d'élèves à 10. C'est cohérent."
+        ],
+        reponse: "Moyenne = 12"
+      },
       traps: "Il faut ranger la série avant de chercher la médiane. Et la moyenne d'une classe ne se calcule pas en faisant la moyenne des moyennes si les effectifs diffèrent." },
 
     { id: "probabilites", theme: "Organisation et gestion de données", t: "Probabilités",
@@ -3343,6 +3704,18 @@
         "La probabilité de l'événement contraire vaut 1 − p."
       ],
       method: "Tirer un roi dans un jeu de 32 cartes : 4 rois sur 32 cartes, soit 4/32 = 1/8. Ne pas tirer de roi : 1 − 1/8 = 7/8.",
+      schema: SCHEMAS.probabilites,
+      exemple: {
+        enonce: "Une urne contient 5 boules rouges, 3 vertes et 2 bleues. On en tire une au hasard. Quelle est la probabilité qu'elle soit rouge ? Qu'elle ne soit pas rouge ?",
+        etapes: [
+          "On compte le nombre total de boules : 5 + 3 + 2 = 10. Ce sont les cas possibles.",
+          "Les cas favorables à « rouge » sont au nombre de 5.",
+          "P(rouge) = 5/10, que l'on simplifie en 1/2.",
+          "Pour « pas rouge », on utilise l'événement contraire : 1 − 1/2 = 1/2.",
+          "Contrôle : on peut aussi compter directement les non-rouges, 3 + 2 = 5, donc 5/10 = 1/2. Les deux méthodes concordent."
+        ],
+        reponse: "P(rouge) = 1/2   et   P(pas rouge) = 1/2"
+      },
       traps: "On donne la probabilité sous forme simplifiée. Et le résultat ne peut jamais dépasser 1." },
 
     { id: "pythagore", theme: "Espace et géométrie", t: "Théorème de Pythagore",
@@ -3354,6 +3727,18 @@
         "Triplets utiles à reconnaître : 3-4-5, 6-8-10, 5-12-13, 8-15-17."
       ],
       method: "Pour trouver l'hypoténuse avec 3 et 4 : 3² + 4² = 25, donc l'hypoténuse vaut √25 = 5. Pour trouver un autre côté avec hypoténuse 13 et côté 5 : 13² − 5² = 144, donc √144 = 12.",
+      schema: SCHEMAS.pythagore,
+      exemple: {
+        enonce: "Une échelle de 5 m est appuyée contre un mur. Son pied est à 3 m du mur. À quelle hauteur touche-t-elle le mur ?",
+        etapes: [
+          "On fait un schéma : le mur et le sol forment l'angle droit, l'échelle est l'hypoténuse.",
+          "On connaît l'hypoténuse (5 m) et un côté (3 m) : on cherche l'autre côté, donc on SOUSTRAIT.",
+          "Pythagore : hauteur² = 5² − 3² = 25 − 9 = 16.",
+          "hauteur = √16 = 4.",
+          "Vérification : 3² + 4² = 9 + 16 = 25 = 5². C'est cohérent."
+        ],
+        reponse: "L'échelle touche le mur à 4 m de haut"
+      },
       traps: "On additionne pour chercher l'hypoténuse, mais on soustrait pour chercher un autre côté. Et il faut penser à prendre la racine carrée à la fin." },
 
     { id: "thales", theme: "Espace et géométrie", t: "Théorème de Thalès",
@@ -3364,18 +3749,48 @@
         "La réciproque permet de démontrer que deux droites sont parallèles."
       ],
       method: "On repère les deux triangles emboîtés, on écrit l'égalité des trois rapports, puis on utilise le produit en croix sur les deux rapports qui contiennent la longueur cherchée.",
-      traps: "Il faut respecter l'ordre des sommets : mélanger le petit et le grand triangle donne un résultat faux." },
+      schema: SCHEMAS.thales,
+      exemple: {
+        enonce: "Les droites (MN) et (BC) sont parallèles. AM = 3 cm, AB = 9 cm et BC = 12 cm. Calcule MN.",
+        etapes: [
+          "Les deux triangles AMN et ABC sont emboîtés, avec (MN) parallèle à (BC) : le théorème de Thalès s'applique.",
+          "On écrit les rapports toujours dans le même ordre, petit triangle sur grand triangle : AM/AB = AN/AC = MN/BC.",
+          "On garde les deux rapports où l'on connaît trois valeurs sur quatre : AM/AB = MN/BC, soit 3/9 = MN/12.",
+          "On simplifie 3/9 = 1/3, donc MN/12 = 1/3.",
+          "Produit en croix : 3 × MN = 12, donc MN = 4.",
+          "Vérification de bon sens : MN est dans le petit triangle, il doit être plus court que BC = 12. C'est le cas."
+        ],
+        reponse: "MN = 4 cm"
+      },
+      traps: "Il faut respecter l'ordre des sommets : mélanger le petit et le grand triangle donne un résultat faux. Et Thalès exige des droites parallèles — sans elles, rien ne s'applique." },
 
     { id: "trigonometrie", theme: "Espace et géométrie", t: "Trigonométrie : le cosinus",
       goal: "Calculer une longueur ou un angle dans un triangle rectangle.",
       know: [
-        "Cosinus d'un angle aigu = côté adjacent ÷ hypoténuse.",
-        "Le côté adjacent est celui qui touche l'angle, sans être l'hypoténuse.",
-        "Moyen de retenir : CAH — Cosinus, Adjacent, Hypoténuse.",
-        "Pour retrouver l'angle à partir du cosinus, on utilise la touche cos⁻¹ de la calculatrice."
+        "On ne parle de cosinus que dans un triangle RECTANGLE, et pour un angle AIGU.",
+        "L'hypoténuse est le côté opposé à l'angle droit. Elle ne change jamais, quel que soit l'angle étudié.",
+        "Le côté adjacent à l'angle est celui qui le touche sans être l'hypoténuse. Le côté opposé est celui d'en face.",
+        "Attention : adjacent et opposé changent selon l'angle qu'on étudie. Il faut donc repérer l'angle AVANT de nommer les côtés.",
+        "Cosinus de l'angle = côté adjacent ÷ hypoténuse. Moyen de retenir : CAH.",
+        "En 4ᵉ on n'utilise que le cosinus. Le sinus (Opposé ÷ Hypoténuse) et la tangente (Opposé ÷ Adjacent) arrivent en 3ᵉ : SOH et TOA.",
+        "Le cosinus est un nombre sans unité, toujours strictement compris entre 0 et 1 pour un angle aigu.",
+        "Deux usages : connaissant l'angle et une longueur, on trouve l'autre longueur ; connaissant deux longueurs, on trouve l'angle avec la touche cos⁻¹ (ou Arccos)."
       ],
-      method: "Si l'adjacent vaut 4 et l'hypoténuse 5, alors cos(angle) = 0,8, et l'angle mesure environ 37°.",
-      traps: "La calculatrice doit être en mode degrés. Et le cosinus d'un angle aigu est toujours compris entre 0 et 1." },
+      method: "On repère l'angle droit, puis l'angle étudié. On nomme les trois côtés par rapport à cet angle. On écrit cos(angle) = adjacent ÷ hypoténuse, puis on remplace par les valeurs connues et on résout comme une équation.",
+      schema: SCHEMAS.trigo,
+      exemple: {
+        enonce: "ABC est un triangle rectangle en B. L'angle en A mesure 40° et AB = 6 cm. Calcule AC, l'hypoténuse. (arrondir au dixième)",
+        etapes: [
+          "Le triangle est rectangle en B, donc l'hypoténuse est AC, le côté opposé à l'angle droit.",
+          "On étudie l'angle en A. Le côté qui le touche sans être l'hypoténuse est AB : c'est l'adjacent.",
+          "On écrit la formule : cos(40°) = adjacent ÷ hypoténuse = AB ÷ AC = 6 ÷ AC.",
+          "On isole AC comme dans une équation : AC = 6 ÷ cos(40°).",
+          "À la calculatrice, en mode degrés : cos(40°) ≈ 0,766, donc AC ≈ 6 ÷ 0,766 ≈ 7,8.",
+          "Vérification de bon sens : l'hypoténuse doit être plus longue que AB = 6 cm. C'est bien le cas."
+        ],
+        reponse: "AC ≈ 7,8 cm"
+      },
+      traps: "Mettre la calculatrice en mode degrés (DEG), sinon le résultat est faux sans prévenir. Ne pas confondre adjacent et opposé : le côté adjacent change si on change d'angle. Et un cosinus supérieur à 1 signale forcément une erreur." },
 
     { id: "transformations", theme: "Espace et géométrie", t: "Transformations et angles",
       goal: "Reconnaître et utiliser symétries, translation, et calculer des angles.",
@@ -3386,6 +3801,17 @@
         "Deux angles opposés par le sommet sont égaux ; avec deux droites parallèles, les angles alternes-internes sont égaux."
       ],
       method: "Dans un triangle isocèle dont l'angle au sommet mesure 40° : il reste 140° à partager entre les deux angles de base, soit 70° chacun.",
+      schema: SCHEMAS.transformations,
+      exemple: {
+        enonce: "Dans un triangle ABC, l'angle en A mesure 55° et l'angle en B mesure 70°. Combien mesure l'angle en C ?",
+        etapes: [
+          "La somme des trois angles d'un triangle vaut toujours 180°.",
+          "On additionne les deux angles connus : 55 + 70 = 125°.",
+          "On soustrait de 180 : 180 − 125 = 55°.",
+          "Remarque : les angles en A et en C sont égaux, donc le triangle est isocèle en B."
+        ],
+        reponse: "L'angle en C mesure 55°"
+      },
       traps: "Une transformation ne change ni les longueurs ni les aires : chercher un agrandissement là où il n'y en a pas est une erreur classique." },
 
     { id: "aires", theme: "Grandeurs et mesures", t: "Périmètres et aires",
@@ -3398,6 +3824,17 @@
         "Le périmètre se mesure en cm, l'aire en cm²."
       ],
       method: "Pour un disque de rayon 5 : l'aire vaut 3,14 × 25 = 78,5 cm², et le périmètre 3,14 × 10 = 31,4 cm.",
+      schema: SCHEMAS.aires,
+      exemple: {
+        enonce: "Un terrain rectangulaire de 20 m sur 12 m contient un bassin circulaire de 4 m de rayon. Quelle est l'aire de pelouse restante ? (π ≈ 3,14)",
+        etapes: [
+          "Aire du rectangle : 20 × 12 = 240 m².",
+          "Aire du disque : π × r² = 3,14 × 4² = 3,14 × 16 = 50,24 m².",
+          "Aire de pelouse = aire totale − aire du bassin = 240 − 50,24.",
+          "On soigne l'unité : des mètres au carré, car c'est une aire."
+        ],
+        reponse: "189,76 m² de pelouse"
+      },
       traps: "Confondre π × r² (aire) et 2 × π × r (périmètre) est l'erreur la plus fréquente. Et pour le triangle, on oublie souvent de diviser par 2." },
 
     { id: "volumes", theme: "Grandeurs et mesures", t: "Volumes",
@@ -3410,6 +3847,17 @@
         "1 L = 1 dm³ = 1 000 cm³ ; 1 m³ = 1 000 L."
       ],
       method: "Pour un cylindre de rayon 2 cm et de hauteur 10 cm : l'aire de la base vaut 3,14 × 4 = 12,56 cm², donc le volume vaut 125,6 cm³.",
+      schema: SCHEMAS.volumes,
+      exemple: {
+        enonce: "Une boîte de conserve a un rayon de 4 cm et une hauteur de 12 cm. Quel est son volume, et combien de litres contient-elle ? (π ≈ 3,14)",
+        etapes: [
+          "La base est un disque : aire = π × r² = 3,14 × 16 = 50,24 cm².",
+          "Volume du cylindre = aire de la base × hauteur = 50,24 × 12 = 602,88 cm³.",
+          "Conversion : 1 L = 1 000 cm³.",
+          "602,88 ÷ 1 000 ≈ 0,6 L."
+        ],
+        reponse: "Environ 603 cm³, soit un peu plus d'un demi-litre"
+      },
       traps: "Le ÷ 3 de la pyramide et du cône s'oublie souvent. Et toutes les longueurs doivent être dans la même unité avant de calculer." }
   ];
 
@@ -3480,7 +3928,18 @@
           '<div class="chbody">' +
             '<h4>À savoir</h4>' +
             '<ul>' + c.know.map(function (k) { return '<li>' + esc(k) + '</li>'; }).join("") + '</ul>' +
+            (c.schema || "") +
             '<h4>La méthode</h4><p>' + esc(c.method) + '</p>' +
+            (c.exemple
+              ? '<h4>Exercice type, corrigé</h4>' +
+                '<div class="exo">' +
+                  '<p class="enonce">' + esc(c.exemple.enonce) + '</p>' +
+                  '<ol class="etapes">' + c.exemple.etapes.map(function (e) {
+                    return '<li>' + esc(e) + '</li>';
+                  }).join("") + '</ol>' +
+                  '<p class="reponse">' + esc(c.exemple.reponse) + '</p>' +
+                '</div>'
+              : "") +
             '<h4>Les pièges</h4><p class="trap">' + esc(c.traps) + '</p>' +
             (dispo
               ? '<div class="row"><button class="btn" data-train="' + c.id + '">S\'entraîner : ' + s.taille + ' questions</button>' +
