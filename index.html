@@ -983,6 +983,44 @@
   .answer.bad { border-color: var(--red); background: var(--red-wash); }
   .answer.bad .key { color: var(--red); }
 
+  /* ---------- question à réponse écrite ---------- */
+  .typein { display: flex; flex-direction: column; gap: 8px; }
+  .typein label {
+    font-size: 15px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: baseline;
+  }
+  .typein label em {
+    font-style: normal;
+    font-family: var(--f-mono);
+    font-size: 11px;
+    color: var(--ink-soft);
+  }
+  .typerow { display: flex; gap: 8px; flex-wrap: wrap; }
+  .typerow input {
+    flex: 1 1 200px;
+    min-width: 0;
+    font-family: var(--f-mono);
+    font-size: 19px;
+    color: var(--ink);
+    background: var(--paper);
+    border: 2px solid var(--rule);
+    border-radius: 3px;
+    padding: 11px 14px;
+  }
+  .typerow input:focus-visible { outline: 3px solid var(--blue); outline-offset: 1px; }
+  .typerow input.good { border-color: var(--green); background: var(--green-wash); }
+  .typerow input.bad  { border-color: var(--red);   background: var(--red-wash); }
+  .typerow input:disabled { opacity: 1; }
+  .corrige {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 15px;
+  }
+  .corrige b { font-family: var(--f-mono); font-size: 16px; color: var(--green); }
+
   .explain {
     border-left: 3px solid var(--marker);
     padding: 2px 0 2px 14px;
@@ -1769,6 +1807,72 @@
     return den === 1 ? String(top) : top + "/" + den;
   }
 
+  /* ---------- réponses à écrire ----------
+     Pour la factorisation, un QCM ne prouve rien : il suffit de développer les quatre
+     propositions. L'élève écrit donc sa réponse, et on la vérifie de deux façons :
+     elle doit valoir la même chose que l'énoncé pour toute valeur de x, et être
+     réellement factorisée (un produit, pas une somme). */
+
+  /* Traduit une écriture d'élève en expression calculable : 3(x+2), 3*(x+2),
+     3 (x + 2) et 3x(x+2) sont tous acceptés. */
+  function alg(expr) {
+    var s = String(expr).toLowerCase()
+      .replace(/\s+/g, "")
+      .replace(/×/g, "*").replace(/÷/g, "/")
+      .replace(/[−–—]/g, "-")
+      .replace(/²/g, "^2").replace(/³/g, "^3")
+      .replace(/,/g, ".");
+    s = s.replace(/(\d)(x|\()/g, "$1*$2");   // 3x → 3*x   et   3( → 3*(
+    s = s.replace(/(x|\))\(/g, "$1*(");      // x( → x*(   et   )( → )*(
+    s = s.replace(/\)(x|\d)/g, ")*$1");      // )x → )*x   et   )3 → )*3
+    s = s.replace(/x(\d)/g, "x*$1");
+    return s.replace(/\^/g, "**");
+  }
+
+  /* Une saisie ne peut contenir que des caractères de calcul. */
+  function saisieValide(expr) {
+    return /^[0-9x+\-*/().^²³×÷−–—,\s]+$/.test(String(expr));
+  }
+
+  function evalue(s, x) {
+    try {
+      var v = Function("x", '"use strict"; return (' + s + ');')(x);
+      return typeof v === "number" ? v : NaN;
+    } catch (err) { return NaN; }
+  }
+
+  /* Deux expressions sont égales si elles donnent la même valeur pour plusieurs x. */
+  function memeExpression(a, b) {
+    var ea = alg(a), eb = alg(b);
+    var tests = [-3.7, -2, -0.5, 0, 1.3, 2, 5.5];
+    for (var i = 0; i < tests.length; i++) {
+      var va = evalue(ea, tests[i]), vb = evalue(eb, tests[i]);
+      if (!isFinite(va) || !isFinite(vb)) return false;
+      if (Math.abs(va - vb) > 1e-9 * Math.max(1, Math.abs(vb))) return false;
+    }
+    return true;
+  }
+
+  /* Factorisé = produit au niveau le plus haut : des parenthèses, et aucun + ou −
+     en dehors d'elles. « 3x + 6 » est donc refusé, « 3(x + 2) » accepté. */
+  function estFactorise(expr) {
+    var e = alg(expr);
+    if (e.indexOf("(") < 0) return false;
+    var prof = 0;
+    for (var i = 0; i < e.length; i++) {
+      var c = e.charAt(i);
+      if (c === "(") prof++;
+      else if (c === ")") prof--;
+      else if ((c === "+" || c === "-") && prof === 0 && i > 0) return false;
+    }
+    return true;
+  }
+
+  /* Fabrique une question à réponse écrite. */
+  function ecrite(d, q, sol, aide, e, verif) {
+    return { d: d, q: q, type: "saisie", sol: sol, aide: aide, e: e, verif: verif, gen: true };
+  }
+
   var GENERATORS = {
     maths: [
       { d: 1, make: function () {
@@ -1948,9 +2052,42 @@
       } },
       { d: 8, make: function () {
         var k = rnd(2, 9), b = rnd(2, 12);
-        return made(8, "Factorise " + k + "x + " + k * b + ".", k + "(x + " + b + ")",
-          [k + "(x + " + k * b + ")", "x(" + k + " + " + k * b + ")", (k + b) + "x"],
-          "Le facteur commun est " + k + " : " + k + "x + " + k * b + " = " + k + " × x + " + k + " × " + b + " = " + k + "(x + " + b + ").");
+        var enonce = k + "x + " + k * b;
+        return ecrite(8, "Factorise " + enonce + ".", k + "(x + " + b + ")",
+          "écris ta réponse, par exemple 5(x + 3)",
+          "Le plus grand facteur commun à " + k + "x et " + k * b + " est " + k + " : " +
+          enonce + " = " + k + " × x + " + k + " × " + b + " = " + k + "(x + " + b + ").",
+          { source: enonce, factorise: true, pgcdMin: k });
+      } },
+      { d: 8, make: function () {
+        var a = rnd(2, 9);
+        var enonce = "x² + " + a + "x";
+        return ecrite(8, "Factorise " + enonce + ".", "x(x + " + a + ")",
+          "écris ta réponse, par exemple x(x + 4)",
+          "Les deux termes contiennent x : " + enonce + " = x × x + x × " + a + " = x(x + " + a + ").",
+          { source: enonce, factorise: true });
+      } },
+      { d: 9, make: function () {
+        var k = rnd(2, 6), a = rnd(2, 7), b = rnd(2, 9);
+        /* a et b doivent être premiers entre eux, sinon le facteur commun réel
+           serait plus grand que k et la « bonne » réponse serait incomplète. */
+        while (pgcd(a, b) > 1) b = rnd(2, 9);
+        var enonce = (k * a) + "x² + " + (k * b) + "x";
+        return ecrite(9, "Factorise " + enonce + ".", k + "x(" + a + "x + " + b + ")",
+          "sors tout ce qui est commun, nombre et lettre",
+          "Le facteur commun est " + k + "x : " + enonce + " = " + k + "x × " + a + "x + " + k + "x × " + b +
+          " = " + k + "x(" + a + "x + " + b + "). Il faut sortir le nombre le plus grand possible, et le x.",
+          { source: enonce, factorise: true, pgcdMin: k });
+      } },
+      { d: 10, make: function () {
+        var k = rnd(2, 8), a = rnd(2, 9), b = rnd(2, 9);
+        while (pgcd(a, b) > 1) b = rnd(2, 9);
+        var enonce = (k * a) + "x + " + (k * b);
+        return ecrite(10, "Factorise complètement " + enonce + ".", k + "(" + a + "x + " + b + ")",
+          "attention : sors le plus grand facteur commun",
+          "Le PGCD de " + (k * a) + " et " + (k * b) + " est " + k + " : " + enonce + " = " + k + "(" + a + "x + " + b + "). " +
+          "Sortir un facteur plus petit donnerait une factorisation incomplète.",
+          { source: enonce, factorise: true, pgcdMin: k });
       } },
       { d: 8, make: function () {
         var a = rnd(2, 9);
@@ -2239,9 +2376,10 @@
     "fractions", "aires", "aires", "equations", "litteral",
     "proportion", "aires", "aires", "volumes", "proportion",
     "puissances", "statistiques", "litteral", "pythagore", "pythagore",
-    "puissances", "volumes", "litteral", "litteral", "litteral",
-    "probabilites", "puissances", "puissances", "equations", "pythagore",
-    "litteral", "proportion", "statistiques"
+    "puissances", "volumes", "litteral",
+    "litteral", "litteral", "litteral", "litteral",   // les quatre factorisations à écrire
+    "litteral", "probabilites", "puissances", "puissances", "equations",
+    "pythagore", "litteral", "proportion", "statistiques"
   ];
   var CH_Q_MATHS = [
     "relatifs", "relatifs", "relatifs", "priorites", "fractions",
@@ -2419,6 +2557,7 @@
     }).slice(0, QUIZ_LEN - generated.length);
 
     return shuffle(generated.concat(written)).map(function (item) {
+      if (item.type === "saisie") return item;       // rien à mélanger : la réponse s'écrit
       var right = item.a[item.c];
       var opts = shuffle(item.a);
       return { q: item.q, a: opts, c: opts.indexOf(right), e: item.e, d: item.d, gen: !!item.gen };
@@ -3555,12 +3694,21 @@
     var item = run.items[run.i];
     var pct = Math.round((run.i / run.items.length) * 100);
 
-    var answers = item.a.map(function (text, idx) {
-      return '<button class="answer" data-idx="' + idx + '">' +
-        '<span class="key">' + "ABCD"[idx] + '</span>' +
-        '<span>' + esc(text) + '</span>' +
-      '</button>';
-    }).join("");
+    var answers = item.type === "saisie"
+      ? '<div class="typein">' +
+          '<label for="reponse">Ta réponse <em>' + esc(item.aide) + '</em></label>' +
+          '<div class="typerow">' +
+            '<input id="reponse" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" ' +
+              'inputmode="text" placeholder="ex. 3(x + 2)">' +
+            '<button class="btn" id="valider">Vérifier</button>' +
+          '</div>' +
+        '</div>'
+      : item.a.map(function (text, idx) {
+          return '<button class="answer" data-idx="' + idx + '">' +
+            '<span class="key">' + "ABCD"[idx] + '</span>' +
+            '<span>' + esc(text) + '</span>' +
+          '</button>';
+        }).join("");
 
     app.innerHTML = '' +
       '<div class="row"><button class="btn quiet" id="back">← ' +
@@ -3584,7 +3732,80 @@
     Array.prototype.forEach.call(app.querySelectorAll(".answer"), function (btn) {
       btn.addEventListener("click", function () { choose(parseInt(btn.getAttribute("data-idx"), 10)); });
     });
+
+    var champ = document.getElementById("reponse");
+    if (champ) {
+      var envoyer = function () { corrigeSaisie(champ.value); };
+      document.getElementById("valider").addEventListener("click", envoyer);
+      champ.addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); envoyer(); } });
+      champ.focus();
+    }
     window.scrollTo(0, 0);
+  }
+
+  /* Correction d'une réponse écrite. */
+  function corrigeSaisie(valeur) {
+    if (run.answered) return;
+    var item = run.items[run.i];
+    var saisie = String(valeur).trim();
+    var champ = document.getElementById("reponse");
+
+    if (!saisie) { champ.focus(); return; }
+
+    var motif = "";
+    var juste = false;
+
+    if (!saisieValide(saisie)) {
+      motif = "Utilise seulement des chiffres, la lettre x, des parenthèses et les signes + − × ÷.";
+    } else if (!memeExpression(saisie, item.verif.source)) {
+      motif = "Ton expression ne vaut pas la même chose que l'énoncé. Développe ta réponse pour vérifier.";
+    } else if (item.verif.factorise && !estFactorise(saisie)) {
+      motif = "C'est bien égal à l'énoncé, mais ce n'est pas factorisé : il faut un produit, avec des parenthèses.";
+    } else if (item.verif.pgcdMin && !facteurSuffisant(saisie, item.verif.pgcdMin)) {
+      motif = "C'est factorisé, mais pas complètement : on peut encore sortir un facteur commun.";
+    } else {
+      juste = true;
+    }
+
+    run.answered = true;
+    if (juste) run.score++;
+    else run.misses.push({ q: item.q, a: item.sol });
+
+    champ.disabled = true;
+    champ.classList.add(juste ? "good" : "bad");
+    document.getElementById("valider").disabled = true;
+
+    var last = run.i === run.items.length - 1;
+    document.getElementById("after").innerHTML = '' +
+      '<div class="reaction">' +
+        owl(juste ? "good" : "sad") +
+        '<div class="explain">' +
+          '<span class="lab">' + (juste ? "Bien vu" : "À retenir") + '</span>' +
+          (juste ? "" : '<span class="corrige">Réponse attendue : <b>' + esc(item.sol) + '</b><br>' + esc(motif) + '</span>') +
+          esc(item.e) +
+        '</div>' +
+      '</div>' +
+      '<div class="row"><button class="btn" id="next">' + (last ? "Voir mon score" : "Question suivante →") + '</button></div>';
+
+    document.getElementById("next").addEventListener("click", function () {
+      if (last) { finish(); return; }
+      run.i++;
+      run.answered = false;
+      renderQuestion();
+    });
+    document.getElementById("next").focus();
+  }
+
+  /* Vérifie qu'on a bien sorti tout le facteur commun : le contenu des parenthèses
+     ne doit plus être divisible par le facteur attendu. */
+  function facteurSuffisant(saisie, k) {
+    var reste = alg(saisie);
+    /* On efface le contenu des parenthèses : il ne reste que le facteur sorti,
+       qu'il soit écrit avant — 3(2x+5) — ou après — (2x+5)*3. */
+    while (/\([^()]*\)/.test(reste)) reste = reste.replace(/\([^()]*\)/g, "P");
+    var nombres = reste.match(/\d+(\.\d+)?/g) || [];
+    var coef = nombres.reduce(function (a, n) { return a * parseFloat(n); }, 1);
+    return coef >= k && coef % k === 0;
   }
 
   function choose(idx) {
