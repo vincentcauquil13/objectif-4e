@@ -585,7 +585,25 @@
   }
   .formula .fx { display: block; font-size: 13.5px; color: var(--ink-soft); line-height: 1.45; }
 
-  /* ---------- chapitres de révision (maths 4ᵉ) ---------- */
+  /* sélecteur de matière dans l'onglet Révisions */
+  .picks { display: flex; flex-wrap: wrap; gap: 7px; }
+  .pick {
+    font-family: var(--f-display);
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--ink-soft);
+    background: var(--card);
+    border: 1.5px solid var(--rule);
+    border-radius: 99px;
+    padding: 7px 15px;
+    cursor: pointer;
+    transition: border-color .14s ease, color .14s ease;
+  }
+  .pick:hover { color: var(--blue); border-color: var(--blue); }
+  .pick:focus-visible { outline: 3px solid var(--blue); outline-offset: 2px; }
+  .pick.on { color: var(--card); background: var(--blue); border-color: var(--blue); }
+
+  /* ---------- chapitres de révision ---------- */
   .theme { display: flex; flex-direction: column; gap: 8px; }
   .theme h3 {
     font-family: var(--f-mono);
@@ -2477,7 +2495,9 @@
   /* ---------- chapitres du programme de maths ----------
      Chaque question de maths reçoit son chapitre, pour permettre l'entraînement ciblé
      depuis une fiche de révision. Les tableaux suivent l'ordre des questions ci-dessus. */
-  var CH_GEN_MATHS = [
+  var CH_GEN = {};
+  var CH_Q = {};
+  CH_GEN.maths = [
     "relatifs", "relatifs", "relatifs", "priorites", "proportion",
     "fractions", "aires", "aires", "equations", "litteral",
     "proportion", "aires", "aires", "volumes", "proportion",
@@ -2487,7 +2507,49 @@
     "litteral", "probabilites", "puissances", "puissances", "equations",
     "pythagore", "litteral", "proportion", "equations", "statistiques"
   ];
-  var CH_Q_MATHS = [
+
+  CH_Q.physique = [
+    "lumiere", "lumiere", "circuits", "tension", "etats",
+    "etats", "etats", "lumiere", "masse-vol", "melanges",
+    "circuits", "melanges", "matiere", "circuits", "atomes",
+    "chimie", "circuits", "ohm", "ohm", "tension",
+    "lumiere", "chimie", "masse-vol", "atomes", "tension",
+    "energie", "forces", "lumiere", "energie", "energie",
+    "energie", "etats", "circuits", "etats", "circuits",
+    "etats", "tension", "energie", "energie", "masse-vol",
+    "son", "son", "son", "son", "son",
+    "atomes", "chimie", "chimie", "chimie", "chimie",
+    "forces", "forces", "forces"
+  ];
+  CH_GEN.physique = ["masse-vol", "ohm", "forces", "energie", "tension", "tension", "lumiere", "masse-vol"];
+
+  CH_Q.svt = [
+    "digestion", "respiration", "reproduction", "reproduction", "seismes",
+    "biodiversite", "plantes", "respiration", "respiration", "respiration",
+    "tectonique", "seismes", "tectonique", "seismes", "reproduction",
+    "respiration", "digestion", "digestion", "digestion", "cellule",
+    "digestion", "cellule", "respiration", "cellule", "reproduction",
+    "reproduction", "cellule", "reproduction", "biodiversite", "cellule",
+    "genetique", "genetique", "genetique", "biodiversite", "genetique",
+    "nerveux", "nerveux", "nerveux", "tectonique", "tectonique",
+    "tectonique", "biodiversite", "seismes", "biodiversite", "biodiversite",
+    "plantes"
+  ];
+
+  CH_Q.francais = [
+    "temps", "temps", "classes", "fonctions", "fonctions",
+    "figures", "figures", "accords", "accords", "propositions",
+    "voix", "modes", "classes", "classes", "classes",
+    "classes", "modes", "fonctions", "fonctions", "temps",
+    "figures", "figures", "classes", "discours", "modes",
+    "modes", "classes", "propositions", "modes", "figures",
+    "temps", "voix", "figures", "fonctions", "propositions",
+    "narration", "figures", "modes", "figures", "figures",
+    "discours", "accords", "figures", "figures", "temps",
+    "figures", "narration", "modes", "classes", "classes"
+  ];
+  CH_GEN.francais = ["modes", "temps", "modes", "modes", "classes", "figures", "figures"];
+  CH_Q.maths = [
     "relatifs", "relatifs", "relatifs", "priorites", "fractions",
     "fractions", "proportion", "proportion", "aires", "volumes",
     "transformations", "transformations", "transformations", "equations", "litteral",
@@ -2662,10 +2724,8 @@
     s.questions.forEach(function (q, i) { q.d = levels[i] || 3; });
     s.questions = s.questions.concat(EXTRA[s.id] || []);
     s.makers = GENERATORS[s.id] || [];
-    if (s.id === "maths") {
-      s.questions.forEach(function (q, i) { q.ch = CH_Q_MATHS[i]; });
-      s.makers.forEach(function (m, i) { m.ch = CH_GEN_MATHS[i]; });
-    }
+    s.questions.forEach(function (q, i) { q.ch = (CH_Q[s.id] || [])[i]; });
+    s.makers.forEach(function (m, i) { m.ch = (CH_GEN[s.id] || [])[i]; });
   });
 
   var QUIZ_LEN = 20;
@@ -3682,6 +3742,155 @@
       '<text x="22" y="108" class="lbl">Exposant négatif = nombre plus petit que 1, jamais négatif</text>',
       "Un exposant négatif rend le nombre plus petit, il ne le rend pas négatif"),
 
+    circuits: svg("0 0 340 190",
+      '<path d="M40 40 L300 40 L300 150 L40 150 Z" fill="none" stroke="currentColor" stroke-width="2.5"/>' +
+      '<path d="M30 80 L30 110 M50 70 L50 120" stroke="currentColor" stroke-width="3"/>' +
+      '<text x="8" y="140" class="lbl">pile</text>' +
+      '<circle cx="130" cy="40" r="14" fill="none" stroke="currentColor" stroke-width="2.5"/>' +
+      '<path d="M121 31 L139 49 M139 31 L121 49" stroke="currentColor" stroke-width="2"/>' +
+      '<circle cx="220" cy="40" r="14" fill="none" stroke="currentColor" stroke-width="2.5"/>' +
+      '<path d="M211 31 L229 49 M229 31 L211 49" stroke="currentColor" stroke-width="2"/>' +
+      '<text x="112" y="22" class="lbl">L1</text><text x="202" y="22" class="lbl">L2</text>' +
+      '<path d="M160 150 L200 150" stroke="var(--marker)" stroke-width="4"/>' +
+      '<path d="M186 144 L200 150 L186 156" fill="none" stroke="var(--marker)" stroke-width="3"/>' +
+      '<text x="150" y="174" class="lbl mark">sens du courant</text>' +
+      '<text x="230" y="100" class="lbl">une seule boucle :</text>' +
+      '<text x="230" y="118" class="lbl">c\'est un circuit</text>' +
+      '<text x="230" y="136" class="lbl">en série</text>',
+      "En série, tout passe par la même boucle : une lampe grillée éteint l'autre"),
+
+    lumiere: svg("0 0 340 170",
+      '<circle cx="46" cy="85" r="20" fill="var(--marker)" opacity=".5" stroke="currentColor" stroke-width="2.5"/>' +
+      '<rect x="150" y="45" width="16" height="80" fill="none" stroke="currentColor" stroke-width="2.5"/>' +
+      '<path d="M66 85 L150 45 M66 85 L150 125 M66 85 L150 85" stroke="var(--marker)" stroke-width="2"/>' +
+      '<path d="M166 45 L300 15 M166 125 L300 155" stroke="var(--marker)" stroke-width="2" stroke-dasharray="5 4"/>' +
+      '<path d="M300 15 L300 155" stroke="currentColor" stroke-width="2.5"/>' +
+      '<rect x="288" y="15" width="12" height="140" fill="currentColor" opacity=".25"/>' +
+      '<text x="20" y="130" class="lbl">source</text>' +
+      '<text x="128" y="150" class="lbl">objet</text>' +
+      '<text x="250" y="170" class="lbl">ombre portée</text>',
+      "La lumière va en ligne droite : c'est ce qui donne des ombres nettes"),
+
+    son: svg("0 0 340 150",
+      '<path d="M24 75 q14 -40 28 0 q14 40 28 0 q14 -40 28 0 q14 40 28 0" fill="none" stroke="currentColor" stroke-width="2.5"/>' +
+      '<text x="24" y="126" class="lbl">son grave : peu de vibrations</text>' +
+      '<path d="M190 75 q7 -34 14 0 q7 34 14 0 q7 -34 14 0 q7 34 14 0 q7 -34 14 0 q7 34 14 0 q7 -34 14 0 q7 34 14 0" fill="none" stroke="var(--marker)" stroke-width="2.5"/>' +
+      '<text x="190" y="126" class="lbl mark">son aigu : beaucoup</text>' +
+      '<path d="M20 30 L320 30" stroke="var(--ink-soft)" stroke-width="1" stroke-dasharray="4 4"/>' +
+      '<text x="20" y="22" class="lbl">1 seconde</text>',
+      "La fréquence, en hertz, compte les vibrations par seconde : elle donne la hauteur du son"),
+
+    matiere: svg("0 0 340 160",
+      '<circle cx="70" cy="70" r="30" fill="none" stroke="currentColor" stroke-width="2.5"/>' +
+      '<circle cx="70" cy="70" r="9" fill="currentColor"/>' +
+      '<circle cx="100" cy="70" r="5" fill="var(--marker)"/>' +
+      '<circle cx="46" cy="52" r="5" fill="var(--marker)"/>' +
+      '<text x="46" y="124" class="lbl">atome</text>' +
+      '<text x="44" y="142" class="lbl">noyau + électrons</text>' +
+      '<circle cx="215" cy="60" r="18" fill="none" stroke="currentColor" stroke-width="2.5"/>' +
+      '<circle cx="188" cy="88" r="12" fill="none" stroke="currentColor" stroke-width="2.5"/>' +
+      '<circle cx="242" cy="88" r="12" fill="none" stroke="currentColor" stroke-width="2.5"/>' +
+      '<path d="M202 74 L200 78 M228 74 L230 78" stroke="currentColor" stroke-width="2.5"/>' +
+      '<text x="208" y="66" class="lbl ctr">O</text>' +
+      '<text x="188" y="93" class="lbl ctr">H</text><text x="242" y="93" class="lbl ctr">H</text>' +
+      '<text x="180" y="124" class="lbl">molécule d\'eau</text>' +
+      '<text x="212" y="142" class="lbl ctr">H₂O</text>',
+      "Une molécule est un assemblage d'atomes ; l'atome est fait d'un noyau et d'électrons"),
+
+    forces: svg("0 0 340 160",
+      '<rect x="60" y="70" width="70" height="50" rx="4" fill="none" stroke="currentColor" stroke-width="2.5"/>' +
+      '<path d="M130 95 L250 95" stroke="var(--marker)" stroke-width="4"/>' +
+      '<path d="M236 86 L252 95 L236 104" fill="none" stroke="var(--marker)" stroke-width="4"/>' +
+      '<text x="160" y="84" class="lbl mark">force</text>' +
+      '<path d="M95 120 L95 148" stroke="currentColor" stroke-width="3"/>' +
+      '<path d="M88 140 L95 150 L102 140" fill="none" stroke="currentColor" stroke-width="3"/>' +
+      '<text x="104" y="144" class="lbl">poids</text>' +
+      '<text x="20" y="34" class="lbl">Une force se représente par une flèche :</text>' +
+      '<text x="20" y="52" class="lbl">direction, sens et intensité (en newtons)</text>',
+      "Une force modifie le mouvement ou déforme : on la dessine par une flèche"),
+
+    digestion: svg("0 0 300 210",
+      '<path d="M150 16 q-18 22 0 40" fill="none" stroke="currentColor" stroke-width="2.5"/>' +
+      '<path d="M150 56 L150 84" stroke="currentColor" stroke-width="2.5"/>' +
+      '<path d="M150 84 q40 6 34 34 q-4 26 -40 22" fill="none" stroke="currentColor" stroke-width="2.5"/>' +
+      '<path d="M144 140 q-40 8 -30 34 q10 24 46 16 q34 -8 26 -30" fill="none" stroke="var(--marker)" stroke-width="3"/>' +
+      '<text x="168" y="34" class="lbl">bouche</text>' +
+      '<text x="168" y="74" class="lbl">œsophage</text>' +
+      '<text x="196" y="116" class="lbl">estomac</text>' +
+      '<text x="196" y="176" class="lbl mark">intestin grêle</text>' +
+      '<text x="14" y="196" class="lbl">c\'est là que les nutriments passent dans le sang</text>',
+      "Le trajet des aliments : la digestion commence dès la bouche"),
+
+    cellule: svg("0 0 320 180",
+      '<ellipse cx="120" cy="90" rx="86" ry="62" fill="none" stroke="currentColor" stroke-width="2.5"/>' +
+      '<circle cx="108" cy="82" r="24" fill="var(--marker)" opacity=".4" stroke="currentColor" stroke-width="2.5"/>' +
+      '<circle cx="108" cy="82" r="6" fill="currentColor"/>' +
+      '<text x="140" y="60" class="lbl">membrane</text>' +
+      '<text x="88" y="130" class="lbl">cytoplasme</text>' +
+      '<text x="66" y="76" class="lbl mark">noyau</text>' +
+      '<text x="220" y="70" class="lbl">Le noyau contient</text>' +
+      '<text x="220" y="88" class="lbl">les chromosomes,</text>' +
+      '<text x="220" y="106" class="lbl">donc l\'information</text>' +
+      '<text x="220" y="124" class="lbl">génétique</text>',
+      "Toute cellule a une membrane, un cytoplasme et un noyau"),
+
+    reflexe: svg("0 0 330 180",
+      '<circle cx="46" cy="60" r="18" fill="none" stroke="currentColor" stroke-width="2.5"/>' +
+      '<text x="20" y="36" class="lbl">peau</text>' +
+      '<rect x="140" y="30" width="34" height="120" rx="8" fill="none" stroke="currentColor" stroke-width="2.5"/>' +
+      '<text x="182" y="26" class="lbl">moelle épinière</text>' +
+      '<rect x="250" y="70" width="50" height="34" rx="6" fill="none" stroke="currentColor" stroke-width="2.5"/>' +
+      '<text x="252" y="124" class="lbl">muscle</text>' +
+      '<path d="M64 60 L140 60" stroke="var(--marker)" stroke-width="3"/>' +
+      '<path d="M128 54 L142 60 L128 66" fill="none" stroke="var(--marker)" stroke-width="3"/>' +
+      '<text x="66" y="50" class="lbl mark">message sensitif</text>' +
+      '<path d="M174 100 L250 92" stroke="var(--marker)" stroke-width="3"/>' +
+      '<path d="M238 84 L252 92 L240 100" fill="none" stroke="var(--marker)" stroke-width="3"/>' +
+      '<text x="176" y="126" class="lbl mark">message moteur</text>' +
+      '<text x="14" y="170" class="lbl">Le message ne remonte pas au cerveau : c\'est ce qui rend le réflexe si rapide</text>',
+      "L'arc réflexe : la moelle épinière répond sans attendre le cerveau"),
+
+    plaques: svg("0 0 330 170",
+      '<rect x="10" y="70" width="140" height="42" fill="none" stroke="currentColor" stroke-width="2.5"/>' +
+      '<path d="M150 70 L230 130 L230 160 L150 112 Z" fill="var(--marker)" opacity=".35" stroke="currentColor" stroke-width="2.5"/>' +
+      '<rect x="150" y="70" width="170" height="42" fill="none" stroke="currentColor" stroke-width="2.5"/>' +
+      '<path d="M60 60 L110 60" stroke="var(--marker)" stroke-width="3"/>' +
+      '<path d="M98 54 L112 60 L98 66" fill="none" stroke="var(--marker)" stroke-width="3"/>' +
+      '<path d="M270 60 L220 60" stroke="var(--marker)" stroke-width="3"/>' +
+      '<path d="M232 54 L218 60 L232 66" fill="none" stroke="var(--marker)" stroke-width="3"/>' +
+      '<path d="M170 60 q10 -22 22 -8 q12 -14 22 8" fill="none" stroke="currentColor" stroke-width="2.5"/>' +
+      '<text x="176" y="44" class="lbl">volcans</text>' +
+      '<text x="14" y="140" class="lbl">plaque océanique</text>' +
+      '<text x="236" y="140" class="lbl">plaque continentale</text>' +
+      '<text x="14" y="30" class="lbl">Les plaques se rapprochent : l\'une plonge sous l\'autre</text>',
+      "Zone de subduction : la plaque océanique plonge, d'où séismes et volcans"),
+
+    phrase: svg("0 0 340 160",
+      '<rect x="20" y="50" width="70" height="38" rx="4" fill="none" stroke="currentColor" stroke-width="2.5"/>' +
+      '<rect x="104" y="50" width="70" height="38" rx="4" fill="var(--marker)" opacity=".4" stroke="currentColor" stroke-width="2.5"/>' +
+      '<rect x="188" y="50" width="130" height="38" rx="4" fill="none" stroke="currentColor" stroke-width="2.5"/>' +
+      '<text x="55" y="74" class="lbl ctr">Le chat</text>' +
+      '<text x="139" y="74" class="lbl ctr">mange</text>' +
+      '<text x="253" y="74" class="lbl ctr">une souris</text>' +
+      '<text x="55" y="112" class="lbl ctr">sujet</text>' +
+      '<text x="139" y="112" class="lbl ctr mark">verbe</text>' +
+      '<text x="253" y="112" class="lbl ctr">COD</text>' +
+      '<text x="20" y="36" class="lbl">On cherche le verbe en premier, puis « qui ? » et « quoi ? »</text>' +
+      '<text x="20" y="144" class="lbl">Le COD suit le verbe sans préposition — sinon c\'est un COI</text>',
+      "Trouver le verbe d'abord : tout le reste se repère par rapport à lui"),
+
+    temps: svg("0 0 340 150",
+      '<path d="M20 90 L320 90" stroke="currentColor" stroke-width="2.5"/>' +
+      '<path d="M312 84 L320 90 L312 96" fill="none" stroke="currentColor" stroke-width="2.5"/>' +
+      '<rect x="40" y="60" width="120" height="26" rx="3" fill="none" stroke="currentColor" stroke-width="2"/>' +
+      '<text x="100" y="78" class="lbl ctr">imparfait : le décor</text>' +
+      '<circle cx="200" cy="90" r="9" fill="var(--marker)" stroke="currentColor" stroke-width="2.5"/>' +
+      '<circle cx="250" cy="90" r="9" fill="var(--marker)" stroke="currentColor" stroke-width="2.5"/>' +
+      '<text x="184" y="122" class="lbl">passé simple :</text>' +
+      '<text x="184" y="140" class="lbl">les actions</text>' +
+      '<text x="20" y="36" class="lbl">« Il lisait tranquillement quand la porte s\'ouvrit. »</text>',
+      "L'imparfait dure et décrit ; le passé simple marque les actions ponctuelles"),
+
     proportion: svg("0 0 330 140",
       '<rect x="30" y="35" width="240" height="60" fill="none" stroke="currentColor" stroke-width="2.5"/>' +
       '<path d="M30 65 L270 65 M110 35 L110 95 M190 35 L190 95" stroke="currentColor" stroke-width="2"/>' +
@@ -3693,7 +3902,8 @@
       "Dans un tableau de proportionnalité, le coefficient est le même pour toutes les colonnes")
   };
 
-  var MATHS_CHAPTERS = [
+  var CHAPTERS = {};
+  CHAPTERS.maths = [
     { id: "relatifs", theme: "Nombres et calculs", t: "Nombres relatifs",
       goal: "Additionner, soustraire, multiplier et diviser des nombres positifs et négatifs.",
       know: [
@@ -4042,6 +4252,771 @@
       traps: "Le ÷ 3 de la pyramide et du cône s'oublie souvent. Et toutes les longueurs doivent être dans la même unité avant de calculer." }
   ];
 
+  CHAPTERS.physique = [
+    { id: "etats", theme: "Organisation et transformations de la matière", t: "États et changements d'état",
+      goal: "Reconnaître les trois états de l'eau et nommer les changements d'état.",
+      know: [
+        "Trois états : solide (forme propre), liquide (prend la forme du récipient), gazeux (occupe tout l'espace disponible).",
+        "Fusion : solide → liquide. Solidification : liquide → solide.",
+        "Vaporisation : liquide → gaz. Liquéfaction : gaz → liquide.",
+        "Sous pression normale, la glace fond à 0 °C et l'eau bout à 100 °C.",
+        "Pendant tout le changement d'état, la température reste bloquée : c'est un palier.",
+        "La masse se conserve toujours, mais le volume peut changer : l'eau qui gèle prend plus de place."
+      ],
+      method: "On identifie l'état de départ et l'état d'arrivée, puis on nomme le changement. On se rappelle que la température ne bouge pas tant que les deux états coexistent.",
+      exemple: {
+        enonce: "On chauffe 200 g de glace à −10 °C jusqu'à 20 °C. Décris ce qui se passe, et donne la masse d'eau obtenue.",
+        etapes: [
+          "De −10 °C à 0 °C, la glace se réchauffe sans changer d'état.",
+          "À 0 °C, la fusion commence : la température reste bloquée à 0 °C tant qu'il reste de la glace.",
+          "Une fois toute la glace fondue, l'eau liquide se réchauffe de 0 °C à 20 °C.",
+          "La masse ne change à aucun moment : la matière n'a fait que changer de forme."
+        ],
+        reponse: "On obtient 200 g d'eau liquide"
+      },
+      traps: "La température ne monte pas pendant un changement d'état, même si on continue de chauffer. Et « condensation » désigne le passage à l'état liquide de la vapeur — le mot exact est liquéfaction." },
+
+    { id: "melanges", theme: "Organisation et transformations de la matière", t: "Mélanges et solutions",
+      goal: "Distinguer les mélanges et séparer leurs constituants.",
+      know: [
+        "Mélange homogène : on ne distingue pas les constituants (eau salée, air).",
+        "Mélange hétérogène : on les distingue (eau et huile, eau boueuse).",
+        "Dissoudre, c'est disperser un soluté dans un solvant : le soluté ne disparaît pas.",
+        "Lors d'une dissolution, la masse totale se conserve : masse de la solution = masse du solvant + masse du soluté.",
+        "Une solution est saturée quand elle ne peut plus dissoudre de soluté.",
+        "Techniques de séparation : décantation, filtration, distillation."
+      ],
+      method: "On regarde d'abord si l'on distingue plusieurs constituants. Puis on choisit la technique adaptée : filtration pour séparer un solide d'un liquide, distillation pour récupérer un liquide dissous.",
+      exemple: {
+        enonce: "On dissout 15 g de sel dans 200 g d'eau. Quelle est la masse de la solution ? Comment récupérer le sel ?",
+        etapes: [
+          "La dissolution ne détruit rien : la masse totale se conserve.",
+          "Masse de la solution = 200 + 15 = 215 g.",
+          "Le sel est dissous : une filtration ne le retiendra pas, car il traverse le filtre.",
+          "Il faut évaporer l'eau : le sel reste au fond du récipient."
+        ],
+        reponse: "215 g, et on récupère le sel par évaporation"
+      },
+      traps: "Un liquide transparent n'est pas forcément un corps pur : l'eau salée est limpide et pourtant c'est un mélange. Et la filtration ne retient jamais ce qui est dissous." },
+
+    { id: "masse-vol", theme: "Organisation et transformations de la matière", t: "Masse volumique",
+      goal: "Calculer une masse volumique et prévoir si un corps flotte.",
+      know: [
+        "La masse volumique compare la masse et le volume : ρ = m ÷ V.",
+        "Unités courantes : g/cm³ ou kg/L. L'eau vaut 1 g/cm³.",
+        "Un corps flotte si sa masse volumique est plus faible que celle du liquide.",
+        "1 L = 1 dm³ = 1 000 cm³.",
+        "Deux objets de même masse peuvent avoir des volumes très différents : c'est ce que mesure la masse volumique."
+      ],
+      method: "On mesure la masse à la balance et le volume à l'éprouvette graduée (par déplacement d'eau), puis on divise la masse par le volume. On compare enfin à 1 g/cm³ pour savoir si ça flotte.",
+      exemple: {
+        enonce: "Un caillou a une masse de 240 g. Plongé dans une éprouvette, il fait monter l'eau de 80 cm³. Calcule sa masse volumique et dis s'il flotte.",
+        etapes: [
+          "Le volume du caillou est égal au volume d'eau déplacé : 80 cm³.",
+          "ρ = m ÷ V = 240 ÷ 80 = 3 g/cm³.",
+          "On compare à l'eau, qui vaut 1 g/cm³.",
+          "3 est supérieur à 1, donc le caillou est plus dense que l'eau."
+        ],
+        reponse: "ρ = 3 g/cm³, le caillou coule"
+      },
+      traps: "Ne pas confondre masse et masse volumique : un kilo de plume et un kilo de plomb ont la même masse mais des volumes très différents. Et il faut des unités cohérentes avant de diviser." },
+
+    { id: "atomes", theme: "Organisation et transformations de la matière", t: "Atomes, molécules et ions",
+      goal: "Décrire la matière à l'échelle microscopique.",
+      know: [
+        "L'atome est la plus petite partie d'un élément chimique. Il est formé d'un noyau et d'électrons.",
+        "Une molécule est un assemblage d'atomes : l'eau est H₂O, le dioxygène O₂.",
+        "Un ion est un atome (ou un groupe d'atomes) qui a gagné ou perdu des électrons : il porte alors une charge.",
+        "Ion positif s'il a perdu des électrons (Na⁺), négatif s'il en a gagné (Cl⁻).",
+        "Dans une formule, l'indice indique le nombre d'atomes : H₂O contient 2 hydrogènes et 1 oxygène."
+      ],
+      method: "On lit la formule chimique en comptant les atomes de chaque élément. Un indice s'applique seulement à l'atome qui le précède.",
+      schema: SCHEMAS.matiere,
+      exemple: {
+        enonce: "Combien d'atomes de chaque élément dans 3 molécules de CO₂ ? Et dans 2 molécules de H₂SO₄ ?",
+        etapes: [
+          "Une molécule de CO₂ contient 1 atome de carbone et 2 d'oxygène.",
+          "Pour 3 molécules : 3 atomes de carbone et 6 d'oxygène.",
+          "Une molécule de H₂SO₄ contient 2 hydrogènes, 1 soufre et 4 oxygènes.",
+          "Pour 2 molécules : 4 hydrogènes, 2 soufres et 8 oxygènes."
+        ],
+        reponse: "3 C et 6 O   ·   4 H, 2 S et 8 O"
+      },
+      traps: "Le coefficient devant la formule multiplie tous les atomes ; l'indice ne concerne que l'atome qui le précède." },
+
+    { id: "chimie", theme: "Organisation et transformations de la matière", t: "Transformations chimiques",
+      goal: "Reconnaître une transformation chimique et identifier les gaz produits.",
+      know: [
+        "Dans une transformation chimique, les réactifs disparaissent et des produits se forment.",
+        "Les atomes se réorganisent mais aucun n'apparaît ni ne disparaît : la masse totale se conserve (Lavoisier).",
+        "Une équation de réaction doit donc être ajustée avec des coefficients.",
+        "Test du dioxyde de carbone : l'eau de chaux se trouble.",
+        "Test du dioxygène : une bûchette incandescente se rallume.",
+        "Test du dihydrogène : détonation à l'approche d'une flamme.",
+        "Combustion complète du carbone : carbone + dioxygène → dioxyde de carbone. Si le dioxygène manque, il se forme du monoxyde de carbone, mortel."
+      ],
+      method: "On identifie les réactifs et les produits, on écrit l'équation, puis on ajuste les coefficients jusqu'à avoir le même nombre d'atomes de chaque élément de part et d'autre.",
+      exemple: {
+        enonce: "On brûle du méthane CH₄ dans le dioxygène. Ajuste l'équation : CH₄ + O₂ → CO₂ + H₂O.",
+        etapes: [
+          "Carbone : 1 à gauche, 1 à droite. C'est équilibré.",
+          "Hydrogène : 4 à gauche, seulement 2 à droite. On met donc 2 devant H₂O.",
+          "Oxygène : on en a maintenant 2 dans CO₂ et 2 dans les 2 H₂O, soit 4 à droite.",
+          "À gauche, O₂ n'en apporte que 2 : on met 2 devant O₂.",
+          "Vérification : 1 C, 4 H et 4 O de chaque côté."
+        ],
+        reponse: "CH₄ + 2 O₂ → CO₂ + 2 H₂O"
+      },
+      traps: "On ajuste avec les coefficients devant les formules, jamais en changeant les indices : écrire CO₃ au lieu de CO₂ change la substance." },
+
+    { id: "circuits", theme: "L'énergie et ses conversions", t: "Circuits électriques",
+      goal: "Distinguer série et dérivation, et reconnaître un court-circuit.",
+      know: [
+        "Le courant ne circule que dans un circuit fermé.",
+        "En série, tous les dipôles sont sur la même boucle : si l'un grille, tout s'éteint.",
+        "En dérivation, chaque branche est indépendante : c'est le câblage des maisons.",
+        "Un court-circuit est un chemin de très faible résistance qui contourne un dipôle : l'intensité s'emballe et les fils chauffent.",
+        "Le sens conventionnel du courant va du + vers le − à l'extérieur du générateur.",
+        "Les métaux conduisent le courant, le plastique et le verre sont isolants."
+      ],
+      method: "On suit le fil depuis la borne + du générateur. S'il n'existe qu'un seul chemin, le circuit est en série ; s'il se sépare en plusieurs branches à un nœud, il est en dérivation.",
+      schema: SCHEMAS.circuits,
+      exemple: {
+        enonce: "Deux lampes brillent dans une guirlande. Quand l'une grille, toutes s'éteignent. Explique, et dis ce qu'il faudrait changer.",
+        etapes: [
+          "Si tout s'éteint, c'est qu'il n'y a qu'une seule boucle : les lampes sont en série.",
+          "La lampe grillée ouvre le circuit ; le courant ne peut plus circuler nulle part.",
+          "En dérivation, chaque lampe serait sur sa propre branche.",
+          "Une branche coupée n'empêcherait pas les autres de fonctionner."
+        ],
+        reponse: "Elles sont en série ; il faudrait les brancher en dérivation"
+      },
+      traps: "Un court-circuit ne « vide » pas la pile lentement : l'intensité devient très forte tout de suite, ce qui peut faire fondre les fils et déclencher un incendie." },
+
+    { id: "tension", theme: "L'énergie et ses conversions", t: "Tension et intensité",
+      goal: "Mesurer et prévoir tensions et intensités dans un circuit.",
+      know: [
+        "La tension se mesure en volts (V) avec un voltmètre branché en dérivation, aux bornes du dipôle.",
+        "L'intensité se mesure en ampères (A) avec un ampèremètre branché en série, traversé par le courant.",
+        "En série : l'intensité est la même partout, et les tensions s'additionnent (U = U₁ + U₂).",
+        "En dérivation : la tension est la même dans chaque branche, et les intensités s'additionnent (loi des nœuds).",
+        "Le courant n'est pas consommé : ce qui entre dans un nœud en ressort intégralement."
+      ],
+      method: "On repère d'abord si le montage est en série ou en dérivation, puis on applique la loi correspondante. On vérifie l'unité et l'ordre de grandeur.",
+      exemple: {
+        enonce: "Dans un circuit en dérivation, deux branches sont traversées par 0,25 A et 0,15 A. La tension du générateur est 6 V. Donne l'intensité principale et la tension aux bornes de chaque lampe.",
+        etapes: [
+          "Le montage est en dérivation : les intensités des branches s'additionnent.",
+          "Intensité principale : 0,25 + 0,15 = 0,40 A.",
+          "En dérivation, chaque branche subit la même tension que le générateur.",
+          "Chaque lampe reçoit donc 6 V."
+        ],
+        reponse: "I = 0,40 A   et   6 V aux bornes de chaque lampe"
+      },
+      traps: "Ne jamais brancher un ampèremètre en dérivation aux bornes d'une pile : cela crée un court-circuit et détruit l'appareil." },
+
+    { id: "ohm", theme: "L'énergie et ses conversions", t: "Loi d'Ohm",
+      goal: "Relier tension, intensité et résistance.",
+      know: [
+        "U = R × I, avec U en volts, R en ohms (Ω) et I en ampères.",
+        "On en déduit R = U ÷ I et I = U ÷ R.",
+        "La résistance freine le courant : à tension égale, plus R est grande, plus I est faible.",
+        "Une résistance se mesure à l'ohmmètre, sur un composant débranché du circuit.",
+        "Pour un conducteur ohmique, la tension est proportionnelle à l'intensité : le graphique U en fonction de I est une droite passant par l'origine."
+      ],
+      method: "On écrit la formule complète, on repère les deux grandeurs connues, puis on isole l'inconnue comme dans une équation. On vérifie que les unités sont volts, ohms et ampères.",
+      exemple: {
+        enonce: "Une résistance de 220 Ω est soumise à une tension de 5,5 V. Calcule l'intensité qui la traverse.",
+        etapes: [
+          "On écrit la loi d'Ohm : U = R × I.",
+          "On isole I : I = U ÷ R.",
+          "On remplace : I = 5,5 ÷ 220 = 0,025 A.",
+          "On peut convertir en milliampères : 0,025 A = 25 mA."
+        ],
+        reponse: "I = 0,025 A, soit 25 mA"
+      },
+      traps: "Attention aux unités : une intensité donnée en milliampères doit être convertie en ampères avant d'appliquer la formule (25 mA = 0,025 A)." },
+
+    { id: "energie", theme: "L'énergie et ses conversions", t: "Puissance et énergie",
+      goal: "Distinguer puissance et énergie, et suivre les conversions.",
+      know: [
+        "La puissance est l'énergie transférée chaque seconde : elle se mesure en watts (W).",
+        "Pour l'électricité : P = U × I.",
+        "L'énergie se mesure en joules (J) ou en kilowattheures (kWh) : E = P × t.",
+        "L'énergie se conserve : elle change de forme sans jamais disparaître.",
+        "Formes d'énergie : cinétique (mouvement), de position, thermique, électrique, chimique, lumineuse.",
+        "L'énergie cinétique dépend du carré de la vitesse : doubler la vitesse la multiplie par 4."
+      ],
+      method: "On distingue ce qui est demandé : une puissance (en watts, à un instant) ou une énergie (en joules ou kWh, sur une durée). Puis on applique P = U × I ou E = P × t.",
+      exemple: {
+        enonce: "Un radiateur de 2 000 W fonctionne 3 heures. Quelle énergie consomme-t-il en kWh ?",
+        etapes: [
+          "On convertit la puissance en kilowatts : 2 000 W = 2 kW.",
+          "On applique E = P × t = 2 × 3.",
+          "Le résultat est en kilowattheures, car les kW sont multipliés par des heures.",
+          "À titre de comparaison, une ampoule LED de 10 W consommerait 200 fois moins."
+        ],
+        reponse: "E = 6 kWh"
+      },
+      traps: "Puissance et énergie ne sont pas la même chose : le watt décrit un débit, le kilowattheure une quantité consommée sur une durée." },
+
+    { id: "lumiere", theme: "Des signaux pour observer", t: "La lumière",
+      goal: "Expliquer ombres, éclipses et vitesse de la lumière.",
+      know: [
+        "Dans un milieu transparent et homogène, la lumière se propage en ligne droite.",
+        "Sa vitesse dans le vide est de 300 000 km/s : rien ne va plus vite.",
+        "Une source primaire produit sa lumière (Soleil, lampe) ; un objet diffusant ne fait que la renvoyer (Lune, mur).",
+        "L'ombre propre est la partie non éclairée de l'objet, l'ombre portée est celle projetée derrière lui.",
+        "Éclipse de Soleil : la Lune passe entre le Soleil et la Terre. Éclipse de Lune : la Terre s'interpose.",
+        "L'année-lumière est une distance : celle parcourue par la lumière en un an."
+      ],
+      method: "On trace les rayons en lignes droites depuis la source, en passant par les bords de l'objet : ils délimitent la zone d'ombre.",
+      schema: SCHEMAS.lumiere,
+      exemple: {
+        enonce: "Une étoile est à 4 années-lumière de la Terre. Que voyons-nous exactement en la regardant ?",
+        etapes: [
+          "Une année-lumière est la distance parcourue par la lumière en un an.",
+          "La lumière de cette étoile a donc mis 4 ans à nous parvenir.",
+          "Nous voyons l'étoile telle qu'elle était il y a 4 ans, pas telle qu'elle est maintenant.",
+          "Regarder loin dans l'espace, c'est regarder dans le passé."
+        ],
+        reponse: "Son image d'il y a 4 ans"
+      },
+      traps: "L'année-lumière mesure une distance, jamais une durée. Et la Lune n'émet pas de lumière : elle renvoie celle du Soleil." },
+
+    { id: "son", theme: "Des signaux pour observer", t: "Le son",
+      goal: "Décrire un son par sa fréquence et son niveau sonore.",
+      know: [
+        "Le son est une vibration de la matière : il ne se propage pas dans le vide.",
+        "Sa vitesse dans l'air est d'environ 340 m/s, bien plus lente que la lumière.",
+        "La fréquence, en hertz (Hz), compte les vibrations par seconde : elle donne la hauteur du son.",
+        "Fréquence basse = son grave ; fréquence élevée = son aigu.",
+        "Le niveau sonore se mesure en décibels (dB). Au-delà de 85 dB, une exposition prolongée abîme l'oreille de façon irréversible.",
+        "L'oreille humaine perçoit environ de 20 Hz à 20 000 Hz."
+      ],
+      method: "On distingue toujours deux choses différentes : la hauteur (grave ou aigu, liée à la fréquence) et le niveau sonore (fort ou faible, en décibels).",
+      schema: SCHEMAS.son,
+      exemple: {
+        enonce: "On voit un éclair, puis on entend le tonnerre 6 secondes plus tard. À quelle distance est l'orage ?",
+        etapes: [
+          "La lumière parcourt la distance quasi instantanément : on néglige son temps de trajet.",
+          "Le son, lui, met 6 secondes à nous parvenir, à 340 m/s.",
+          "Distance = vitesse × temps = 340 × 6 = 2 040 m.",
+          "Soit environ 2 km."
+        ],
+        reponse: "L'orage est à environ 2 km"
+      },
+      traps: "Un son aigu n'est pas un son fort : la hauteur dépend de la fréquence, l'intensité du niveau sonore. Ce sont deux notions indépendantes." },
+
+    { id: "forces", theme: "Mouvements et interactions", t: "Forces, poids et mouvement",
+      goal: "Représenter une force et distinguer poids et masse.",
+      know: [
+        "Une force est une action capable de modifier le mouvement d'un objet ou de le déformer.",
+        "Elle se mesure en newtons (N) avec un dynamomètre.",
+        "On la représente par une flèche : direction, sens et intensité.",
+        "Le poids est la force d'attraction exercée par un astre : P = m × g, avec g ≈ 10 N/kg sur Terre.",
+        "La masse, en kilogrammes, ne dépend pas du lieu ; le poids, si.",
+        "Principe d'inertie : sans force, un objet garde une vitesse constante en ligne droite."
+      ],
+      method: "On liste les actions qui s'exercent sur l'objet, on les représente par des flèches, puis on applique P = m × g pour le poids. On vérifie les unités : kg pour la masse, N pour le poids.",
+      schema: SCHEMAS.forces,
+      exemple: {
+        enonce: "Un astronaute a une masse de 70 kg. Calcule son poids sur Terre (g = 10 N/kg) puis sur la Lune (g = 1,6 N/kg).",
+        etapes: [
+          "Sur Terre : P = m × g = 70 × 10 = 700 N.",
+          "Sur la Lune : P = 70 × 1,6 = 112 N.",
+          "Sa masse, elle, reste 70 kg dans les deux cas.",
+          "Son poids est environ six fois plus faible sur la Lune : c'est pourquoi on y fait de grands bonds."
+        ],
+        reponse: "700 N sur Terre, 112 N sur la Lune, pour 70 kg partout"
+      },
+      traps: "Dire « je pèse 70 kilos » est un abus de langage : 70 kg est une masse. Le poids correspondant est de 700 newtons." }
+  ];
+
+  CHAPTERS.svt = [
+    { id: "digestion", theme: "Le corps humain et la santé", t: "Digestion et nutrition",
+      goal: "Suivre le trajet des aliments et comprendre le passage dans le sang.",
+      know: [
+        "La digestion transforme les aliments en nutriments, assez petits pour passer dans le sang.",
+        "Action mécanique : les dents broient, l'estomac brasse. Action chimique : les sucs digestifs découpent les molécules.",
+        "Trajet : bouche, œsophage, estomac, intestin grêle, gros intestin.",
+        "Les nutriments passent dans le sang au niveau de l'intestin grêle, dont la paroi est couverte de villosités très irriguées.",
+        "Ce qui n'est pas absorbé forme les déchets, évacués par le gros intestin.",
+        "Le sang distribue ensuite les nutriments à tous les organes."
+      ],
+      method: "On suit le trajet dans l'ordre et on se demande à chaque étape : que subit l'aliment ici, et qu'est-ce qui passe dans le sang ?",
+      schema: SCHEMAS.digestion,
+      exemple: {
+        enonce: "Explique pourquoi la paroi de l'intestin grêle est repliée en villosités, très longues et très irriguées.",
+        etapes: [
+          "Les nutriments doivent passer de l'intestin vers le sang : c'est l'absorption intestinale.",
+          "Plus la surface de contact est grande, plus le passage est efficace.",
+          "Les villosités multiplient cette surface : déplié, l'intestin couvrirait plusieurs centaines de m².",
+          "Chaque villosité contient de nombreux vaisseaux sanguins, qui emportent immédiatement les nutriments."
+        ],
+        reponse: "Une grande surface d'échange très irriguée rend l'absorption rapide et complète"
+      },
+      traps: "Digestion et absorption ne sont pas la même chose : la digestion découpe, l'absorption fait passer dans le sang. Et l'estomac n'absorbe presque rien." },
+
+    { id: "respiration", theme: "Le corps humain et la santé", t: "Respiration et circulation",
+      goal: "Relier poumons, cœur et organes.",
+      know: [
+        "Dans les alvéoles pulmonaires, le dioxygène passe de l'air vers le sang ; le dioxyde de carbone fait le trajet inverse.",
+        "Le cœur est une pompe musculaire qui met le sang en mouvement.",
+        "Les artères emportent le sang qui sort du cœur, les veines le ramènent.",
+        "Les globules rouges transportent le dioxygène grâce à l'hémoglobine ; les globules blancs défendent l'organisme.",
+        "Les organes consomment dioxygène et nutriments, et rejettent du CO₂ : c'est la respiration cellulaire.",
+        "Plus un organe travaille, plus il consomme — d'où l'accélération du cœur pendant l'effort."
+      ],
+      method: "On raisonne toujours en circuit fermé : d'où vient le sang, où va-t-il, que prend-il et que dépose-t-il à chaque étape ?",
+      exemple: {
+        enonce: "Pendant un effort, le rythme cardiaque passe de 70 à 140 battements par minute. Explique pourquoi.",
+        etapes: [
+          "Les muscles qui travaillent consomment davantage de dioxygène et de nutriments.",
+          "Ils produisent aussi plus de dioxyde de carbone à évacuer.",
+          "Pour répondre à ce besoin, le sang doit circuler plus vite dans les muscles.",
+          "Le cœur bat donc plus vite, et la respiration s'accélère en même temps pour fournir plus de dioxygène."
+        ],
+        reponse: "Le débit sanguin augmente pour approvisionner les muscles et évacuer leurs déchets"
+      },
+      traps: "Artère et veine ne se distinguent pas par la couleur du sang mais par le sens : l'artère part du cœur, la veine y revient." },
+
+    { id: "cellule", theme: "Le vivant et son évolution", t: "La cellule",
+      goal: "Décrire l'unité de base de tous les êtres vivants.",
+      know: [
+        "Tous les êtres vivants sont formés de cellules.",
+        "Une cellule animale comporte une membrane, un cytoplasme et un noyau.",
+        "La cellule végétale a en plus une paroi rigide et des chloroplastes, qui contiennent la chlorophylle.",
+        "Un organisme unicellulaire tient en une seule cellule : bactérie, paramécie.",
+        "Le noyau contient les chromosomes, donc l'information génétique.",
+        "Les cellules se multiplient en se divisant : une cellule donne deux cellules identiques."
+      ],
+      method: "On observe au microscope, on repère la membrane qui délimite, puis le noyau à l'intérieur. La présence d'une paroi et de chloroplastes signe une cellule végétale.",
+      schema: SCHEMAS.cellule,
+      exemple: {
+        enonce: "Au microscope, on observe des cellules rectangulaires, jointives, contenant de petites structures vertes. Animal ou végétal ? Justifie.",
+        etapes: [
+          "La forme rectangulaire et régulière suggère une paroi rigide.",
+          "Les structures vertes sont des chloroplastes, qui contiennent la chlorophylle.",
+          "Ni la paroi ni les chloroplastes n'existent dans une cellule animale.",
+          "Ces chloroplastes permettent la photosynthèse."
+        ],
+        reponse: "Ce sont des cellules végétales"
+      },
+      traps: "Toutes les cellules végétales ne sont pas vertes : celles des racines n'ont pas de chloroplastes, puisqu'elles ne reçoivent pas la lumière." },
+
+    { id: "reproduction", theme: "Le corps humain et la santé", t: "Puberté et reproduction humaine",
+      goal: "Comprendre la fécondation et le début de la grossesse.",
+      know: [
+        "La puberté regroupe les transformations qui rendent le corps apte à se reproduire.",
+        "Les testicules produisent les spermatozoïdes, les ovaires produisent les ovules.",
+        "La fécondation est la rencontre d'un spermatozoïde et d'un ovule, dans une trompe.",
+        "Elle forme une cellule-œuf, qui se divise en se déplaçant vers l'utérus.",
+        "La nidation est l'installation de l'embryon dans la paroi de l'utérus.",
+        "Le placenta permet les échanges entre la mère et le fœtus : les sangs ne se mélangent pas.",
+        "Le cycle menstruel dure environ 28 jours, avec des variations d'une personne à l'autre."
+      ],
+      method: "On replace les étapes dans l'ordre : production des cellules reproductrices, fécondation, division, nidation, puis développement.",
+      exemple: {
+        enonce: "Pourquoi tout ce que consomme la mère (alcool, tabac, médicaments) peut-il atteindre le fœtus ?",
+        etapes: [
+          "Le fœtus ne respire ni ne mange par lui-même : tout lui arrive par le sang de la mère.",
+          "Les échanges se font au niveau du placenta, à travers une paroi très fine.",
+          "Cette paroi laisse passer le dioxygène et les nutriments, mais aussi de nombreuses substances toxiques.",
+          "Elles atteignent donc un organisme en construction, bien plus fragile."
+        ],
+        reponse: "Parce que le placenta laisse passer ces substances vers le fœtus"
+      },
+      traps: "La fécondation a lieu dans une trompe, pas dans l'utérus. L'utérus, c'est le lieu de la nidation et du développement." },
+
+    { id: "genetique", theme: "Le vivant et son évolution", t: "Reproduction sexuée et génétique",
+      goal: "Relier reproduction, chromosomes et ressemblances familiales.",
+      know: [
+        "La reproduction sexuée fait fusionner deux cellules reproductrices, une de chaque parent.",
+        "Les descendants sont donc tous différents : ils reçoivent un mélange unique.",
+        "La reproduction asexuée n'implique qu'un parent (bouturage, division) et donne des clones identiques.",
+        "L'information génétique est dans le noyau, portée par les chromosomes.",
+        "Une cellule humaine contient 46 chromosomes, soit 23 paires : une de chaque parent.",
+        "Les cellules reproductrices n'en contiennent que 23, pour que la cellule-œuf en retrouve 46.",
+        "Un gène est un segment d'ADN qui porte une information : couleur des yeux, groupe sanguin…"
+      ],
+      method: "On compte toujours en paires : 23 paires chez l'humain, une moitié de chaque parent. C'est ce partage qui explique les ressemblances familiales sans identité parfaite.",
+      exemple: {
+        enonce: "Pourquoi deux frères ne se ressemblent-ils pas exactement, alors qu'ils ont les mêmes parents ?",
+        etapes: [
+          "Chaque cellule reproductrice reçoit un chromosome au hasard dans chaque paire.",
+          "Cela fait un nombre gigantesque de combinaisons possibles pour chaque spermatozoïde ou ovule.",
+          "La fécondation associe ensuite deux de ces cellules, elles-mêmes déjà uniques.",
+          "Chaque enfant reçoit donc un mélange différent : sauf pour les vrais jumeaux, issus d'une même cellule-œuf."
+        ],
+        reponse: "Parce que chaque enfant reçoit une combinaison unique de chromosomes"
+      },
+      traps: "46 chromosomes, c'est 23 paires — et non 46 paires. Les cellules reproductrices, elles, n'en ont que 23." },
+
+    { id: "nerveux", theme: "Le corps humain et la santé", t: "Le système nerveux",
+      goal: "Suivre un message nerveux et comprendre le réflexe.",
+      know: [
+        "Les organes des sens captent les informations et les transmettent au cerveau par les nerfs.",
+        "Le cerveau analyse, décide, et envoie un ordre aux muscles par les nerfs moteurs.",
+        "Les neurones transmettent les messages ; ils communiquent entre eux par les synapses.",
+        "Un réflexe est une réponse rapide et involontaire : le message passe par la moelle épinière sans attendre le cerveau.",
+        "Alcool, drogues et manque de sommeil allongent le temps de réaction et diminuent la vigilance.",
+        "Le port du casque protège le cerveau, organe fragile et non réparable."
+      ],
+      method: "On suit le message dans l'ordre : capteur → nerf sensitif → centre nerveux → nerf moteur → muscle. Pour un réflexe, le centre est la moelle épinière.",
+      schema: SCHEMAS.reflexe,
+      exemple: {
+        enonce: "On retire sa main d'une plaque brûlante avant même d'avoir senti la douleur. Explique ce paradoxe.",
+        etapes: [
+          "Le message part des capteurs de la peau par un nerf sensitif.",
+          "Il atteint la moelle épinière, qui commande aussitôt le muscle : la main se retire.",
+          "Ce trajet court prend quelques centièmes de seconde.",
+          "En parallèle, un autre message monte jusqu'au cerveau, qui met plus longtemps à traiter la douleur.",
+          "La main a donc déjà bougé quand on ressent la brûlure."
+        ],
+        reponse: "Le réflexe passe par la moelle épinière, plus court que le trajet vers le cerveau"
+      },
+      traps: "Un réflexe n'est pas un mouvement rapide décidé par le cerveau : il est involontaire, on ne peut pas l'empêcher." },
+
+    { id: "plantes", theme: "Le vivant et son évolution", t: "Nutrition des plantes",
+      goal: "Expliquer comment une plante fabrique sa matière.",
+      know: [
+        "Une plante verte produit sa propre matière organique : elle est autotrophe.",
+        "La photosynthèse utilise l'eau, le dioxyde de carbone et la lumière, et rejette du dioxygène.",
+        "Elle a lieu dans les chloroplastes, grâce à la chlorophylle.",
+        "Les racines prélèvent l'eau et les sels minéraux ; les feuilles captent la lumière et le CO₂.",
+        "La plante respire aussi, jour et nuit : respiration et photosynthèse sont deux choses différentes.",
+        "Les animaux, eux, doivent consommer de la matière organique déjà formée."
+      ],
+      method: "On distingue toujours ce qui entre et ce qui sort. Photosynthèse : entrent l'eau, le CO₂ et la lumière ; sortent la matière organique et le dioxygène.",
+      exemple: {
+        enonce: "Une plante placée dans un placard sombre jaunit puis meurt, même arrosée. Pourquoi ?",
+        etapes: [
+          "L'arrosage fournit l'eau et les sels minéraux, mais pas la lumière.",
+          "Sans lumière, la photosynthèse ne peut pas avoir lieu.",
+          "La plante ne fabrique donc plus sa matière organique.",
+          "Elle épuise ses réserves, la chlorophylle se dégrade — d'où le jaunissement — puis elle meurt."
+        ],
+        reponse: "Sans lumière, pas de photosynthèse : la plante ne peut plus se nourrir"
+      },
+      traps: "La plante ne « mange » pas la terre : le sol lui fournit de l'eau et des sels minéraux, pas de matière organique." },
+
+    { id: "seismes", theme: "La planète Terre et l'action humaine", t: "Séismes et volcans",
+      goal: "Expliquer l'origine des séismes et distinguer les types d'éruptions.",
+      know: [
+        "Un séisme naît de la rupture brutale des roches en profondeur, au foyer.",
+        "Les ondes se propagent dans toutes les directions ; l'épicentre est le point de la surface situé au-dessus du foyer.",
+        "La magnitude mesure l'énergie libérée ; l'intensité décrit les dégâts ressentis.",
+        "Volcan effusif : lave fluide, coulées, éruption peu dangereuse à distance.",
+        "Volcan explosif : magma visqueux et riche en gaz, nuées ardentes très dangereuses.",
+        "Séismes et volcans se concentrent aux frontières de plaques."
+      ],
+      method: "On remonte toujours à la cause : des contraintes s'accumulent, la roche casse, les ondes partent. Pour un volcan, tout dépend de la viscosité du magma et de sa teneur en gaz.",
+      exemple: {
+        enonce: "Deux séismes ont la même magnitude, mais l'un fait des milliers de victimes et l'autre aucune. Comment est-ce possible ?",
+        etapes: [
+          "La magnitude mesure l'énergie libérée, la même dans les deux cas.",
+          "Mais le risque dépend aussi de ce qui se trouve en surface.",
+          "Un séisme en plein désert ne rencontre ni habitants ni bâtiments.",
+          "Dans une ville dense mal construite, le même séisme provoque des effondrements.",
+          "La prévention et les normes de construction changent donc tout."
+        ],
+        reponse: "La magnitude est identique, mais les enjeux humains sont différents"
+      },
+      traps: "Ne pas confondre magnitude (l'énergie, une seule valeur par séisme) et intensité (les dégâts, variables selon les lieux)." },
+
+    { id: "tectonique", theme: "La planète Terre et l'action humaine", t: "Tectonique des plaques",
+      goal: "Relier le déplacement des plaques aux reliefs et aux risques.",
+      know: [
+        "La surface de la Terre est découpée en plaques rigides qui se déplacent de quelques centimètres par an.",
+        "Aux dorsales océaniques, les plaques s'écartent et de la croûte nouvelle se forme.",
+        "En zone de subduction, une plaque océanique plonge sous une autre : séismes profonds et volcans explosifs.",
+        "En collision, deux plaques continentales se heurtent et forment des chaînes de montagnes comme l'Himalaya.",
+        "Les plaques peuvent aussi coulisser l'une contre l'autre le long d'une faille.",
+        "Ces mouvements sont portés par les déplacements lents du manteau."
+      ],
+      method: "On repère d'abord le type de frontière (écartement, plongement, collision, coulissement), puis on en déduit les phénomènes attendus.",
+      schema: SCHEMAS.plaques,
+      exemple: {
+        enonce: "L'Himalaya continue de grandir de quelques millimètres par an. Explique.",
+        etapes: [
+          "La plaque indienne se déplace vers le nord et rencontre la plaque eurasienne.",
+          "Les deux plaques sont continentales, donc trop légères pour plonger l'une sous l'autre.",
+          "Elles se heurtent : les roches se plissent, se cassent et s'empilent.",
+          "Ce soulèvement continue tant que les plaques se rapprochent, d'où les séismes fréquents de la région."
+        ],
+        reponse: "Une collision de deux plaques continentales, toujours en cours"
+      },
+      traps: "Les plaques ne flottent pas sur du magma liquide : le manteau est solide mais capable de se déformer très lentement." },
+
+    { id: "biodiversite", theme: "Le vivant et son évolution", t: "Roches, fossiles et biodiversité",
+      goal: "Dater les roches et décrire la diversité du vivant.",
+      know: [
+        "Une roche sédimentaire se forme par accumulation puis compaction de sédiments, souvent au fond de l'eau.",
+        "Une roche magmatique vient du refroidissement du magma : lent en profondeur (granite, gros cristaux), rapide en surface (basalte, petits cristaux).",
+        "Un fossile est le reste d'un être vivant conservé dans une roche sédimentaire : il faut un enfouissement rapide.",
+        "Les fossiles permettent de dater les couches et de retracer l'histoire du vivant.",
+        "La biodiversité se mesure à trois échelles : les milieux, les espèces et les gènes.",
+        "Une espèce regroupe des individus qui se reproduisent entre eux et ont des descendants fertiles."
+      ],
+      method: "Pour une roche : on regarde si elle est faite de grains collés (sédimentaire) ou de cristaux (magmatique). Pour l'âge des couches : la plus profonde est la plus ancienne.",
+      exemple: {
+        enonce: "Dans une falaise, on trouve des coquillages fossiles à 2 000 m d'altitude. Qu'en déduire ?",
+        etapes: [
+          "Ces animaux vivaient dans la mer : la roche s'est donc formée sous l'eau.",
+          "C'est une roche sédimentaire, faite de dépôts accumulés au fond d'un océan.",
+          "Elle se trouve aujourd'hui en altitude : elle a donc été soulevée.",
+          "Ce soulèvement s'explique par la collision de deux plaques, qui a formé la montagne."
+        ],
+        reponse: "Cette roche s'est formée au fond de la mer, puis a été soulevée par la formation de la montagne"
+      },
+      traps: "Un fossile n'est pas un animal transformé en pierre : ce sont ses restes, ou son empreinte, conservés dans la roche." }
+  ];
+
+  CHAPTERS.francais = [
+    { id: "classes", theme: "Grammaire", t: "Les classes grammaticales",
+      goal: "Donner la nature d'un mot, quelle que soit sa place dans la phrase.",
+      know: [
+        "La nature d'un mot ne change jamais : « rapidement » est toujours un adverbe.",
+        "Mots variables : nom, déterminant, adjectif, pronom, verbe.",
+        "Mots invariables : adverbe, préposition, conjonction, interjection.",
+        "Le déterminant accompagne le nom (le, un, ce, mon) ; le pronom le remplace (il, celui-ci, qui).",
+        "Les conjonctions de coordination relient deux éléments de même fonction : mais, ou, et, donc, or, ni, car.",
+        "Un même mot peut changer de classe selon l'emploi : « le pouvoir » est un nom, « pouvoir venir » un verbe."
+      ],
+      method: "On se demande ce que le mot fait : accompagne-t-il un nom, le remplace-t-il, précise-t-il un verbe ? Le test de substitution aide : si on peut remplacer par « le », c'est un déterminant.",
+      exemple: {
+        enonce: "Donne la classe grammaticale de chaque mot souligné : « Cette vieille maison, que j'aime beaucoup, est vide. »",
+        etapes: [
+          "« Cette » accompagne le nom « maison » : c'est un déterminant démonstratif.",
+          "« vieille » qualifie le nom : c'est un adjectif qualificatif.",
+          "« que » introduit une subordonnée et remplace « maison » : c'est un pronom relatif.",
+          "« beaucoup » précise le verbe « aime » et ne varie jamais : c'est un adverbe.",
+          "« est » relie le sujet à son attribut : c'est un verbe d'état."
+        ],
+        reponse: "déterminant · adjectif · pronom relatif · adverbe · verbe"
+      },
+      traps: "Ne pas confondre nature et fonction : « vieille » est un adjectif (nature) épithète de « maison » (fonction)." },
+
+    { id: "fonctions", theme: "Grammaire", t: "Les fonctions dans la phrase",
+      goal: "Repérer sujet, COD, COI, attribut et compléments circonstanciels.",
+      know: [
+        "Le sujet répond à « qui est-ce qui ? » et commande l'accord du verbe.",
+        "Le COD suit le verbe sans préposition : il lit un livre.",
+        "Le COI est relié au verbe par une préposition : il parle à son frère.",
+        "L'attribut du sujet suit un verbe d'état — être, sembler, devenir, paraître, rester.",
+        "Les compléments circonstanciels (temps, lieu, manière, cause) peuvent être déplacés ou supprimés.",
+        "L'épithète est collée au nom ; l'apposition en est détachée par une virgule."
+      ],
+      method: "On trouve le verbe, puis on pose les questions dans l'ordre : qui ? quoi ? à qui ? où ? quand ? comment ? Un complément qu'on peut déplacer ou supprimer est circonstanciel.",
+      schema: SCHEMAS.phrase,
+      exemple: {
+        enonce: "Analyse les fonctions : « Hier, dans le jardin, mon frère a offert un cadeau à sa sœur. »",
+        etapes: [
+          "Le verbe est « a offert ».",
+          "Qui a offert ? « mon frère » : c'est le sujet.",
+          "A offert quoi ? « un cadeau », sans préposition : c'est le COD.",
+          "A offert à qui ? « à sa sœur », avec préposition : c'est le COI.",
+          "« Hier » et « dans le jardin » peuvent être déplacés ou supprimés : ce sont des compléments circonstanciels de temps et de lieu."
+        ],
+        reponse: "sujet · COD · COI · deux compléments circonstanciels"
+      },
+      traps: "Après un verbe d'état, ce qui suit n'est jamais un COD : « il est médecin » — « médecin » est attribut du sujet." },
+
+    { id: "temps", theme: "Conjugaison", t: "Les temps du récit",
+      goal: "Employer passé simple et imparfait à bon escient.",
+      know: [
+        "Le passé simple raconte les actions brèves qui font avancer l'histoire, au premier plan.",
+        "L'imparfait plante le décor, décrit, et exprime l'habitude ou la durée : c'est l'arrière-plan.",
+        "Le plus-que-parfait marque une action antérieure à une autre action passée.",
+        "Le présent de narration rend une scène plus vivante à l'intérieur d'un récit au passé.",
+        "Passé simple des verbes en -er : il chanta, ils chantèrent. Des verbes en -ir : il finit, ils finirent.",
+        "Verbes irréguliers fréquents : il fut, il eut, il fit, il prit, il vint, il put."
+      ],
+      method: "On se demande si l'action fait avancer l'histoire (passé simple) ou si elle décrit une situation qui dure (imparfait). Les deux se combinent dans la même phrase.",
+      schema: SCHEMAS.temps,
+      exemple: {
+        enonce: "Justifie l'emploi des temps : « La nuit tombait. Les oiseaux se taisaient. Soudain, une porte claqua et il bondit. »",
+        etapes: [
+          "« tombait » et « se taisaient » sont à l'imparfait : ils décrivent le décor qui dure.",
+          "« claqua » est au passé simple : c'est une action brève, signalée par « soudain ».",
+          "« bondit » est aussi au passé simple : une nouvelle action ponctuelle qui fait avancer le récit.",
+          "L'alternance crée un effet de rupture : le calme installé est brisé net."
+        ],
+        reponse: "Imparfait pour l'arrière-plan, passé simple pour les actions du premier plan"
+      },
+      traps: "« Il courut » (passé simple) et « il courait » (imparfait) ne disent pas la même chose : l'un est une action, l'autre une situation." },
+
+    { id: "modes", theme: "Conjugaison", t: "Subjonctif, conditionnel, impératif",
+      goal: "Reconnaître et employer les modes autres que l'indicatif.",
+      know: [
+        "L'indicatif présente les faits comme réels.",
+        "Le subjonctif présente une action envisagée : après « il faut que », « bien que », « pour que », « avant que ».",
+        "Le conditionnel exprime l'hypothèse, la politesse, mais aussi le futur vu depuis le passé.",
+        "Futur ou conditionnel : « je viendrai » (sans s, futur), « je viendrais » (avec s, conditionnel).",
+        "L'impératif donne un ordre et se conjugue sans sujet exprimé, à trois personnes seulement.",
+        "À l'impératif, les verbes en -er ne prennent pas de -s à la 2ᵉ personne du singulier : « mange »."
+      ],
+      method: "On regarde le mot qui introduit : « il faut que » impose le subjonctif, « si » suivi de l'imparfait appelle le conditionnel dans l'autre membre. Pour trancher entre futur et conditionnel, on remplace par « je » à la 1ʳᵉ personne et on écoute.",
+      exemple: {
+        enonce: "Complète et justifie : « Il faut que tu ___ (venir). Si j'avais le temps, je ___ (venir) aussi. »",
+        etapes: [
+          "« Il faut que » impose le subjonctif présent : que tu viennes.",
+          "Dans la deuxième phrase, « si » est suivi de l'imparfait (« j'avais »).",
+          "La structure « si + imparfait » appelle le conditionnel présent dans l'autre membre.",
+          "Conditionnel de venir à la 1ʳᵉ personne : je viendrais, avec un -s.",
+          "Attention : on n'écrit jamais « si je viendrais » — après « si », pas de conditionnel."
+        ],
+        reponse: "que tu viennes   ·   je viendrais"
+      },
+      traps: "Jamais de conditionnel après « si » exprimant l'hypothèse. Et le -s final distingue le conditionnel du futur." },
+
+    { id: "accords", theme: "Orthographe", t: "Les accords du participe passé",
+      goal: "Accorder correctement selon l'auxiliaire.",
+      know: [
+        "Avec l'auxiliaire être, le participe passé s'accorde avec le sujet : elles sont parties.",
+        "Avec l'auxiliaire avoir, il ne s'accorde qu'avec le COD placé avant le verbe.",
+        "Sans COD, ou avec un COD placé après, pas d'accord : elles ont mangé une pomme.",
+        "Le COD placé avant est souvent le pronom relatif « que » ou un pronom personnel : les fleurs que j'ai cueillies.",
+        "Verbes pronominaux : on accorde avec le COD s'il précède. « Elle s'est lavée » mais « elle s'est lavé les mains ».",
+        "Le participe passé employé seul s'accorde comme un adjectif : les fleurs cueillies."
+      ],
+      method: "On repère l'auxiliaire. Avec être, on accorde avec le sujet. Avec avoir, on cherche le COD et on regarde s'il est avant ou après le verbe.",
+      exemple: {
+        enonce: "Accorde : « Les lettres qu'il a écrit___ », « Elle est parti___ », « Elle s'est lavé___ les mains ».",
+        etapes: [
+          "Première phrase : auxiliaire avoir. Le COD est « que », qui remplace « les lettres », placé avant.",
+          "On accorde donc au féminin pluriel : écrites.",
+          "Deuxième phrase : auxiliaire être, accord avec le sujet féminin singulier : partie.",
+          "Troisième phrase : verbe pronominal, le COD est « les mains », placé après le verbe.",
+          "Le COD étant après, il n'y a pas d'accord : lavé."
+        ],
+        reponse: "écrites · partie · lavé"
+      },
+      traps: "« Elle s'est lavée » et « elle s'est lavé les mains » n'ont pas le même accord : tout dépend de la position du COD." },
+
+    { id: "voix", theme: "Grammaire", t: "Voix active et voix passive",
+      goal: "Transformer une phrase d'une voix à l'autre.",
+      know: [
+        "À la voix active, le sujet fait l'action. À la voix passive, il la subit.",
+        "Pour passer au passif : le COD devient sujet, le sujet devient complément d'agent introduit par « par ».",
+        "Le verbe se construit avec l'auxiliaire être, au même temps que le verbe actif.",
+        "Le participe passé s'accorde alors avec le nouveau sujet.",
+        "Seuls les verbes qui admettent un COD peuvent se mettre au passif.",
+        "Le complément d'agent est souvent omis quand on ignore ou veut taire l'auteur : « la vitre a été cassée »."
+      ],
+      method: "On repère le COD de la phrase active : il devient sujet. On conserve le temps du verbe, en le construisant avec être, et on accorde le participe passé.",
+      exemple: {
+        enonce: "Mets à la voix passive : « Le jardinier arrosait les fleurs. » Puis reviens à l'actif : « La souris a été mangée par le chat. »",
+        etapes: [
+          "Le COD de la phrase active est « les fleurs » : il devient sujet.",
+          "Le verbe était à l'imparfait : on garde l'imparfait de être, donc « étaient ».",
+          "Accord du participe avec le nouveau sujet : arrosées. Le sujet devient complément d'agent.",
+          "Pour la seconde : le complément d'agent « le chat » redevient sujet, « la souris » redevient COD.",
+          "Le passé composé passif « a été mangée » redonne le passé composé actif « a mangé »."
+        ],
+        reponse: "Les fleurs étaient arrosées par le jardinier   ·   Le chat a mangé la souris"
+      },
+      traps: "Au passif, le sujet ne fait pas l'action : dans « la souris est mangée », c'est le chat qui mange." },
+
+    { id: "propositions", theme: "Grammaire", t: "Les propositions subordonnées",
+      goal: "Distinguer relative, complétive et circonstancielle.",
+      know: [
+        "Une proposition s'organise autour d'un verbe conjugué : autant de verbes, autant de propositions.",
+        "La subordonnée relative complète un nom, son antécédent, et commence par un pronom relatif : qui, que, dont, où.",
+        "La subordonnée complétive complète le verbe et répond à « quoi ? » : elle est introduite par « que ».",
+        "La subordonnée circonstancielle précise les circonstances : cause (parce que), conséquence (si bien que), but (pour que), temps (quand), opposition (bien que).",
+        "« Bien que » et « pour que » sont suivis du subjonctif."
+      ],
+      method: "On compte les verbes conjugués, puis on regarde ce que complète la subordonnée : un nom (relative), le verbe principal (complétive), ou toute la phrase (circonstancielle).",
+      exemple: {
+        enonce: "Identifie la nature de chaque subordonnée : « Je pense qu'il viendra. » · « Le livre que j'ai lu est passionnant. » · « Il est resté parce qu'il pleuvait. »",
+        etapes: [
+          "Première phrase : « qu'il viendra » complète le verbe « pense » — je pense quoi ? C'est une complétive, COD.",
+          "Deuxième phrase : « que j'ai lu » complète le nom « livre », son antécédent. C'est une relative.",
+          "Troisième phrase : « parce qu'il pleuvait » indique la cause et peut être déplacée.",
+          "C'est donc une circonstancielle de cause."
+        ],
+        reponse: "complétive · relative · circonstancielle de cause"
+      },
+      traps: "« Que » peut être pronom relatif (après un nom) ou conjonction (après un verbe d'opinion) : c'est ce qu'il complète qui tranche." },
+
+    { id: "discours", theme: "Expression", t: "Le discours rapporté",
+      goal: "Passer du discours direct au discours indirect.",
+      know: [
+        "Discours direct : les paroles sont citées entre guillemets, avec un verbe de parole.",
+        "Discours indirect : les paroles sont intégrées au récit par « que », sans guillemets.",
+        "Quand le verbe introducteur est au passé, les temps reculent : présent → imparfait, futur → conditionnel.",
+        "Les personnes changent : « je » devient « il ».",
+        "Les indicateurs de temps changent aussi : demain → le lendemain, hier → la veille, aujourd'hui → ce jour-là.",
+        "Dans une question rapportée, on garde l'ordre sujet-verbe et on supprime le point d'interrogation.",
+        "Le discours indirect libre glisse les paroles dans le récit sans guillemets ni « que »."
+      ],
+      method: "On procède dans l'ordre : verbe introducteur, puis personnes, puis temps, puis indicateurs de temps. On supprime enfin guillemets et ponctuation expressive.",
+      exemple: {
+        enonce: "Mets au discours indirect : Il déclara : « Je partirai demain, car je suis fatigué. »",
+        etapes: [
+          "Verbe introducteur au passé : les temps vont reculer d'un cran.",
+          "« Je » devient « il » : c'est lui qui parle de lui-même.",
+          "« Je partirai » (futur) devient « il partirait » (conditionnel).",
+          "« Je suis » (présent) devient « il était » (imparfait).",
+          "« Demain » devient « le lendemain », et on remplace les guillemets par « que »."
+        ],
+        reponse: "Il déclara qu'il partirait le lendemain, car il était fatigué"
+      },
+      traps: "On oublie souvent de changer les indicateurs de temps : « il a dit qu'il viendrait demain » n'a pas le même sens que « le lendemain »." },
+
+    { id: "figures", theme: "Expression", t: "Les figures de style",
+      goal: "Reconnaître et nommer les principales figures.",
+      know: [
+        "Comparaison : rapprochement avec un outil (comme, tel que, ressembler à).",
+        "Métaphore : même rapprochement, mais sans outil de comparaison.",
+        "Personnification : on prête des traits humains à ce qui n'en a pas.",
+        "Hyperbole : exagération. Litote : on dit moins pour suggérer plus.",
+        "Oxymore : deux mots de sens contraires accolés. Antithèse : deux idées opposées dans la même phrase.",
+        "Métonymie : on désigne par un élément lié (« boire un verre »). Périphrase : une expression remplace un mot.",
+        "Anaphore : répétition en début de phrases ou de vers. Gradation : intensité croissante.",
+        "Allitération (consonnes) et assonance (voyelles) jouent sur les sons."
+      ],
+      method: "On se demande d'abord s'il y a un outil de comparaison, puis si les termes s'opposent, puis s'il y a exagération ou atténuation. Nommer la figure ne suffit pas : il faut dire l'effet produit.",
+      exemple: {
+        enonce: "Nomme les figures : « Cette obscure clarté qui tombe des étoiles. » · « Il pleure des rivières. » · « Le vent hurlait. »",
+        etapes: [
+          "« Obscure clarté » accole deux mots de sens contraires : c'est un oxymore.",
+          "L'effet : rendre sensible une lumière étrange, entre nuit et jour.",
+          "« Pleure des rivières » exagère énormément la quantité de larmes : c'est une hyperbole.",
+          "« Le vent hurlait » attribue au vent une action humaine : c'est une personnification.",
+          "L'effet : rendre la tempête menaçante, presque vivante."
+        ],
+        reponse: "oxymore · hyperbole · personnification"
+      },
+      traps: "Comparaison et métaphore se distinguent par la présence de l'outil : « fort comme un lion » (comparaison), « ce lion » (métaphore)." },
+
+    { id: "narration", theme: "Expression", t: "Le narrateur et les points de vue",
+      goal: "Identifier qui raconte et ce qu'il sait.",
+      know: [
+        "Le narrateur n'est pas l'auteur : c'est la voix qui raconte l'histoire.",
+        "Récit à la première personne : le narrateur est un personnage. À la troisième : il est extérieur.",
+        "Point de vue interne : on suit un seul personnage, on ne sait que ce qu'il sait.",
+        "Point de vue externe : on décrit seulement de l'extérieur, comme une caméra, sans accès aux pensées.",
+        "Point de vue omniscient : le narrateur sait tout, y compris les pensées de chacun et l'avenir.",
+        "Le choix du point de vue crée l'effet : l'interne fait partager les émotions, l'externe entretient le mystère."
+      ],
+      method: "On repère les marques de pensée (« il se demandait », « elle sentit ») : si elles ne concernent qu'un personnage, le point de vue est interne. Aucune pensée, c'est externe ; les pensées de plusieurs, c'est omniscient.",
+      exemple: {
+        enonce: "Identifie le point de vue : « Il poussa la porte, le cœur battant. Il ignorait que Marie l'attendait derrière, terrifiée elle aussi. »",
+        etapes: [
+          "La première phrase donne les sensations d'un personnage : « le cœur battant ».",
+          "Mais la seconde révèle ce qu'il ignore, et les émotions de Marie.",
+          "Un narrateur interne ne pourrait pas savoir ce que le personnage ignore.",
+          "Ici, le narrateur sait tout de tout le monde : le point de vue est omniscient.",
+          "Effet : le lecteur en sait plus que les personnages, ce qui crée du suspense."
+        ],
+        reponse: "Point de vue omniscient"
+      },
+      traps: "Un récit à la troisième personne n'est pas forcément omniscient : il peut suivre un seul personnage, en point de vue interne." }
+  ];
+
   /* ---------------- onglets ---------------- */
   var TABS = [
     { id: "quiz",     label: "Quiz",       icon: "✏️" },
@@ -4072,12 +5047,17 @@
   }
 
   /* ---------------- onglet Révisions 4ᵉ ---------------- */
+  var revisionSubject = "maths";
+
   function renderRevision() {
-    app.setAttribute("style", tint("maths"));
+    var sujet = revisionSubject;
+    var matiere = subjectById(sujet);
+    var chapitres = CHAPTERS[sujet] || [];
+    app.setAttribute("style", tint(sujet));
 
     /* Combien de questions disponibles pour s'entraîner sur ce chapitre. */
     function stock(chId) {
-      var m = subjectById("maths");
+      var m = matiere;
       var gens = m.makers.filter(function (x) { return x.ch === chId; }).length;
       var ecrites = m.questions.filter(function (q) { return q.ch === chId; }).length;
       /* Longueur réelle de l'entraînement, calculée comme dans buildQuiz : un générateur
@@ -4088,7 +5068,7 @@
     }
 
     var themes = [];
-    MATHS_CHAPTERS.forEach(function (c) {
+    chapitres.forEach(function (c) {
       if (!themes.length || themes[themes.length - 1].nom !== c.theme) {
         themes.push({ nom: c.theme, chapitres: [] });
       }
@@ -4136,19 +5116,34 @@
       return '<section class="theme"><h3>' + esc(t.nom) + '</h3>' + fiches + '</section>';
     }).join("");
 
+    var choix = Object.keys(CHAPTERS).map(function (id) {
+      var s = subjectById(id);
+      return '<button class="pick' + (id === sujet ? " on" : "") + '" data-pick="' + id + '"' +
+        ' style="' + tint(id) + '" aria-pressed="' + (id === sujet ? "true" : "false") + '">' +
+        '<span aria-hidden="true">' + s.medal + '</span> ' + esc(s.name) + '</button>';
+    }).join("");
+
     app.innerHTML = '' +
       tabsBar() +
       '<header class="pagehead">' +
-        '<p class="eyebrow">Programme complet · mathématiques</p>' +
+        '<p class="eyebrow">Programme complet · ' + esc(matiere.name.toLowerCase()) + '</p>' +
         '<h1>Ce qu\'il y a à réviser en 4ᵉ</h1>' +
-        '<p class="sub">Les ' + MATHS_CHAPTERS.length + ' chapitres de l\'année, avec pour chacun le cours à savoir, ' +
-          'la méthode, les pièges classiques — et un entraînement qui ne pose que des questions de ce chapitre.</p>' +
+        '<p class="sub">Les ' + chapitres.length + ' chapitres de l\'année, avec pour chacun le cours à savoir, ' +
+          'un schéma, la méthode, un exercice corrigé, les pièges classiques — et un entraînement qui ne pose ' +
+          'que des questions de ce chapitre.</p>' +
+        '<div class="picks">' + choix + '</div>' +
       '</header>' +
       blocs;
 
     wireTabs();
+    Array.prototype.forEach.call(app.querySelectorAll("[data-pick]"), function (btn) {
+      btn.addEventListener("click", function () {
+        revisionSubject = btn.getAttribute("data-pick");
+        renderRevision();
+      });
+    });
     Array.prototype.forEach.call(app.querySelectorAll("[data-train]"), function (btn) {
-      btn.addEventListener("click", function () { startQuiz("maths", btn.getAttribute("data-train")); });
+      btn.addEventListener("click", function () { startQuiz(sujet, btn.getAttribute("data-train")); });
     });
     window.scrollTo(0, 0);
   }
@@ -4346,13 +5341,13 @@
     /* Entraînement lancé depuis une fiche : un seul chapitre, tous niveaux confondus,
        et cela ne fait pas monter de niveau — c'est de la révision, pas une évaluation. */
     if (chapter) {
-      var ch = MATHS_CHAPTERS.filter(function (c) { return c.id === chapter; })[0];
+      var ch = (CHAPTERS[id] || []).filter(function (c) { return c.id === chapter; })[0];
       var entrainement = {
-        id: "maths", medal: "📐",
+        id: id, medal: subject.medal,
         name: ch ? ch.t : subject.name,
         questions: subject.questions, makers: subject.makers
       };
-      lvl = levelOf("maths");
+      lvl = levelOf(id);
       run = {
         subject: entrainement, level: lvl, chapter: chapter, training: true,
         items: buildQuiz(subject, lvl, chapter), i: 0, score: 0, misses: [], answered: false
