@@ -920,6 +920,47 @@
     margin-right: 8px;
   }
 
+  /* choix du niveau à jouer, sous la carte d'une matière */
+  .subject-cell { display: flex; flex-direction: column; }
+  .levelpick {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 7px 12px;
+    border: 1px solid var(--rule);
+    border-top: none;
+    border-radius: 0 0 3px 3px;
+    background: var(--card);
+  }
+  .lvlbtn {
+    font-family: var(--f-mono);
+    font-size: 15px;
+    line-height: 1;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    border: 1.5px solid var(--rule);
+    background: var(--card);
+    color: var(--blue);
+    cursor: pointer;
+  }
+  .lvlbtn:hover:not(:disabled) { border-color: var(--blue); }
+  .lvlbtn:disabled { opacity: .35; cursor: default; }
+  .lvlbtn:focus-visible { outline: 3px solid var(--blue); outline-offset: 2px; }
+  .lvlnow { font-family: var(--f-mono); font-size: 12px; color: var(--ink-soft); }
+  .lvlnow b { color: var(--blue); font-size: 14px; }
+  .lvlnote {
+    font-family: var(--f-mono);
+    font-size: 10px;
+    letter-spacing: .06em;
+    color: var(--ink-soft);
+    border: 1px dashed var(--rule);
+    border-radius: 99px;
+    padding: 2px 8px;
+  }
+
+
   /* ---------- historique et erreurs ---------- */
   .progress-table.history .quoi { color: var(--ink); }
   .progress-table.history .date { font-family: var(--f-mono); font-size: 12px; }
@@ -2352,6 +2393,139 @@
         return made(10, "Dans une classe, " + n1 + " élèves ont eu " + v1 + " et " + n2 + " élèves ont eu " + v2 + ". Quelle est la moyenne ?",
           num(moy), [num((v1 + v2) / 2), num(v1 + v2), num(moy + 1)],
           "Moyenne pondérée : (" + n1 + " × " + v1 + " + " + n2 + " × " + v2 + ") ÷ " + (n1 + n2) + " = " + num(moy) + ". Ce n'est pas la moyenne des deux notes.");
+      } },
+      /* ---- niveaux 11 à 20 : programme de 3ᵉ ---- */
+      { d: 11, make: function () {
+        var a = rnd(2, 12), b = rnd(2, 12);
+        while (a === b) b = rnd(2, 12);
+        return made(11, "Développe (" + a + " + " + b + ")² avec l'identité remarquable.",
+          (a * a) + " + " + (2 * a * b) + " + " + (b * b),
+          [(a * a) + " + " + (b * b), (a * a) + " + " + (a * b) + " + " + (b * b), ((a + b) * (a + b)) + " + 1"],
+          "(a + b)² = a² + 2ab + b² = " + a * a + " + " + 2 * a * b + " + " + b * b + ". Le double produit s'oublie souvent.");
+      } },
+      { d: 11, make: function () {
+        var a = rnd(2, 12);
+        return made(11, "Factorise x² − " + (a * a) + ".", "(x − " + a + ")(x + " + a + ")",
+          ["(x − " + a + ")²", "(x + " + a + ")²", "x(x − " + a * a + ")"],
+          "C'est une différence de deux carrés : a² − b² = (a − b)(a + b), avec b = " + a + ".");
+      } },
+      { d: 12, make: function () {
+        var a = rnd(2, 9), b = rnd(2, 9);
+        return made(12, "Combien vaut √" + (a * a) + " × √" + (b * b) + " ?", a * b,
+          [a + b, a * a * b * b, num(Math.sqrt(a * a + b * b))],
+          "√" + a * a + " = " + a + " et √" + b * b + " = " + b + ", donc le produit vaut " + a * b + ". Retenir : √a × √b = √(ab).");
+      } },
+      { d: 12, make: function () {
+        var n = rnd(2, 9), p = rnd(2, 9);
+        return made(12, "Un article passe de " + (n * 10) + " € à " + (n * 10 + p * 10) + " €. Quel est le pourcentage d'augmentation ?",
+          num(p * 10 / (n * 10) * 100) + " %", [num(p * 10) + " %", num(n * 10 / (p * 10) * 100) + " %", num(p) + " %"],
+          "Augmentation = (valeur finale − valeur initiale) ÷ valeur initiale × 100 = " + (p * 10) + " ÷ " + (n * 10) + " × 100 = " + num(p * 10 / (n * 10) * 100) + " %.");
+      } },
+      { d: 13, make: function () {
+        var k = rnd(2, 6), x = rnd(2, 9);
+        return made(13, "Résous l'équation produit (x − " + x + ")(x + " + k + ") = 0.",
+          "x = " + x + " ou x = −" + k,
+          ["x = " + x + " et x = " + k, "x = −" + x + " ou x = " + k, "x = " + signed(x - k)],
+          "Un produit est nul si l'un de ses facteurs est nul : x − " + x + " = 0 donne x = " + x + " ; x + " + k + " = 0 donne x = −" + k + ".");
+      } },
+      { d: 13, make: function () {
+        var n = rnd(2, 9);
+        return made(13, "Quelle est l'image de " + n + " par la fonction f(x) = 3x − 5 ?", 3 * n - 5,
+          [3 * n + 5, n * 3, 3 * (n - 5)],
+          "On remplace x par " + n + " : f(" + n + ") = 3 × " + n + " − 5 = " + (3 * n - 5) + ".");
+      } },
+      { d: 14, make: function () {
+        var a = rnd(2, 9), b = rnd(10, 40);
+        return made(14, "Pour la fonction f(x) = " + a + "x, quel est l'antécédent de " + (a * b) + " ?", b,
+          [a * b * a, num(b / a), a + b],
+          "On résout " + a + "x = " + a * b + ", donc x = " + a * b + " ÷ " + a + " = " + b + ". L'antécédent est la valeur de départ, l'image celle d'arrivée.");
+      } },
+      { d: 14, make: function () {
+        var d = pickOne([12, 18, 24, 30, 36, 42, 48]), e = pickOne([8, 16, 20, 28, 32]);
+        return made(14, "Quel est le PGCD de " + d + " et " + e + " ?", pgcd(d, e),
+          [d * e / pgcd(d, e), Math.min(d, e), pgcd(d, e) * 2],
+          "Algorithme d'Euclide : on divise, on garde le reste, on recommence jusqu'à un reste nul. PGCD(" + d + " ; " + e + ") = " + pgcd(d, e) + ".");
+      } },
+      { d: 15, make: function () {
+        var trip = pickOne([[3, 4, 5], [6, 8, 10], [5, 12, 13], [8, 15, 17]]);
+        var angle = Math.round(Math.atan2(trip[1], trip[0]) * 180 / Math.PI);
+        return made(15, "Dans un triangle rectangle, le côté opposé mesure " + trip[1] + " et l'hypoténuse " + trip[2] + ". Que vaut le sinus de l'angle ?",
+          num(trip[1] / trip[2]), [num(trip[0] / trip[2]), num(trip[1] / trip[0]), num(trip[2] / trip[1])],
+          "SOH : sinus = opposé ÷ hypoténuse = " + trip[1] + " ÷ " + trip[2] + " = " + num(trip[1] / trip[2]) + ". L'angle mesure environ " + angle + "°.");
+      } },
+      { d: 15, make: function () {
+        var trip = pickOne([[3, 4], [6, 8], [5, 12], [8, 15]]);
+        return made(15, "Dans un triangle rectangle, le côté opposé mesure " + trip[1] + " et l'adjacent " + trip[0] + ". Que vaut la tangente de l'angle ?",
+          num(trip[1] / trip[0]), [num(trip[0] / trip[1]), num(trip[1] / Math.sqrt(trip[0] * trip[0] + trip[1] * trip[1])), num(trip[0] * trip[1])],
+          "TOA : tangente = opposé ÷ adjacent = " + trip[1] + " ÷ " + trip[0] + " = " + num(trip[1] / trip[0]) + ".");
+      } },
+      { d: 16, make: function () {
+        var k = pickOne([2, 3, 4, 5]), a = rnd(2, 9);
+        return made(16, "On agrandit une figure d'aire " + a + " cm² dans un rapport " + k + ". Quelle est l'aire de l'image ?",
+          (a * k * k) + " cm²", [(a * k) + " cm²", (a * k * k * k) + " cm²", (a + k) + " cm²"],
+          "Dans un agrandissement de rapport " + k + ", les longueurs sont multipliées par " + k + ", les aires par k² = " + k * k + ", les volumes par k³.");
+      } },
+      { d: 16, make: function () {
+        var k = pickOne([2, 3, 4]), v = rnd(2, 9) * 10;
+        return made(16, "On réduit un solide de volume " + (v * k * k * k) + " cm³ dans un rapport 1/" + k + ". Quel est le volume de l'image ?",
+          v + " cm³", [(v * k) + " cm³", (v * k * k) + " cm³", num(v * k * k) + " cm³"],
+          "Les volumes sont divisés par k³ = " + k * k * k + " : " + (v * k * k * k) + " ÷ " + k * k * k + " = " + v + " cm³.");
+      } },
+      { d: 17, make: function () {
+        var n = rnd(2, 9);
+        return made(17, "Combien vaut (" + n + "x)³ ?", (n * n * n) + "x³",
+          [(n * 3) + "x³", (n * n * n) + "x", n + "x³"],
+          "L'exposant s'applique à tout le produit : (" + n + "x)³ = " + n + "³ × x³ = " + n * n * n + "x³.");
+      } },
+      { d: 17, make: function () {
+        var boules = rnd(3, 8), autres = rnd(3, 8);
+        var total = boules + autres;
+        return made(17, "Une urne contient " + boules + " boules rouges et " + autres + " bleues. On tire deux boules avec remise. Quelle est la probabilité d'obtenir deux rouges ?",
+          frac(boules * boules, total * total), [frac(boules, total), frac(2 * boules, total), frac(boules * (boules - 1), total * (total - 1))],
+          "Avec remise, les tirages sont indépendants : on multiplie les probabilités. (" + boules + "/" + total + ") × (" + boules + "/" + total + ") = " + frac(boules * boules, total * total) + ".");
+      } },
+      { d: 18, make: function () {
+        var a = rnd(2, 6), b = rnd(2, 9);
+        return made(18, "Une fonction affine s'écrit f(x) = ax + b. Si f(0) = " + b + " et f(1) = " + (a + b) + ", que vaut a ?",
+          a, [b, a + b, num(b / a)],
+          "f(0) donne l'ordonnée à l'origine, ici b = " + b + ". Le coefficient directeur vaut a = f(1) − f(0) = " + (a + b) + " − " + b + " = " + a + ".");
+      } },
+      { d: 18, make: function () {
+        var r = rnd(2, 9);
+        return made(18, "Quel est le volume d'une boule de rayon " + r + " cm ? (π ≈ 3,14, arrondi à l'unité)",
+          Math.round(4 / 3 * 3.14 * r * r * r) + " cm³",
+          [Math.round(3.14 * r * r * r) + " cm³", Math.round(4 * 3.14 * r * r) + " cm³", Math.round(3.14 * r * r) + " cm³"],
+          "V = (4/3) × π × r³ = (4/3) × 3,14 × " + r * r * r + " ≈ " + Math.round(4 / 3 * 3.14 * r * r * r) + " cm³. La formule 4πr² donne l'aire de la sphère, pas son volume.");
+      } },
+      { d: 19, make: function () {
+        var n = rnd(2, 6), m = rnd(2, 6);
+        return made(19, "Écris sous la forme d'une seule puissance : (10^" + n + ")^" + m + ".", "10^" + (n * m),
+          ["10^" + (n + m), "10^" + Math.abs(n - m), "100^" + (n * m)],
+          "Puissance d'une puissance : on multiplie les exposants, donc " + n + " × " + m + " = " + n * m + ".");
+      } },
+      { d: 19, make: function () {
+        var a = rnd(2, 9), b = rnd(2, 9);
+        return made(19, "Développe (" + a + "x − " + b + ")(" + a + "x + " + b + ").",
+          (a * a) + "x² − " + (b * b),
+          [(a * a) + "x² + " + (b * b), (a * a) + "x² − " + (2 * a * b) + "x − " + (b * b), (a * a) + "x² − " + (b * b) + "x"],
+          "Identité remarquable (a − b)(a + b) = a² − b² : les termes en x s'annulent, il reste " + a * a + "x² − " + b * b + ".");
+      } },
+      { d: 20, make: function () {
+        var serie = [];
+        for (var i = 0; i < 8; i++) serie.push(rnd(2, 20));
+        var range = serie.slice().sort(function (x, y) { return x - y; });
+        var med = (range[3] + range[4]) / 2;
+        return made(20, "Voici une série rangée : " + range.join(" ; ") + ". Quelle est la médiane ?",
+          num(med), [String(range[3]), String(range[4]), num((range[0] + range[7]) / 2)],
+          "La série compte 8 valeurs, un nombre pair : la médiane est la moyenne des 4ᵉ et 5ᵉ valeurs, (" + range[3] + " + " + range[4] + ") ÷ 2 = " + num(med) + ".");
+      } },
+      { d: 20, make: function () {
+        var v = rnd(2, 9) * 10, t = rnd(2, 5);
+        var d1 = v * t;
+        return made(20, "Un train roule à " + v + " km/h pendant " + t + " h, puis à " + (v * 2) + " km/h pendant 1 h. Quelle est sa vitesse moyenne sur tout le trajet ?",
+          num((d1 + v * 2) / (t + 1)) + " km/h",
+          [num((v + v * 2) / 2) + " km/h", num(v * 1.5) + " km/h", num(d1 + v * 2) + " km/h"],
+          "Vitesse moyenne = distance totale ÷ temps total = (" + d1 + " + " + v * 2 + ") ÷ " + (t + 1) + " = " + num((d1 + v * 2) / (t + 1)) + " km/h. Ce n'est jamais la moyenne des deux vitesses.");
       } }
     ],
 
@@ -2594,7 +2768,12 @@
     "puissances", "volumes", "litteral",
     "litteral", "litteral", "litteral", "litteral",   // les quatre factorisations à écrire
     "litteral", "probabilites", "puissances", "puissances", "equations",
-    "pythagore", "litteral", "proportion", "equations", "statistiques"
+    "pythagore", "litteral", "proportion", "equations", "statistiques",
+    /* niveaux 11 a 20 : programme de 3e */
+    "litteral", "litteral", "puissances", "proportion", "equations",
+    "equations", "equations", "fractions", "trigonometrie", "trigonometrie",
+    "aires", "volumes", "puissances", "probabilites", "equations",
+    "volumes", "puissances", "litteral", "statistiques", "proportion"
   ];
 
   CH_Q.physique = [
@@ -2819,7 +2998,9 @@
 
   var QUIZ_LEN = 20;
   var MAX_REUSE = 5;             // fois qu'un même générateur peut resservir dans un entraînement
-  var MAX_LEVEL = 10;
+  var MAX_LEVEL = 10;              // plafond par défaut
+  var MAX_LEVEL_PLUS = 20;         // matières qui prolongent jusqu'au programme de 3ᵉ
+  var LEVELS_PLUS = { maths: true };
   var PASS = 15;                 // bonnes réponses nécessaires pour débloquer le niveau suivant
   var STORE = "objectif4e_v1";
 
@@ -2853,6 +3034,7 @@
     if (!s.seen || typeof s.seen !== "object") s.seen = {};
     if (!Array.isArray(s.history)) s.history = [];   // un enregistrement par quiz terminé
     if (!Array.isArray(s.errors)) s.errors = [];     // chaque question ratée, avec sa correction
+    if (!s.chosen || typeof s.chosen !== "object") s.chosen = {};  // niveau choisi, s'il diffère
     return s;
   }
 
@@ -3009,9 +3191,25 @@
     });
   }
 
+  /* Plafond de niveaux d'une matière : 10 partout, 20 en maths pour aller jusqu'au
+     programme de 3ᵉ sans y être obligé. */
+  function maxLevel(id) {
+    return LEVELS_PLUS[id] ? MAX_LEVEL_PLUS : MAX_LEVEL;
+  }
+
+  /* Niveau réellement joué : celui atteint, sauf si un niveau plus bas a été choisi
+     pour réviser. On ne peut jamais choisir plus haut que ce qu'on a débloqué. */
+  function playedLevel(id) {
+    var choisi = state.chosen[id];
+    var atteint = levelOf(id);
+    if (!choisi || choisi > atteint || choisi < 1) return atteint;
+    return choisi;
+  }
+
+
   /* Niveau atteint dans une matière : 1 par défaut, 10 au maximum. */
   function levelOf(id) {
-    return Math.min(state.levels[id] || 1, MAX_LEVEL);
+    return Math.min(state.levels[id] || 1, maxLevel(id));
   }
 
   function level(xp) {
@@ -3021,7 +3219,9 @@
   /* Ce que représente chaque niveau de difficulté, du plus simple au plus exigeant. */
   var LEVEL_NAMES = [
     "bases de 5ᵉ", "5ᵉ tranquille", "5ᵉ courant", "5ᵉ solide", "5ᵉ exigeant",
-    "vers la 4ᵉ", "programme de 4ᵉ", "4ᵉ confirmé", "4ᵉ exigeant", "niveau maximum"
+    "vers la 4ᵉ", "programme de 4ᵉ", "4ᵉ confirmé", "4ᵉ exigeant", "4ᵉ maîtrisé",
+    "vers la 3ᵉ", "3ᵉ : découverte", "3ᵉ courant", "3ᵉ solide", "3ᵉ confirmé",
+    "3ᵉ exigeant", "niveau brevet", "brevet exigeant", "au-delà du brevet", "niveau maximum"
   ];
 
   var RANKS = ["Débutant", "Apprenti", "Sérieux", "Costaud", "Solide", "Expert", "Redoutable", "Légende"];
@@ -3046,7 +3246,7 @@
     { id: "streak", icon: "🔥", name: "Trois jours",    hint: "Réviser trois jours d'affilée",
       won: function (st) { return st.streak >= 3; } },
     { id: "summit", icon: "🏔️", name: "Sommet",         hint: "Atteindre le niveau 10 dans une matière",
-      won: function (st) { return SUBJECTS.some(function (s) { return (st.levels[s.id] || 1) >= MAX_LEVEL; }); } }
+      won: function (st) { return SUBJECTS.some(function (s) { return (st.levels[s.id] || 1) >= maxLevel(s.id); }); } }
   ];
 
   /* Met à jour les badges et renvoie ceux qui viennent d'être décrochés. */
@@ -3706,7 +3906,7 @@
       var doneToday = day.subjects[s.id] || 0;
       return '<tr style="' + tint(s.id) + '">' +
         '<th scope="row"><span class="dot"></span>' + esc(s.name) + '</th>' +
-        '<td>' + lvl + '/' + MAX_LEVEL + '</td>' +
+        '<td>' + lvl + '/' + maxLevel(s.id) + '</td>' +
         '<td>' + (best ? best + "/" + QUIZ_LEN : "—") + '</td>' +
         '<td>' + (doneToday || "—") + '</td>' +
         '</tr>';
@@ -5437,27 +5637,43 @@
   /* ---------------- accueil ---------------- */
   function renderHome() {
     app.removeAttribute("style");
-    var done = SUBJECTS.filter(function (s) { return levelOf(s.id) >= MAX_LEVEL; }).length;
+    var done = SUBJECTS.filter(function (s) { return levelOf(s.id) >= maxLevel(s.id); }).length;
 
     var cards = SUBJECTS.map(function (s) {
       var best = state.best[s.id] || 0;
       var lvl = levelOf(s.id);
-      var done = lvl >= MAX_LEVEL;
-      var progress = Math.round(((lvl - 1) / (MAX_LEVEL - 1)) * 100);
+      var haut = maxLevel(s.id);
+      var done = lvl >= haut;
+      var progress = Math.round(((lvl - 1) / (haut - 1)) * 100);
       var label = best ? "record " + best + "/" + QUIZ_LEN : "jamais fait";
+      var joue = playedLevel(s.id);
+      /* Le sélecteur de niveau n'apparaît que s'il y a un niveau plus bas à choisir. */
+      var choix = lvl > 1
+        ? '<div class="levelpick">' +
+            '<button class="lvlbtn" data-down="' + s.id + '"' + (joue <= 1 ? " disabled" : "") +
+              ' aria-label="Niveau plus facile">−</button>' +
+            '<span class="lvlnow">Jouer le niveau <b>' + joue + '</b></span>' +
+            '<button class="lvlbtn" data-up="' + s.id + '"' + (joue >= lvl ? " disabled" : "") +
+              ' aria-label="Niveau plus difficile">+</button>' +
+            (joue < lvl ? '<span class="lvlnote">révision : ne fait pas monter</span>' : "") +
+          '</div>'
+        : "";
       return '' +
+        '<div class="subject-cell">' +
         '<button class="subject" data-subject="' + s.id + '" data-done="' + (done ? 1 : 0) + '"' +
           ' style="' + tint(s.id) + '">' +
           '<span class="top">' +
             '<span class="name"><span class="medal">' + s.medal + '</span> ' + esc(s.name) + '</span>' +
             '<span class="badge">' + esc(label) + '</span>' +
           '</span>' +
-          '<span class="lvl-line"><b>Niveau ' + lvl + '</b> / ' + MAX_LEVEL +
+          '<span class="lvl-line"><b>Niveau ' + lvl + '</b> / ' + haut +
             (done ? ' · terminé ⭐' : ' · ' + esc(LEVEL_NAMES[lvl - 1])) + '</span>' +
           '<span class="topics">' + esc(s.topics) + '</span>' +
           '<span class="track"><i style="width:' + progress + '%"></i></span>' +
           '<span class="doodle d-card" aria-hidden="true"><svg viewBox="0 0 100 100">' + DOODLES[s.id] + '</svg></span>' +
-        '</button>';
+        '</button>' +
+        '<div style="' + tint(s.id) + '">' + choix + '</div>' +
+        '</div>';
     }).join("");
 
     app.innerHTML = '' +
@@ -5523,6 +5739,22 @@
       document.getElementById("setname").addEventListener("click", keep);
       who.addEventListener("keydown", function (e) { if (e.key === "Enter") keep(); });
     }
+
+    /* Choix du niveau à jouer : les flèches ne lancent pas le quiz, elles ajustent. */
+    function reglerNiveau(id, delta) {
+      var atteint = levelOf(id);
+      var nouveau = Math.min(Math.max(playedLevel(id) + delta, 1), atteint);
+      if (nouveau === atteint) delete state.chosen[id];
+      else state.chosen[id] = nouveau;
+      save();
+      renderHome();
+    }
+    Array.prototype.forEach.call(app.querySelectorAll("[data-down]"), function (b) {
+      b.addEventListener("click", function () { reglerNiveau(b.getAttribute("data-down"), -1); });
+    });
+    Array.prototype.forEach.call(app.querySelectorAll("[data-up]"), function (b) {
+      b.addEventListener("click", function () { reglerNiveau(b.getAttribute("data-up"), 1); });
+    });
 
     Array.prototype.forEach.call(app.querySelectorAll("[data-subject]"), function (btn) {
       btn.addEventListener("click", function () { startQuiz(btn.getAttribute("data-subject")); });
@@ -5596,7 +5828,7 @@
       });
       questions = shuffle(questions).slice(0, QUIZ_LEN);
     } else {
-      lvl = levelOf(id);
+      lvl = playedLevel(id);
       questions = buildQuiz(subject, lvl);
     }
 
@@ -5908,7 +6140,9 @@
     } else {
       if (s > (state.best[id] || 0)) state.best[id] = s;
       /* 15 bonnes réponses sur 20 font passer au niveau suivant. */
-      if (s >= seuil(run.items.length) && levelOf(id) < MAX_LEVEL) {
+      /* On ne monte que si le quiz était bien au niveau atteint : rejouer un niveau
+         plus facile sert à réviser, pas à progresser. */
+      if (s >= seuil(run.items.length) && run.level >= levelOf(id) && levelOf(id) < maxLevel(id)) {
         levelUp = levelOf(id) + 1;
         state.levels[id] = levelUp;
       }
@@ -5941,7 +6175,11 @@
     if (run.training) {
       levelNews = '<div class="unlocked"><span class="won info"><b>🎓</b> ' +
         'Entraînement sur un seul chapitre : il rapporte des points mais ne change pas ' +
-        'ton niveau en maths. Pour monter, joue un quiz de maths complet.</span></div>';
+        'ton niveau. Pour monter, joue un quiz complet de la matière.</span></div>';
+    } else if (run.level < levelOf(id)) {
+      levelNews = '<div class="unlocked"><span class="won info"><b>↩️</b> ' +
+        'Tu rejouais le niveau ' + run.level + ', plus facile que ton niveau ' + levelOf(id) +
+        ' : cela ne change pas ta progression. Reviens au niveau ' + levelOf(id) + ' pour monter.</span></div>';
     } else if (id === "daily") {
       levelNews = '<div class="unlocked"><span class="won info"><b>🔥</b> ' +
         'Le défi ne change pas les niveaux des matières : il rapporte 20 points bonus. ' +
@@ -5949,10 +6187,10 @@
     } else if (levelUp) {
       levelNews = '<div class="unlocked"><span class="won levelup"><b>⬆️</b> ' +
         esc(run.subject.name) + ' : niveau ' + (levelUp - 1) + ' → <b>niveau ' + levelUp + '</b>' +
-        (levelUp === MAX_LEVEL ? " — le dernier !" : "") + '</span></div>';
-    } else if (levelOf(id) >= MAX_LEVEL) {
+        (levelUp === maxLevel(id) ? " — le dernier !" : "") + '</span></div>';
+    } else if (levelOf(id) >= maxLevel(id)) {
       levelNews = '<div class="unlocked"><span class="won info"><b>🏔️</b> ' +
-        esc(run.subject.name) + ' : niveau ' + MAX_LEVEL + ', le maximum. Rien de plus dur à débloquer.</span></div>';
+        esc(run.subject.name) + ' : niveau ' + maxLevel(id) + ', le maximum. Rien de plus dur à débloquer.</span></div>';
     } else {
       levelNews = '<div class="unlocked"><span class="won info"><b>🎯</b> ' +
         esc(run.subject.name) + ' : toujours niveau ' + levelOf(id) + '. Il faut <b>' + seuil(n) + '/' + n +
