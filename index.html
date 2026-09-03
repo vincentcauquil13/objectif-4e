@@ -1189,42 +1189,6 @@
   .answer.bad .key { color: var(--red); }
 
   /* ---------- question à réponse écrite ---------- */
-  .typein { display: flex; flex-direction: column; gap: 8px; }
-  .typein label {
-    font-size: 15px;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    align-items: baseline;
-  }
-  .typein label em {
-    font-style: normal;
-    font-family: var(--f-mono);
-    font-size: 11px;
-    color: var(--ink-soft);
-  }
-  .typerow { display: flex; gap: 8px; flex-wrap: wrap; }
-  .typerow input {
-    flex: 1 1 200px;
-    min-width: 0;
-    font-family: var(--f-mono);
-    font-size: 19px;
-    color: var(--ink);
-    background: var(--paper);
-    border: 2px solid var(--rule);
-    border-radius: 3px;
-    padding: 11px 14px;
-  }
-  .typerow input:focus-visible { outline: 3px solid var(--blue); outline-offset: 1px; }
-  .typerow input.good { border-color: var(--green); background: var(--green-wash); }
-  .typerow input.bad  { border-color: var(--red);   background: var(--red-wash); }
-  .typerow input:disabled { opacity: 1; }
-  .corrige {
-    display: block;
-    margin-bottom: 8px;
-    font-size: 15px;
-  }
-  .corrige b { font-family: var(--f-mono); font-size: 16px; color: var(--green); }
 
   .explain {
     border-left: 3px solid var(--marker);
@@ -2091,98 +2055,6 @@
     top /= g; den /= g;
     return den === 1 ? String(top) : top + "/" + den;
   }
-
-  /* ---------- réponses à écrire ----------
-     Pour la factorisation, un QCM ne prouve rien : il suffit de développer les quatre
-     propositions. L'élève écrit donc sa réponse, et on la vérifie de deux façons :
-     elle doit valoir la même chose que l'énoncé pour toute valeur de x, et être
-     réellement factorisée (un produit, pas une somme). */
-
-  /* Traduit une écriture d'élève en expression calculable : 3(x+2), 3*(x+2),
-     3 (x + 2) et 3x(x+2) sont tous acceptés. */
-  function alg(expr) {
-    var s = String(expr).toLowerCase()
-      .replace(/\s+/g, "")
-      .replace(/×/g, "*").replace(/÷/g, "/")
-      .replace(/[−–—]/g, "-")
-      .replace(/²/g, "^2").replace(/³/g, "^3")
-      .replace(/,/g, ".");
-    s = s.replace(/(\d)(x|\()/g, "$1*$2");   // 3x → 3*x   et   3( → 3*(
-    s = s.replace(/(x|\))\(/g, "$1*(");      // x( → x*(   et   )( → )*(
-    s = s.replace(/\)(x|\d)/g, ")*$1");      // )x → )*x   et   )3 → )*3
-    s = s.replace(/x(\d)/g, "x*$1");
-    return s.replace(/\^/g, "**");
-  }
-
-  /* Une saisie ne peut contenir que des caractères de calcul. */
-  function saisieValide(expr) {
-    return /^[0-9x+\-*/().^²³×÷−–—,=\s]+$/.test(String(expr));
-  }
-
-  function evalue(s, x) {
-    try {
-      var v = Function("x", '"use strict"; return (' + s + ');')(x);
-      return typeof v === "number" ? v : NaN;
-    } catch (err) { return NaN; }
-  }
-
-  /* Deux expressions sont égales si elles donnent la même valeur pour plusieurs x. */
-  function memeExpression(a, b) {
-    var ea = alg(a), eb = alg(b);
-    var tests = [-3.7, -2, -0.5, 0, 1.3, 2, 5.5];
-    for (var i = 0; i < tests.length; i++) {
-      var va = evalue(ea, tests[i]), vb = evalue(eb, tests[i]);
-      if (!isFinite(va) || !isFinite(vb)) return false;
-      if (Math.abs(va - vb) > 1e-9 * Math.max(1, Math.abs(vb))) return false;
-    }
-    return true;
-  }
-
-  /* Factorisé = produit au niveau le plus haut : des parenthèses, et aucun + ou −
-     en dehors d'elles. « 3x + 6 » est donc refusé, « 3(x + 2) » accepté. */
-  function estFactorise(expr) {
-    var e = alg(expr);
-    if (e.indexOf("(") < 0) return false;
-    var prof = 0;
-    for (var i = 0; i < e.length; i++) {
-      var c = e.charAt(i);
-      if (c === "(") prof++;
-      else if (c === ")") prof--;
-      else if ((c === "+" || c === "-") && prof === 0 && i > 0) return false;
-    }
-    return true;
-  }
-
-  /* Développé = plus aucune parenthèse à multiplier. */
-  function estDeveloppe(expr) {
-    return alg(expr).indexOf("(") < 0;
-  }
-
-  /* Réduit = un seul terme par degré. « x² − 2x + 5x − 10 » est développé mais pas réduit. */
-  function estReduit(expr) {
-    var e = alg(expr);
-    var termes = e.replace(/-/g, "+-").split("+").filter(function (t) { return t.length; });
-    var vus = {};
-    for (var i = 0; i < termes.length; i++) {
-      var deg = /x\*\*3/.test(termes[i]) ? 3 : /x\*\*2/.test(termes[i]) ? 2 : /x/.test(termes[i]) ? 1 : 0;
-      if (vus[deg]) return false;
-      vus[deg] = 1;
-    }
-    return true;
-  }
-
-  /* Solution d'équation : on accepte « x = 4 », « 4 », « 5/2 » ou « 2,5 ». */
-  function valeurSaisie(saisie) {
-    var brut = String(saisie).trim().replace(/^x\s*=\s*/i, "");
-    if (!brut) return NaN;
-    return evalue(alg(brut), 0);
-  }
-
-  /* Fabrique une question à réponse écrite. */
-  function ecrite(d, q, sol, aide, e, verif) {
-    return { d: d, q: q, type: "saisie", sol: sol, aide: aide, e: e, verif: verif, gen: true };
-  }
-
   var GENERATORS = {
     maths: [
       { d: 1, make: function () {
@@ -2261,17 +2133,15 @@
       { d: 4, make: function () {
         var a = rnd(2, 9), b = rnd(2, 20), x = rnd(2, 12);
         var res = a * x + b;
-        return ecrite(4, "Résous l'équation " + a + "x + " + b + " = " + res + ".", "x = " + x,
-          "donne la valeur de x",
-          "On retire " + b + " des deux côtés : " + a + "x = " + a * x + ". Puis on divise par " + a + " : x = " + x + ".",
-          { mode: "equation", sol: x });
+        return made(4, "Résous l'équation " + a + "x + " + b + " = " + res + ".", "x = " + x,
+          ["x = " + (res - b), "x = " + num(res / a), "x = " + (x + a)],
+          "On retire " + b + " des deux côtés : " + a + "x = " + a * x + ". Puis on divise par " + a + " : x = " + x + ".");
       } },
       { d: 4, make: function () {
         var a = rnd(2, 9), b = rnd(2, 12);
-        return ecrite(4, "Développe " + a + "(x + " + b + ").", a + "x + " + a * b,
-          "écris la forme développée, par exemple 4x + 12",
-          "On distribue le " + a + " sur chaque terme : " + a + " × x + " + a + " × " + b + " = " + a + "x + " + a * b + ".",
-          { source: a + "*(x+" + b + ")", mode: "developpe" });
+        return made(4, "Développe " + a + "(x + " + b + ").", a + "x + " + a * b,
+          [a + "x + " + b, "x + " + a * b, (a + b) + "x"],
+          "On distribue le " + a + " sur chaque terme : " + a + " × x + " + a + " × " + b + " = " + a + "x + " + a * b + ".");
       } },
       { d: 4, make: function () {
         var p = rnd(20, 90), h = pickOne([10, 20, 25, 50]);
@@ -2354,60 +2224,52 @@
       { d: 8, make: function () {
         var a = rnd(2, 9), b = rnd(2, 9);
         while (a === b) b = rnd(2, 9);
-        var terme = termeX(a - b);                       // coefficient du terme en x
-        return ecrite(8, "Développe et réduis (x + " + a + ")(x − " + b + ").",
+        var terme = termeX(a - b);
+        return made(8, "Développe et réduis (x + " + a + ")(x − " + b + ").",
           "x² " + terme + " − " + a * b,
-          "n'oublie pas de réduire les termes en x",
+          ["x² − " + a * b, "x² " + termeX(a + b) + " − " + a * b, "x² " + terme + " + " + a * b],
           "Double distributivité : x² − " + b + "x + " + a + "x − " + a * b +
-          ", puis on réduit les termes en x : " + terme + ".",
-          { source: "(x+" + a + ")*(x-" + b + ")", mode: "developpe" });
+          ", puis on réduit les termes en x : " + terme + ".");
       } },
       { d: 8, make: function () {
         var k = rnd(2, 9), b = rnd(2, 12);
         var enonce = k + "x + " + k * b;
-        return ecrite(8, "Factorise " + enonce + ".", k + "(x + " + b + ")",
-          "écris ta réponse, par exemple 5(x + 3)",
+        return made(8, "Factorise " + enonce + ".", k + "(x + " + b + ")",
+          [k + "(x + " + k * b + ")", "x(" + k + " + " + k * b + ")", (k + b) + "x"],
           "Le plus grand facteur commun à " + k + "x et " + k * b + " est " + k + " : " +
-          enonce + " = " + k + " × x + " + k + " × " + b + " = " + k + "(x + " + b + ").",
-          { source: enonce, factorise: true, pgcdMin: k });
+          enonce + " = " + k + " × x + " + k + " × " + b + " = " + k + "(x + " + b + ").");
       } },
       { d: 8, make: function () {
         var a = rnd(2, 9);
         var enonce = "x² + " + a + "x";
-        return ecrite(8, "Factorise " + enonce + ".", "x(x + " + a + ")",
-          "écris ta réponse, par exemple x(x + 4)",
-          "Les deux termes contiennent x : " + enonce + " = x × x + x × " + a + " = x(x + " + a + ").",
-          { source: enonce, factorise: true });
+        return made(8, "Factorise " + enonce + ".", "x(x + " + a + ")",
+          ["x(x + 1)", "x²(x + " + a + ")", "(x + " + a + ")"],
+          "Les deux termes contiennent x : " + enonce + " = x × x + x × " + a + " = x(x + " + a + ").");
       } },
       { d: 9, make: function () {
         var k = rnd(2, 6), a = rnd(2, 7), b = rnd(2, 9);
-        /* a et b doivent être premiers entre eux, sinon le facteur commun réel
-           serait plus grand que k et la « bonne » réponse serait incomplète. */
         while (pgcd(a, b) > 1) b = rnd(2, 9);
         var enonce = (k * a) + "x² + " + (k * b) + "x";
-        return ecrite(9, "Factorise " + enonce + ".", k + "x(" + a + "x + " + b + ")",
-          "sors tout ce qui est commun, nombre et lettre",
+        return made(9, "Factorise " + enonce + ".", k + "x(" + a + "x + " + b + ")",
+          ["x(" + (k * a) + "x + " + (k * b) + ")", k + "(" + a + "x² + " + b + "x)", k + "x(" + a + "x + " + (k * b) + ")"],
           "Le facteur commun est " + k + "x : " + enonce + " = " + k + "x × " + a + "x + " + k + "x × " + b +
-          " = " + k + "x(" + a + "x + " + b + "). Il faut sortir le nombre le plus grand possible, et le x.",
-          { source: enonce, factorise: true, pgcdMin: k });
+          " = " + k + "x(" + a + "x + " + b + "). Il faut sortir le nombre le plus grand possible, et le x.");
       } },
       { d: 10, make: function () {
         var k = rnd(2, 8), a = rnd(2, 9), b = rnd(2, 9);
         while (pgcd(a, b) > 1) b = rnd(2, 9);
         var enonce = (k * a) + "x + " + (k * b);
-        return ecrite(10, "Factorise complètement " + enonce + ".", k + "(" + a + "x + " + b + ")",
-          "attention : sors le plus grand facteur commun",
+        return made(10, "Factorise complètement " + enonce + ".", k + "(" + a + "x + " + b + ")",
+          [enonce, k + "(" + a + "x + " + (k * b) + ")", a + "(" + k + "x + " + b + ")"],
           "Le PGCD de " + (k * a) + " et " + (k * b) + " est " + k + " : " + enonce + " = " + k + "(" + a + "x + " + b + "). " +
-          "Sortir un facteur plus petit donnerait une factorisation incomplète.",
-          { source: enonce, factorise: true, pgcdMin: k });
+          "Sortir un facteur plus petit donnerait une factorisation incomplète.");
       } },
       { d: 8, make: function () {
         var a = rnd(2, 9);
-        return ecrite(8, "Développe et réduis (x + " + a + ")².", "x² + " + 2 * a + "x + " + a * a,
-          "attention au double produit",
+        return made(8, "Développe et réduis (x + " + a + ")².", "x² + " + 2 * a + "x + " + a * a,
+          ["x² + " + a * a, "x² + " + a + "x + " + a * a, "2x + " + 2 * a],
           "(x + " + a + ")² = (x + " + a + ")(x + " + a + ") = x² + " + a + "x + " + a + "x + " + a * a +
-          " = x² + " + 2 * a + "x + " + a * a + ". Le double produit s'oublie souvent.",
-          { source: "(x+" + a + ")**2", mode: "developpe" });
+          " = x² + " + 2 * a + "x + " + a * a + ". Le double produit s'oublie souvent.");
       } },
       { d: 8, make: function () {
         var faces = pickOne([6, 10, 20]), cible = pickOne(["pair", "impair"]);
@@ -2428,10 +2290,9 @@
       } },
       { d: 9, make: function () {
         var d = rnd(2, 9), n = rnd(2, 9), k = rnd(2, 6);
-        return ecrite(9, "Résous l'équation x/" + d + " = " + n + "/" + (d * k) + ".", "x = " + frac(n, k),
-          "tu peux répondre en fraction ou en nombre décimal",
-          "Produit en croix : " + (d * k) + "x = " + n * d + ", donc x = " + n * d + " ÷ " + (d * k) + " = " + frac(n, k) + ".",
-          { mode: "equation", sol: n / k });
+        return made(9, "Résous l'équation x/" + d + " = " + n + "/" + (d * k) + ".", "x = " + frac(n, k),
+          ["x = " + (n * d), "x = " + frac(n * k, 1), "x = " + frac(d, n)],
+          "Produit en croix : " + (d * k) + "x = " + n * d + ", donc x = " + n * d + " ÷ " + (d * k) + " = " + frac(n, k) + ".");
       } },
       { d: 10, make: function () {
         var trip = pickOne([[6, 8, 10], [9, 12, 15], [5, 12, 13], [12, 16, 20]]);
@@ -2441,14 +2302,13 @@
       } },
       { d: 10, make: function () {
         var a = rnd(2, 5), b = rnd(2, 9), c = rnd(2, 9);
-        while (b === a * c) c = rnd(2, 9);               // sinon le terme en x disparaît
+        while (b === a * c) c = rnd(2, 9);
         var mid = a * -c + b;
         var terme = termeX(mid);
-        return ecrite(10, "Développe et réduis (" + a + "x + " + b + ")(x − " + c + ").",
+        return made(10, "Développe et réduis (" + a + "x + " + b + ")(x − " + c + ").",
           a + "x² " + terme + " − " + b * c,
-          "quatre produits, puis on réduit",
-          a + "x² − " + a * c + "x + " + b + "x − " + b * c + ", puis on réduit les termes en x : " + terme + ".",
-          { source: "(" + a + "x+" + b + ")*(x-" + c + ")", mode: "developpe" });
+          [a + "x² − " + b * c, a + "x² " + termeX(b + c) + " − " + b * c, a + "x² " + terme + " + " + b * c],
+          a + "x² − " + a * c + "x + " + b + "x − " + b * c + ", puis on réduit les termes en x : " + terme + ".");
       } },
       { d: 10, make: function () {
         var v = rnd(2, 12) * 10, t = pickOne([15, 30, 45]);
@@ -2458,14 +2318,12 @@
           t + " min = " + num(t / 60) + " h. Distance = " + v + " × " + num(t / 60) + " = " + num(dist) + " km. Il faut convertir les minutes en heures.");
       } },
       { d: 6, make: function () {
-        /* a − c ≥ 2 et c ≥ 2 : sinon l'énoncé ou l'explication afficherait « 1x ». */
         var a = rnd(4, 9), c = rnd(2, a - 2), x = rnd(2, 12), b = rnd(2, 15);
-        var droite = (a - c) * x + b;                    // ax + b = cx + (a−c)x + b
-        return ecrite(6, "Résous l'équation " + a + "x + " + b + " = " + c + "x + " + droite + ".", "x = " + x,
-          "regroupe d'abord les x d'un même côté",
+        var droite = (a - c) * x + b;
+        return made(6, "Résous l'équation " + a + "x + " + b + " = " + c + "x + " + droite + ".", "x = " + x,
+          ["x = " + (droite - b), "x = " + num(droite / a), "x = " + (x + c)],
           "On enlève " + c + "x des deux côtés : " + (a - c) + "x + " + b + " = " + droite + ". On enlève " + b + " : " +
-          (a - c) + "x = " + (a - c) * x + ". On divise par " + (a - c) + " : x = " + x + ".",
-          { mode: "equation", sol: x });
+          (a - c) + "x = " + (a - c) * x + ". On divise par " + (a - c) + " : x = " + x + ".");
       } },
       { d: 10, make: function () {
         var n1 = rnd(8, 18), n2 = rnd(4, 14), v1 = rnd(5, 12), v2 = rnd(12, 18);
@@ -3379,7 +3237,6 @@
     }
 
     return shuffle(generated.concat(written)).map(function (item) {
-      if (item.type === "saisie") return item;       // rien à mélanger : la réponse s'écrit
       var right = item.a[item.c];
       var opts = shuffle(item.a);
       return { q: item.q, a: opts, c: opts.indexOf(right), e: item.e, d: item.d, ch: item.ch, gen: !!item.gen };
@@ -6036,21 +5893,12 @@
     var item = run.items[run.i];
     var pct = Math.round((run.i / run.items.length) * 100);
 
-    var answers = item.type === "saisie"
-      ? '<div class="typein">' +
-          '<label for="reponse">Ta réponse <em>' + esc(item.aide) + '</em></label>' +
-          '<div class="typerow">' +
-            '<input id="reponse" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" ' +
-              'inputmode="text" placeholder="ex. 3(x + 2)">' +
-            '<button class="btn" id="valider">Vérifier</button>' +
-          '</div>' +
-        '</div>'
-      : item.a.map(function (text, idx) {
-          return '<button class="answer" data-idx="' + idx + '">' +
-            '<span class="key">' + "ABCD"[idx] + '</span>' +
-            '<span>' + esc(text) + '</span>' +
-          '</button>';
-        }).join("");
+    var answers = item.a.map(function (text, idx) {
+      return '<button class="answer" data-idx="' + idx + '">' +
+        '<span class="key">' + "ABCD"[idx] + '</span>' +
+        '<span>' + esc(text) + '</span>' +
+      '</button>';
+    }).join("");
 
     app.innerHTML = '' +
       '<div class="row"><button class="btn quiet" id="back">← ' +
@@ -6074,109 +5922,7 @@
     Array.prototype.forEach.call(app.querySelectorAll(".answer"), function (btn) {
       btn.addEventListener("click", function () { choose(parseInt(btn.getAttribute("data-idx"), 10)); });
     });
-
-    var champ = document.getElementById("reponse");
-    if (champ) {
-      var envoyer = function () { corrigeSaisie(champ.value); };
-      document.getElementById("valider").addEventListener("click", envoyer);
-      champ.addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); envoyer(); } });
-      champ.focus();
-    }
     window.scrollTo(0, 0);
-  }
-
-  /* Juge une réponse écrite selon la forme attendue, et dit précisément ce qui cloche.
-     Les trois modes correspondent aux trois exercices où un QCM donnerait la réponse. */
-  function corrige(verif, saisie) {
-    if (!saisieValide(saisie)) {
-      return { juste: false, motif: "Utilise seulement des chiffres, la lettre x, des parenthèses et les signes + − × ÷." };
-    }
-
-    if (verif.mode === "equation") {
-      var v = valeurSaisie(saisie);
-      if (!isFinite(v)) return { juste: false, motif: "Écris seulement la valeur de x, par exemple « 4 » ou « x = 4 »." };
-      if (Math.abs(v - verif.sol) > 1e-9) {
-        /* Une valeur approchée montre que le raisonnement est bon : on le dit autrement. */
-        return { juste: false, motif: Math.abs(v - verif.sol) < 0.02
-          ? "Tu y es presque, mais c'est une valeur approchée : donne la valeur exacte, en fraction."
-          : "Vérifie en remplaçant x par ta valeur dans l'équation de départ." };
-      }
-      return { juste: true, motif: "" };
-    }
-
-    if (!memeExpression(saisie, verif.source)) {
-      return { juste: false, motif: verif.mode === "developpe"
-        ? "Ton expression ne vaut pas la même chose que l'énoncé. Reprends la distributivité terme par terme."
-        : "Ton expression ne vaut pas la même chose que l'énoncé. Développe ta réponse pour vérifier." };
-    }
-
-    if (verif.mode === "developpe") {
-      if (!estDeveloppe(saisie)) return { juste: false, motif: "Il reste des parenthèses : il faut les développer." };
-      if (!estReduit(saisie)) return { juste: false, motif: "C'est développé, mais pas réduit : il reste des termes semblables à regrouper." };
-      return { juste: true, motif: "" };
-    }
-
-    if (!estFactorise(saisie)) {
-      return { juste: false, motif: "C'est bien égal à l'énoncé, mais ce n'est pas factorisé : il faut un produit, avec des parenthèses." };
-    }
-    if (verif.pgcdMin && !facteurSuffisant(saisie, verif.pgcdMin)) {
-      return { juste: false, motif: "C'est factorisé, mais pas complètement : on peut encore sortir un facteur commun." };
-    }
-    return { juste: true, motif: "" };
-  }
-
-  /* Correction d'une réponse écrite. */
-  function corrigeSaisie(valeur) {
-    if (run.answered) return;
-    var item = run.items[run.i];
-    var saisie = String(valeur).trim();
-    var champ = document.getElementById("reponse");
-
-    if (!saisie) { champ.focus(); return; }
-
-    var verdict = corrige(item.verif, saisie);
-    var juste = verdict.juste;
-    var motif = verdict.motif;
-
-    run.answered = true;
-    if (juste) run.score++;
-    else run.misses.push({ q: item.q, a: item.sol, donnee: saisie, ch: item.ch });
-
-    champ.disabled = true;
-    champ.classList.add(juste ? "good" : "bad");
-    document.getElementById("valider").disabled = true;
-
-    var last = run.i === run.items.length - 1;
-    document.getElementById("after").innerHTML = '' +
-      '<div class="reaction">' +
-        owl(juste ? "good" : "sad") +
-        '<div class="explain">' +
-          '<span class="lab">' + (juste ? "Bien vu" : "À retenir") + '</span>' +
-          (juste ? "" : '<span class="corrige">Réponse attendue : <b>' + esc(item.sol) + '</b><br>' + esc(motif) + '</span>') +
-          esc(item.e) +
-        '</div>' +
-      '</div>' +
-      '<div class="row"><button class="btn" id="next">' + (last ? "Voir mon score" : "Question suivante →") + '</button></div>';
-
-    document.getElementById("next").addEventListener("click", function () {
-      if (last) { finish(); return; }
-      run.i++;
-      run.answered = false;
-      renderQuestion();
-    });
-    document.getElementById("next").focus();
-  }
-
-  /* Vérifie qu'on a bien sorti tout le facteur commun : le contenu des parenthèses
-     ne doit plus être divisible par le facteur attendu. */
-  function facteurSuffisant(saisie, k) {
-    var reste = alg(saisie);
-    /* On efface le contenu des parenthèses : il ne reste que le facteur sorti,
-       qu'il soit écrit avant — 3(2x+5) — ou après — (2x+5)*3. */
-    while (/\([^()]*\)/.test(reste)) reste = reste.replace(/\([^()]*\)/g, "P");
-    var nombres = reste.match(/\d+(\.\d+)?/g) || [];
-    var coef = nombres.reduce(function (a, n) { return a * parseFloat(n); }, 1);
-    return coef >= k && coef % k === 0;
   }
 
   function choose(idx) {
