@@ -1260,6 +1260,35 @@
     color: var(--ink-soft);
     text-align: center;
     letter-spacing: .04em;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+  footer p { margin: 0; }
+
+  /* Date de version : elle doit se lire d'un coup d'œil, pour vérifier
+     qu'on a bien la dernière mise à jour. */
+  .version {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--ink);
+    background: var(--card);
+    border: 1px solid var(--rule);
+    border-radius: 99px;
+    padding: 7px 16px;
+    letter-spacing: .02em;
+    box-shadow: var(--shadow);
+  }
+  .version b { color: var(--blue); font-weight: 500; }
+  .version .pastille {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--green);
+    flex: none;
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -1334,7 +1363,10 @@
   </svg>
 
   <div id="app"></div>
-  <footer>Objectif 4e — révisions du programme de 5e · ta progression est gardée sur cet appareil</footer>
+  <footer>
+    <p class="version"><span class="pastille" aria-hidden="true"></span>Version du <b>3 septembre 2026</b></p>
+    <p>Objectif 4ᵉ — révisions du programme de 5ᵉ · ta progression est gardée sur cet appareil</p>
+  </footer>
 </div>
 
 <script>
